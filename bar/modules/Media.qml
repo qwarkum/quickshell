@@ -23,6 +23,24 @@ Item {
         root: mediaPlayer
     }
 
+    Connections {
+        target: MprisController        
+
+        function onIsPlayingChanged() {
+            // Animate play/pause button when playback state changes
+            if (MprisController.isPlaying) {
+                playPulseAnimation.restart()
+            } else {
+                pausePulseAnimation.restart()
+            }
+        }
+
+        function onActiveTrackChanged() {
+            // Animate when track changes (next/previous)
+            trackChangeAnimation.restart()
+        }
+    }
+
     Rectangle {
         id: mediaModule
         width: mediaLayout.implicitWidth
@@ -37,7 +55,7 @@ Item {
         RowLayout {
             id: mediaLayout
             anchors.fill: parent
-            anchors.leftMargin: 2
+            anchors.leftMargin: playerProgress.lineWidth
 
             CircularProgress {
                 id: playerProgress
@@ -50,6 +68,7 @@ Item {
                 enableAnimation: true
 
                 Text {
+                    id: playPauseButton
                     anchors.centerIn: parent
                     color: MprisController.activePlayer ? DefaultStyle.colors.white : DefaultStyle.colors.brightGrey
                     text: {
@@ -75,11 +94,13 @@ Item {
                 Layout.rightMargin: 10
                 
                 Text {
+                    id: trackTitle
                     width: parent.width
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     text: MprisController.activeTrack?.title || "No media"
                     color: MprisController.activePlayer ? DefaultStyle.colors.white : DefaultStyle.colors.brightGrey
+                    scale: 0.95
                     font {
                         pixelSize: 13
                         family: DefaultStyle.fonts.rubik
@@ -88,10 +109,88 @@ Item {
                 }
 
                 MouseArea {
-            anchors.fill: parent
-            onClicked: mediaPlayer.toggle()
-            cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: mediaPlayer.toggle()
+                    cursorShape: Qt.PointingHandCursor
+                }
+            }
         }
+    }
+
+    SequentialAnimation {
+        id: trackChangeAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: trackTitle
+                property: "scale"
+                to: 0.95
+                duration: 150
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: trackTitle
+                property: "scale"
+                to: 1.0
+                duration: 250
+                easing.type: Easing.OutBack
+            }
+        }
+    }
+
+    SequentialAnimation {
+        id: playPulseAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.1
+                duration: 150
+                easing.type: Easing.OutQuad
+            }
+            NumberAnimation {
+                target: playPauseButton
+                property: "opacity"
+                to: 1.0
+                duration: 150
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.0
+                duration: 150
+                easing.type: Easing.InQuad
+            }
+        }
+    }
+
+    // Animation for pause button when playback state changes
+    SequentialAnimation {
+        id: pausePulseAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.1
+                duration: 150
+                easing.type: Easing.OutQuad
+            }
+            NumberAnimation {
+                target: playPauseButton
+                property: "opacity"
+                to: 1.0
+                duration: 150
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.0
+                duration: 150
+                easing.type: Easing.InQuad
             }
         }
     }

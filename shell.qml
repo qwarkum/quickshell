@@ -4,11 +4,12 @@ import "./osd"
 import qs.common.widgets
 
 Scope {
-    WallpaperChanger {}
     Bar {}
-    ScreenTopCorners {}
+    
     ScreenBottomCorners {}
 
     BrightnessOsd {}
     AudioOsd {}
+
+    WallpaperChanger {}
 }

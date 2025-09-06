@@ -40,7 +40,7 @@ Singleton {
     function getBatteryIcon() {
         // if (BatteryService.isFullyCharged) return "battery_status_good"
         if (BatteryService.isCharging || BatteryService.isFullyCharged) return "electric_bolt" // "battery_charging_full" 
-        if (BatteryService.isCritical) return "battery_saver"
+        // if (BatteryService.isCritical) return "battery_saver"
         return "battery_full"
     }
 }

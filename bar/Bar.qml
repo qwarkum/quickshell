@@ -11,6 +11,7 @@ Variants {
     PanelWindow {
         required property var modelData
         screen: modelData
+        color: "transparent"
 
         // Panel positioning and appearance
         anchors {
@@ -19,6 +20,7 @@ Variants {
             right: true
         }
         implicitHeight: DefaultStyle.configs.barHeight
+        exclusiveZone: DefaultStyle.configs.barHeight
 
         Rectangle {
             anchors.fill: parent
@@ -26,10 +28,15 @@ Variants {
             border.width: DefaultStyle.configs.windowBorderWidth
             color: DefaultStyle.colors.panelBackground
 
+            ScreenTopCorners {
+                visible: true
+                anchors.fill: parent
+            }
+
             // Main panel layout
             RowLayout {
                 anchors.fill: parent
-                spacing: 10
+                visible: true
 
                 // Workspaces indicator
                 Workspaces { Layout.leftMargin: 5 }
@@ -37,10 +44,9 @@ Variants {
 
                 // Spacer
                 Item { Layout.fillWidth: true }
-                DateTime { Layout.alignment: Qt.AlignVCenter }
+                DateTime {}
                 Item { Layout.fillWidth: true }
                 
-                // WallpaperSelector {}
                 RightSidebar {}
                 Battery { Layout.rightMargin: 10 }
             }

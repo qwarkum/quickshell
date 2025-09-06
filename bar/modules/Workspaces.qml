@@ -32,9 +32,8 @@ Item {
     property int previousActiveWorkspaceId: activeWorkspaceId
 
     onActiveWorkspaceIdChanged: {
-        // animate indicator from previous -> new workspace
-        activeIndicator.moveToWorkspace(previousActiveWorkspaceId, activeWorkspaceId)
-        previousActiveWorkspaceId = activeWorkspaceId
+        // schedule animated move after layout settles (timer will call moveToWorkspace).
+        updateIndicatorTimer.start()
     }
 
     function refreshAppsIcon() {
@@ -70,6 +69,9 @@ Item {
                     }
                 }
                 root.workspaceApps = newWorkspaceApps
+
+                // reposition indicator after apps update (lets widths settle)
+                updateIndicatorTimer.start()
             }
         }
     }
@@ -79,12 +81,7 @@ Item {
         function onRawEvent(event) {
             if(event.name === "openwindow" || event.name === "closewindow") {
                 root.refreshAppsIcon()
-                if (activeIndicator) {
-                    var edges = activeIndicator.computeEdgesForWorkspace(root.activeWorkspaceId)
-                    activeIndicator.leftPosVal = edges.left
-                    activeIndicator.rightPosVal = edges.right
-                    activeIndicator.targetHeight = edges.height
-                }
+                updateIndicatorTimer.start()
             }
         }
     }
@@ -95,6 +92,9 @@ Item {
             activeWorkspaceId = monitor.activeWorkspace.id
         }
         root.refreshAppsIcon()
+
+        // initial placement after everything's created
+        updateIndicatorTimer.start()
     }
 
     // =========================
@@ -112,6 +112,20 @@ Item {
             color: DefaultStyle.colors.moduleBackground
             border.color: DefaultStyle.colors.moduleBorder
             border.width: DefaultStyle.configs.windowBorderWidth
+        }
+
+        // single-shot timer to update/move the indicator after layout settles
+        Timer {
+            id: updateIndicatorTimer
+            interval: 20   // small delay to let layout/widths settle; tune if needed
+            repeat: false
+            onTriggered: {
+                if (!activeIndicator) return
+                // animate from previous -> current workspace
+                activeIndicator.moveToWorkspace(root.previousActiveWorkspaceId, root.activeWorkspaceId)
+                // update stored previous id after the move
+                root.previousActiveWorkspaceId = root.activeWorkspaceId
+            }
         }
 
         // -------------------
@@ -151,12 +165,9 @@ Item {
                     color: isOccupied ? DefaultStyle.colors.workspace : "transparent"
 
                     onWidthChanged: {
-                        // Update active indicator if this is the current workspace
-                        if (workspaceId === root.activeWorkspaceId && activeIndicator) {
-                            var edges = activeIndicator.computeEdgesForWorkspace(workspaceId)
-                            activeIndicator.leftPosVal = edges.left
-                            activeIndicator.rightPosVal = edges.right
-                            activeIndicator.targetHeight = edges.height
+                        // schedule indicator update after this delegate's width change (allows animation)
+                        if (workspaceId === root.activeWorkspaceId) {
+                            updateIndicatorTimer.start()
                         }
                     }
 
@@ -178,8 +189,6 @@ Item {
             z: 2
             radius: height / 2
             color: DefaultStyle.colors.activeWorkspace
-            // border.color: DefaultStyle.colors.activeWorkspaceBorder
-            // border.width: 1
 
             property real leftPosVal: 0
             property real rightPosVal: 0
@@ -191,20 +200,30 @@ Item {
             height: targetHeight
             y: (workspaces.height - height) / 2
 
+            // NEW: compute edges by summing expected widths (deterministic)
             function computeEdgesForWorkspace(wsId) {
-                var c = bgRow.children[wsId - 1]
-                if (c) {
-                    return {
-                        left: bgRow.x + c.x,
-                        right: bgRow.x + c.x + c.width,
-                        height: c.height
+                // wsId is 1-based
+                var x = bgRow.x
+                for (var i = 1; i <= root.workspaceCount; i++) {
+                    // read apps from workspaceApps (workspace keys might be strings)
+                    var apps = root.workspaceApps[i] || root.workspaceApps[String(i)] || []
+                    var w = (apps.length < 2) ? root.workspaceSize
+                            : (apps.length === 2) ? root.workspaceSize * 2
+                            : root.workspaceSize * 2.7
+                    if (i === wsId) {
+                        return {
+                            left: x,
+                            right: x + w,
+                            height: root.workspaceSize
+                        }
                     }
-                } else {
-                    return {
-                        left: bgRow.x,
-                        right: bgRow.x + root.workspaceSize,
-                        height: root.workspaceSize
-                    }
+                    x += w + bgRow.spacing
+                }
+                // fallback
+                return {
+                    left: bgRow.x,
+                    right: bgRow.x + root.workspaceSize,
+                    height: root.workspaceSize
                 }
             }
 
@@ -247,10 +266,8 @@ Item {
             }
 
             Component.onCompleted: {
-                var edges = computeEdgesForWorkspace(root.activeWorkspaceId)
-                leftPosVal = edges.left
-                rightPosVal = edges.right
-                targetHeight = edges.height
+                // initial placement after component creation
+                updateIndicatorTimer.start()
             }
 
             Behavior on color {
@@ -291,7 +308,6 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: wsItem.workspaceId
-                        // text: Icons.dot
                         color : wsItem.isActive  ? DefaultStyle.colors.moduleBackground
                             : wsItem.isHovered ? DefaultStyle.colors.brightGrey
                             : DefaultStyle.colors.emptyWorkspace
@@ -390,10 +406,10 @@ Item {
                             visible: wsItem.apps.length > 2
                             anchors.verticalCenter: parent.verticalCenter
                             color: DefaultStyle.colors.white
-                            font.pixelSize: 8
+                            font.pixelSize: 10
                             font.family: DefaultStyle.fonts.rubik
-                            opacity: visible ? 1 : 0  // Fixed this line - was backwards
-                            scale: visible ? 1 : 0.5  // Also fixed this line
+                            opacity: visible ? 1 : 0
+                            scale: visible ? 1 : 0.5
                             
                             // Animation for counter appearance
                             Behavior on opacity { 

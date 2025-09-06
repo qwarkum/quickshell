@@ -54,6 +54,7 @@ Item {
                     pixelSize: 13
                     family: DefaultStyle.fonts.rubik
                 }
+                Layout.preferredWidth: font.pixelSize * 4
             }
 
             Text {

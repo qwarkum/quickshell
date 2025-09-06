@@ -41,7 +41,7 @@ QtObject {
         property color freeWorkspace: "transparent"
         property color activeWorkspace: "#50f0f0f0"
         // property color activeWorkspace: "#7c585858"
-        property color emptyWorkspace: "#616161"
+        property color emptyWorkspace: "#5f5f5f"
         property color activeWorkspaceBorder: "#8f8f8f"
         property color hoverBackgroundColor: "transparent"
         property color hoverBorderColor: "transparent"

@@ -148,37 +148,55 @@ PanelWindow {
                     id: albumArtContainer
                     Layout.preferredWidth: 140
                     Layout.preferredHeight: 140
-                    color: DefaultStyle.colors.darkGrey
+                    color: DefaultStyle.colors.moduleBackground
                     radius: DefaultStyle.configs.windowRadius
 
                     Image {
-                        id: albumArt
-                        anchors.fill: parent
-                        cache: true
-                        fillMode: Image.PreserveAspectFit
-                        source: MprisController.activeTrack?.artUrl || ""
-                        asynchronous: true
-                        sourceSize.width: 140
-                        sourceSize.height: 140
-                        opacity: 1
-                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    id: albumArt
+    anchors.fill: parent
+    cache: true
+    fillMode: Image.PreserveAspectFit
+    source: MprisController.activeTrack?.artUrl || ""
+    asynchronous: true
+    sourceSize.width: 140
+    sourceSize.height: 140
+    scale: 0.95
+    Behavior on scale { 
+        NumberAnimation { 
+            duration: 300; 
+            easing.type: Easing.OutBack
+        } 
+    }
 
-                        property bool adapt: true
+    property bool adapt: true
 
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: Item {
-                                width: albumArt.width
-                                height: albumArt.height
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: albumArt.adapt ? albumArt.width : Math.min(albumArt.width, albumArt.height)
-                                    height: albumArt.adapt ? albumArt.height : width
-                                    radius: DefaultStyle.configs.windowRadius
-                                }
-                            }
-                        }
-                    }
+    layer.enabled: true
+    layer.effect: OpacityMask {
+        maskSource: Item {
+            width: albumArt.width
+            height: albumArt.height
+            Rectangle {
+                anchors.centerIn: parent
+                width: albumArt.adapt ? albumArt.width : Math.min(albumArt.width, albumArt.height)
+                height: albumArt.adapt ? albumArt.height : width
+                radius: DefaultStyle.configs.windowRadius
+            }
+        }
+    }
+    
+    Component.onCompleted: {
+        // Pop in when component is loaded
+        scale = 1.0;
+    }
+    
+    onSourceChanged: {
+        // Scale animation when album art changes
+        if (source !== "") {
+            scale = 0.9;
+            scale = 1.0;
+        }
+    }
+}
                 }
             }
 
@@ -195,32 +213,52 @@ PanelWindow {
                     spacing: 4
 
                     Text {
-                        id: titleLabel
-                        Layout.fillWidth: true
-                        text: MprisController.activeTrack?.title || "Unknown"
-                        font {
-                            pixelSize: 16
-                            family: DefaultStyle.fonts.rubik
-                        }
-                        elide: Text.ElideRight
-                        color: DefaultStyle.colors.white
-                        opacity: 1
-                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                    }
+    id: titleLabel
+    Layout.fillWidth: true
+    text: MprisController.activeTrack?.title || "Unknown"
+    font {
+        pixelSize: 16
+        family: DefaultStyle.fonts.rubik
+    }
+    elide: Text.ElideRight
+    color: DefaultStyle.colors.white
+    scale: 0.95
+    Behavior on scale { 
+        NumberAnimation { 
+            duration: 300; 
+            easing.type: Easing.OutBack
+        } 
+    }
+    
+    Component.onCompleted: {
+        // Pop in when component is loaded
+        scale = 1.0;
+    }
+}
 
                     Text {
-                        id: artistLabel
-                        Layout.fillWidth: true
-                        text: MprisController.activeTrack?.artist
-                        font {
-                            pixelSize: 12
-                            family: DefaultStyle.fonts.rubik
-                        }
-                        elide: Text.ElideRight
-                        color: DefaultStyle.colors.brightGrey
-                        opacity: 1
-                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                    }
+    id: artistLabel
+    Layout.fillWidth: true
+    text: MprisController.activeTrack?.artist
+    font {
+        pixelSize: 12
+        family: DefaultStyle.fonts.rubik
+    }
+    elide: Text.ElideRight
+    color: DefaultStyle.colors.brightGrey
+    scale: 0.95
+    Behavior on scale { 
+        NumberAnimation { 
+            duration: 300; 
+            easing.type: Easing.OutBack
+        } 
+    }
+    
+    Component.onCompleted: {
+        // Pop in when component is loaded
+        scale = 1.0;
+    }
+}
                 }
 
                 // Middle section - Progress bar
@@ -580,73 +618,81 @@ PanelWindow {
 
                         // Current Player Selector
                         Rectangle {
-                            id: playerSelector
+                            id: playerSelectorWrapper
+                            color: DefaultStyle.colors.moduleBackground
                             width: parent.width
                             height: 25
                             anchors.bottom: parent.bottom
                             radius: 100
-                            // Only square the top corners if there are other players available
                             topRightRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
                             topLeftRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
                             
-                            property bool expanded: false
-                            
-                            // Background color animation on hover and press
-                            color: DefaultStyle.colors.moduleBackground
-                            Behavior on color {
-                                ColorAnimation { duration: 150 }
-                            }
-                            
-                            // Close dropdown when active player changes
-                            Connections {
-                                target: MprisController
-                                function onActivePlayerChanged() {
-                                    playerSelector.expanded = false
-                                }
-                            }
-                            
-                            RowLayout {
-                                Layout.fillWidth: true
-                                anchors.centerIn: parent
-                                spacing: 8
-                                
-                                // Player icon
-                                Image {
-                                    id: playerIcon
-                                    Layout.preferredWidth: 15
-                                    Layout.preferredHeight: 15
-                                    source: MprisController.activePlayer ? IconUtils.findIconForApp(MprisController.activePlayer.desktopEntry || "") : ""
-                                    sourceSize.width: 15
-                                    sourceSize.height: 15
-                                    fillMode: Image.PreserveAspectFit
-                                    opacity: 1
-                                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                                }
-                                
-                                // Player name
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: MprisController.activePlayer ? MprisController.activePlayer.identity : "No players"
-                                    color: DefaultStyle.colors.white
-                                    font {
-                                        pixelSize: 12
-                                        family: DefaultStyle.fonts.rubik
-                                    }
-                                    elide: Text.ElideRight
-                                }
-                            }
-                            
-                            MouseArea {
-                                id: mouseArea
+                            Rectangle {
+                                id: playerSelector
                                 anchors.fill: parent
-                                onClicked: {
-                                    // Only allow expanding if there are other players
-                                    if (Mpris.players.values.length > 1) {
-                                        playerSelector.expanded = !playerSelector.expanded
+                                radius: playerSelectorWrapper.radius
+                                topRightRadius: radius
+                                topLeftRadius: radius
+                                
+                                property bool expanded: false
+                                
+                                // Background color animation on hover and press
+                                color: mouseArea.containsMouse && Mpris.players.values.length > 1 ? DefaultStyle.colors.darkGrey : DefaultStyle.colors.moduleBackground
+                                Behavior on color {
+                                    ColorAnimation { duration: 150 }
+                                }
+                                
+                                // Close dropdown when active player changes
+                                Connections {
+                                    target: MprisController
+                                    function onActivePlayerChanged() {
+                                        playerSelector.expanded = false
                                     }
                                 }
-                                cursorShape: Mpris.players.values.length > 1 ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                hoverEnabled: true
+                                
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    anchors.centerIn: parent
+                                    spacing: 8
+                                    
+                                    // Player icon
+                                    Image {
+                                        id: playerIcon
+                                        Layout.preferredWidth: 15
+                                        Layout.preferredHeight: 15
+                                        source: MprisController.activePlayer ? IconUtils.findIconForApp(MprisController.activePlayer.desktopEntry || "") : ""
+                                        sourceSize.width: 15
+                                        sourceSize.height: 15
+                                        fillMode: Image.PreserveAspectFit
+                                        opacity: 1
+                                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                                    }
+                                    
+                                    // Player name
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: MprisController.activePlayer ? MprisController.activePlayer.identity : "No players"
+                                        color: DefaultStyle.colors.white
+                                        font {
+                                            pixelSize: 12
+                                            family: DefaultStyle.fonts.rubik
+                                        }
+                                        elide: Text.ElideRight
+                                    }
+                                }
+                                
+                                MouseArea {
+                                    id: mouseArea
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        // Only allow expanding if there are other players
+                                        if (Mpris.players.values.length > 1) {
+                                            playerSelector.expanded = !playerSelector.expanded
+                                        }
+                                    }
+                                    cursorShape: Mpris.players.values.length > 1 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    hoverEnabled: true
+                                }
                             }
                         }
                     }
@@ -751,49 +797,53 @@ PanelWindow {
     }
     
     // Animation for next/previous buttons when track changes
-    SequentialAnimation {
-        id: trackChangeAnimation
-        ParallelAnimation {
-            NumberAnimation {
-                target: albumArt
-                property: "opacity"
-                to: 0.3
-                duration: 100
-            }
-            NumberAnimation {
-                target: titleLabel
-                property: "opacity"
-                to: 0.3
-                duration: 100
-            }
-            NumberAnimation {
-                target: artistLabel
-                property: "opacity"
-                to: 0.3
-                duration: 100
-            }
+    // Animation for next/previous buttons when track changes
+SequentialAnimation {
+    id: trackChangeAnimation
+    ParallelAnimation {
+        NumberAnimation {
+            target: albumArt
+            property: "scale"
+            to: 1
+            duration: 150
         }
-        ParallelAnimation {
-            NumberAnimation {
-                target: albumArt
-                property: "opacity"
-                to: 1.0
-                duration: 200
-            }
-            NumberAnimation {
-                target: titleLabel
-                property: "opacity"
-                to: 1.0
-                duration: 200
-            }
-            NumberAnimation {
-                target: artistLabel
-                property: "opacity"
-                to: 1.0
-                duration: 200
-            }
+        NumberAnimation {
+            target: titleLabel
+            property: "scale"
+            to: 0.95
+            duration: 150
+        }
+        NumberAnimation {
+            target: artistLabel
+            property: "scale"
+            to: 0.95
+            duration: 150
         }
     }
+    ParallelAnimation {
+        NumberAnimation {
+            target: albumArt
+            property: "scale"
+            to: 1.03
+            duration: 250
+            easing.type: Easing.OutBack
+        }
+        NumberAnimation {
+            target: titleLabel
+            property: "scale"
+            to: 1.0
+            duration: 250
+            easing.type: Easing.OutBack
+        }
+        NumberAnimation {
+            target: artistLabel
+            property: "scale"
+            to: 1.0
+            duration: 250
+            easing.type: Easing.OutBack
+        }
+    }
+}
 
     Timer {
         running: MprisController.isPlaying
