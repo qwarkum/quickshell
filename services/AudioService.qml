@@ -1,0 +1,85 @@
+import QtQuick
+import Quickshell
+import Quickshell.Io
+import Quickshell.Services.Pipewire
+
+Item {
+    id: root
+
+    // Audio properties
+    property real volume: 0
+    property bool muted: false
+    property bool shouldShowOsd: false
+
+    // Pipewire connection
+    PwObjectTracker {
+        objects: [ Pipewire.defaultAudioSink ]
+    }
+
+    // Volume change detection
+    Connections {
+        target: Pipewire.defaultAudioSink?.audio
+
+        function onVolumeChanged() {
+            root.volume = Pipewire.defaultAudioSink.audio.volume
+            root.muted = Pipewire.defaultAudioSink.audio.muted
+            showOsd()
+        }
+
+        function onMutedChanged() {
+            root.muted = Pipewire.defaultAudioSink.audio.muted
+            showOsd()
+        }
+    }
+
+    // OSD hide timer
+    Timer {
+        id: hideTimer
+        interval: 1000
+        onTriggered: root.shouldShowOsd = false
+    }
+
+    // Process for mute control
+    Process {
+        id: muteProcess
+        command: ["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"]
+    }
+
+    // Process for volume increase
+    Process {
+        id: volUpProcess
+        command: ["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "2%+"]
+    }
+
+    // Process for volume decrease
+    Process {
+        id: volDownProcess
+        command: ["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "2%-"]
+    }
+
+    // Volume control functions
+    function toggleMute() {
+        muteProcess.running = true
+    }
+
+    function increaseVolume() {
+        volUpProcess.running = true
+    }
+
+    function decreaseVolume() {
+        volDownProcess.running = true
+    }
+
+    function showOsd() {
+        root.shouldShowOsd = true
+        hideTimer.restart()
+    }
+
+    // Initial volume sync
+    Component.onCompleted: {
+        if (Pipewire.defaultAudioSink?.audio) {
+            volume = Pipewire.defaultAudioSink.audio.volume
+            muted = Pipewire.defaultAudioSink.audio.muted
+        }
+    }
+}

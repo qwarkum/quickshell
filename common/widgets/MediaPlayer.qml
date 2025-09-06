@@ -1,0 +1,808 @@
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml.Models
+import Quickshell
+import Quickshell.Services.Mpris
+import Qt5Compat.GraphicalEffects
+import qs.icons
+import qs.styles
+import qs.services
+import qs.common.widgets
+import qs.common.utils
+
+PanelWindow {
+    id: mediaPopup
+    implicitWidth: 440 + DefaultStyle.configs.panelRadius * 2
+    implicitHeight: 170
+    color: "transparent"
+    visible: false
+
+    anchors.top: true
+    anchors.left: true
+    exclusiveZone: 0
+
+    property Item item
+
+    // Animation properties - same as calendar panel
+    property real slideProgress: 0.0 // 0.0 = hidden, 1.0 = fully visible
+    property bool animationRunning: false
+
+    // Slide animation - same as calendar panel
+    Behavior on slideProgress {
+        NumberAnimation {
+            id: slideAnimation
+            duration: 300
+            easing.type: Easing.OutCubic
+            onRunningChanged: {
+                mediaPopup.animationRunning = running;
+                if (!running && mediaPopup.slideProgress === 0.0) {
+                    mediaPopup.visible = false;
+                }
+            }
+        }
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            slideProgress = 1.0; // Slide down to show
+        } else if (!animationRunning) {
+            slideProgress = 0.0; // Slide up to hide
+        }
+    }
+
+    Connections {
+        target: MprisController
+        function onActivePlayerChanged() {
+            if (!MprisController.activePlayer) {
+                close()
+            } else {
+                // Reset animations when player changes
+                playerChangeAnimation.restart()
+            }
+        }
+        
+        function onIsPlayingChanged() {
+            // Animate play/pause button when playback state changes
+            if (MprisController.isPlaying) {
+                playPulseAnimation.restart()
+            } else {
+                pausePulseAnimation.restart()
+            }
+        }
+        
+        function onActiveTrackChanged() {
+            // Animate when track changes (next/previous)
+            trackChangeAnimation.restart()
+        }
+    }
+
+    function toggle() {
+        if (!MprisController.activePlayer) return
+        margins.left = 350 - (mediaPopup.implicitWidth - 226) / 2
+        
+        if (visible) {
+            // Start slide up animation
+            slideProgress = 0.0;
+        } else {
+            // Make visible first, then slide down
+            visible = true;
+            slideProgress = 1.0;
+        }
+    }
+
+    function close() {
+        slideProgress = 0.0;
+    }
+
+    Rectangle {
+        id: panelContainer
+        anchors.fill: parent
+        anchors.rightMargin: DefaultStyle.configs.panelRadius
+        anchors.leftMargin: DefaultStyle.configs.panelRadius
+        radius: DefaultStyle.configs.panelRadius
+        topLeftRadius: 0
+        topRightRadius: 0
+        color: DefaultStyle.colors.panelBackground
+        
+        // Slide from top animation - same as calendar panel
+        transform: Translate {
+            y: -height * (1 - slideProgress)
+        }
+
+        RoundCorner {
+            corner: RoundCorner.CornerEnum.TopRight
+            implicitSize: DefaultStyle.configs.panelRadius
+            color: DefaultStyle.colors.panelBackground
+            anchors {
+                top: parent.top
+                left: parent.left
+                leftMargin: -DefaultStyle.configs.panelRadius
+            }
+        }
+        RoundCorner {
+            corner: RoundCorner.CornerEnum.TopLeft
+            implicitSize: DefaultStyle.configs.panelRadius
+            color: DefaultStyle.colors.panelBackground
+            anchors {
+                top: parent.top
+                right: parent.right
+                rightMargin: -DefaultStyle.configs.panelRadius
+            }
+        }
+
+        // All content goes inside the panelContainer so it moves with the animation
+        RowLayout {
+            id: mediaPlayerLayout
+            anchors.fill: parent
+            anchors.leftMargin: (mediaPopup.height - albumArtContainer.height) / 2
+            anchors.rightMargin: (mediaPopup.height - albumArtContainer.height) / 2
+            spacing: 15
+
+            // Left panel - Album art
+            ColumnLayout {
+                Layout.preferredWidth: 140
+                spacing: 12
+
+                Rectangle {
+                    id: albumArtContainer
+                    Layout.preferredWidth: 140
+                    Layout.preferredHeight: 140
+                    color: DefaultStyle.colors.darkGrey
+                    radius: DefaultStyle.configs.windowRadius
+
+                    Image {
+                        id: albumArt
+                        anchors.fill: parent
+                        cache: true
+                        fillMode: Image.PreserveAspectFit
+                        source: MprisController.activeTrack?.artUrl || ""
+                        asynchronous: true
+                        sourceSize.width: 140
+                        sourceSize.height: 140
+                        opacity: 1
+                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+
+                        property bool adapt: true
+
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Item {
+                                width: albumArt.width
+                                height: albumArt.height
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: albumArt.adapt ? albumArt.width : Math.min(albumArt.width, albumArt.height)
+                                    height: albumArt.adapt ? albumArt.height : width
+                                    radius: DefaultStyle.configs.windowRadius
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Right panel - All other controls
+            ColumnLayout {
+                id: rightPanel
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 10
+
+                // Top section - Track info
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    Text {
+                        id: titleLabel
+                        Layout.fillWidth: true
+                        text: MprisController.activeTrack?.title || "Unknown"
+                        font {
+                            pixelSize: 16
+                            family: DefaultStyle.fonts.rubik
+                        }
+                        elide: Text.ElideRight
+                        color: DefaultStyle.colors.white
+                        opacity: 1
+                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                    }
+
+                    Text {
+                        id: artistLabel
+                        Layout.fillWidth: true
+                        text: MprisController.activeTrack?.artist
+                        font {
+                            pixelSize: 12
+                            family: DefaultStyle.fonts.rubik
+                        }
+                        elide: Text.ElideRight
+                        color: DefaultStyle.colors.brightGrey
+                        opacity: 1
+                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                    }
+                }
+
+                // Middle section - Progress bar
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 2
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+
+                        StyledSlider {
+                            id: slider
+                            opacity: 1
+                            Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+
+                            handleHeight: 20
+                            value: MprisController.activePlayer?.position / MprisController.activePlayer?.length || 0
+                            onMoved: {
+                                const active = MprisController.activePlayer;
+                                if (active?.canSeek && active?.positionSupported) {
+                                    active.position = value * active.length;
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        id: timeLayout
+                        Layout.fillWidth: true
+                        spacing: 8
+
+                        Text {
+                            id: currentTime
+                            text: StringUtil.parseMediaTime(MprisController.activePlayer?.position || 0)
+                            font {
+                                pixelSize: 12
+                                family: DefaultStyle.fonts.rubik
+                            }
+                            color: DefaultStyle.colors.brightGrey
+                            opacity: 1
+                            Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Text {
+                            id: totalTime
+                            text: StringUtil.parseMediaTime(MprisController.activePlayer?.length || 0)
+                            font {
+                                pixelSize: 12
+                                family: DefaultStyle.fonts.rubik
+                            }
+                            color: DefaultStyle.colors.brightGrey
+                            opacity: 1
+                            Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        }
+                    }
+
+                    // Player controls
+                    RowLayout {
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.topMargin: -(timeLayout.height)
+                        spacing: 15
+
+                        // Previous Button
+                        Text {
+                            id: prevButton
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
+                            text: Icons.media_backward
+                            font.pixelSize: 20
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            color: MprisController.canGoPrevious ? DefaultStyle.colors.white : DefaultStyle.colors.grey
+                            
+                            // Animation properties
+                            property real targetScale: 1.0
+                            property bool isPressed: false
+                            scale: isPressed ? 0.9 : (prevMouse.containsMouse ? targetScale : 1.0)
+                            opacity: MprisController.canGoPrevious ? 1.0 : 0.8
+                            
+                            Behavior on scale {
+                                NumberAnimation { 
+                                    duration: 150 
+                                    easing.type: Easing.OutQuad
+                                }
+                            }
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+
+                            MouseArea {
+                                id: prevMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: MprisController.canGoPrevious ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onEntered: if (MprisController.canGoPrevious) prevButton.targetScale = 1.1
+                                onExited: prevButton.targetScale = 1.0
+                                onPressed: if (MprisController.canGoPrevious) prevButton.isPressed = true
+                                onReleased: prevButton.isPressed = false
+                                onClicked: if (MprisController.canGoPrevious) MprisController.previous()
+                            }
+                        }
+
+                        // Play/Pause Button
+                        Text {
+                            id: playPauseButton
+                            Layout.preferredWidth: 32
+                            Layout.preferredHeight: 32
+                            text: MprisController.isPlaying ? Icons.media_pause : Icons.media_play
+                            font.pixelSize: 28
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            color: MprisController.canTogglePlaying ? DefaultStyle.colors.white : DefaultStyle.colors.grey
+                            
+                            // Animation properties
+                            property real targetScale: 1.0
+                            property bool isPressed: false
+                            scale: isPressed ? 0.9 : (playPauseMouse.containsMouse ? targetScale : 1.0)
+                            opacity: MprisController.canTogglePlaying ? 1.0 : 0.8
+                            
+                            Behavior on scale {
+                                NumberAnimation { 
+                                    duration: 150 
+                                    easing.type: Easing.OutQuad
+                                }
+                            }
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+
+                            MouseArea {
+                                id: playPauseMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: MprisController.canTogglePlaying ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onEntered: if (MprisController.canTogglePlaying) playPauseButton.targetScale = 1.1
+                                onExited: playPauseButton.targetScale = 1.0
+                                onPressed: if (MprisController.canTogglePlaying) playPauseButton.isPressed = true
+                                onReleased: playPauseButton.isPressed = false
+                                onClicked: if (MprisController.canTogglePlaying) MprisController.togglePlaying()
+                            }
+                        }
+
+                        // Next Button
+                        Text {
+                            id: nextButton
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
+                            text: Icons.media_forward
+                            font.pixelSize: 20
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            color: MprisController.canGoNext ? DefaultStyle.colors.white : DefaultStyle.colors.grey
+                            
+                            // Animation properties
+                            property real targetScale: 1.0
+                            property bool isPressed: false
+                            scale: isPressed ? 0.9 : (nextMouse.containsMouse ? targetScale : 1.0)
+                            opacity: MprisController.canGoNext ? 1.0 : 0.8
+                            
+                            Behavior on scale {
+                                NumberAnimation { 
+                                    duration: 150 
+                                    easing.type: Easing.OutQuad
+                                }
+                            }
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+
+                            MouseArea {
+                                id: nextMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: MprisController.canGoNext ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onEntered: if (MprisController.canGoNext) nextButton.targetScale = 1.1
+                                onExited: nextButton.targetScale = 1.0
+                                onPressed: if (MprisController.canGoNext) nextButton.isPressed = true
+                                onReleased: nextButton.isPressed = false
+                                onClicked: if (MprisController.canGoNext) MprisController.next()
+                            }
+                        }
+                    }
+                }
+
+                // Bottom section - Player selector and delete button
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+
+                    Rectangle {
+                        id: copyButtonWrapper
+                        width: playerSelector.height
+                        height: playerSelector.height
+                        radius: 100
+                        
+                        // Background animation
+                        color: copyMouse.containsMouse ? DefaultStyle.colors.darkGrey : Qt.lighter(DefaultStyle.colors.moduleBackground, 1.1)
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
+
+                        MaterialSymbol {
+                            id: copyButton
+                            anchors.centerIn: parent
+                            text: "content_copy"
+                            iconSize: 18
+                            color: copyMouse.containsMouse ? DefaultStyle.colors.brightGrey : DefaultStyle.colors.grey
+
+                            Behavior on color {
+                                ColorAnimation { duration: 150 }
+                            }
+                            
+                            TextArea {
+                                id: clipboardHelper
+                                visible: false
+                                selectByMouse: true
+                            }
+                            
+                            Timer {
+                                id: revertTimer
+                                interval: 1500
+                                onTriggered: copyButton.text = "content_copy"
+                            }
+                            
+                            MouseArea {
+                                id: copyMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    const track = MprisController.activeTrack
+                                    if (track && track.title) {
+                                        clipboardHelper.text = track.title
+                                        clipboardHelper.selectAll()
+                                        clipboardHelper.copy()
+                                        clipboardHelper.deselect()
+                                        
+                                        copyButton.text = "inventory"
+                                        revertTimer.restart()   
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Player Selector Container
+                    Item {
+                        id: playerSelectorContainer
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 25
+
+                        // Player list popup - positioned directly above the selector with no gap
+                        Rectangle {
+                            id: playerListPopup
+                            anchors.bottom: parent.top // Position above the container
+                            width: playerSelector.width
+                            height: playerSelector.expanded ? Math.min(playerList.contentHeight, 120) : 0
+                            visible: playerSelector.expanded
+                            color: DefaultStyle.colors.moduleBackground
+                            radius: playerSelector.radius
+                            clip: true
+                            
+                            // Animation for expanding/collapsing
+                            Behavior on height {
+                                NumberAnimation { 
+                                    duration: 150; 
+                                    easing.type: playerSelector.expanded ? Easing.OutCubic : Easing.InCubic
+                                }
+                            }
+                            Behavior on opacity {
+                                NumberAnimation { 
+                                    duration: 150;
+                                    easing.type: playerSelector.expanded ? Easing.OutCubic : Easing.InCubic
+                                }
+                            }
+                            
+                            // Bottom corners are squared, top corners are rounded
+                            bottomLeftRadius: 0
+                            bottomRightRadius: 0
+                            
+                            ListView {
+                                id: playerList
+                                anchors.fill: parent
+                                model: {
+                                    // Filter out the currently active player
+                                    const players = Mpris.players.values || []
+                                    return players.filter(player => player !== MprisController.activePlayer)
+                                }
+                                spacing: 3
+                                boundsBehavior: Flickable.StopAtBounds
+                                
+                                delegate: Rectangle {
+                                    width: playerList.width
+                                    height: 25
+                                    color: mouseArea.containsMouse ? DefaultStyle.colors.darkGrey : DefaultStyle.colors.moduleBackground
+                                    radius: playerSelector.radius
+                                    
+                                    // Background color animation
+                                    Behavior on color {
+                                        ColorAnimation { duration: 150 }
+                                    }
+                                    
+                                    RowLayout {
+                                        anchors.centerIn: parent
+                                        anchors.margins: 5
+                                        spacing: 8
+                                        
+                                        Image {
+                                            Layout.preferredWidth: 15
+                                            Layout.preferredHeight: 15
+                                            source: modelData ? IconUtils.findIconForApp(modelData.desktopEntry || "") : ""
+                                            sourceSize.width: 15
+                                            sourceSize.height: 15
+                                            fillMode: Image.PreserveAspectFit
+                                        }
+                                        
+                                        Text {
+                                            Layout.fillWidth: true
+                                            text: modelData.identity
+                                            color: DefaultStyle.colors.white
+                                            font {
+                                                pixelSize: 12
+                                                family: DefaultStyle.fonts.rubik
+                                            }
+                                            elide: Text.ElideRight
+                                        }
+                                    }
+                                    
+                                    MouseArea {
+                                        id: mouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            MprisController.setActivePlayer(modelData)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Scroll indicator for when there are many players
+                            ScrollIndicator {
+                                anchors {
+                                    right: parent.right
+                                    top: parent.top
+                                    bottom: parent.bottom
+                                    rightMargin: 2
+                                }
+                                width: 4
+                                visible: playerList.contentHeight > playerList.height
+                                orientation: Qt.Vertical
+                            }
+                        }
+
+                        // Current Player Selector
+                        Rectangle {
+                            id: playerSelector
+                            width: parent.width
+                            height: 25
+                            anchors.bottom: parent.bottom
+                            radius: 100
+                            // Only square the top corners if there are other players available
+                            topRightRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
+                            topLeftRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
+                            
+                            property bool expanded: false
+                            
+                            // Background color animation on hover and press
+                            color: DefaultStyle.colors.moduleBackground
+                            Behavior on color {
+                                ColorAnimation { duration: 150 }
+                            }
+                            
+                            // Close dropdown when active player changes
+                            Connections {
+                                target: MprisController
+                                function onActivePlayerChanged() {
+                                    playerSelector.expanded = false
+                                }
+                            }
+                            
+                            RowLayout {
+                                Layout.fillWidth: true
+                                anchors.centerIn: parent
+                                spacing: 8
+                                
+                                // Player icon
+                                Image {
+                                    id: playerIcon
+                                    Layout.preferredWidth: 15
+                                    Layout.preferredHeight: 15
+                                    source: MprisController.activePlayer ? IconUtils.findIconForApp(MprisController.activePlayer.desktopEntry || "") : ""
+                                    sourceSize.width: 15
+                                    sourceSize.height: 15
+                                    fillMode: Image.PreserveAspectFit
+                                    opacity: 1
+                                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                                }
+                                
+                                // Player name
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: MprisController.activePlayer ? MprisController.activePlayer.identity : "No players"
+                                    color: DefaultStyle.colors.white
+                                    font {
+                                        pixelSize: 12
+                                        family: DefaultStyle.fonts.rubik
+                                    }
+                                    elide: Text.ElideRight
+                                }
+                            }
+                            
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                onClicked: {
+                                    // Only allow expanding if there are other players
+                                    if (Mpris.players.values.length > 1) {
+                                        playerSelector.expanded = !playerSelector.expanded
+                                    }
+                                }
+                                cursorShape: Mpris.players.values.length > 1 ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                hoverEnabled: true
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: removeButtonWrapper
+                        width: playerSelector.height
+                        height: playerSelector.height
+                        radius: 100
+                        
+                        color: closeMouse.containsMouse ? DefaultStyle.colors.darkGrey : Qt.lighter(DefaultStyle.colors.moduleBackground, 1.1)
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
+
+                        MaterialSymbol {
+                            id: removeCurrentPlayerButton
+                            anchors.centerIn: parent
+                            text: "delete"
+                            iconSize: 20
+                            color: closeMouse.containsMouse ? DefaultStyle.colors.brightGrey : DefaultStyle.colors.grey
+
+                            Behavior on color {
+                                ColorAnimation { duration: 150 }
+                            }
+                            
+                            MouseArea {
+                                id: closeMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (MprisController.activePlayer) {
+                                        MprisController.activePlayer.stop()
+                                        MprisController.activePlayer.quit()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Animation for play/pause button when playback state changes
+    SequentialAnimation {
+        id: playPulseAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.1
+                duration: 150
+                easing.type: Easing.OutQuad
+            }
+            NumberAnimation {
+                target: playPauseButton
+                property: "opacity"
+                to: 1.0
+                duration: 150
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.0
+                duration: 150
+                easing.type: Easing.InQuad
+            }
+        }
+    }
+    
+    // Animation for pause button when playback state changes
+    SequentialAnimation {
+        id: pausePulseAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.1
+                duration: 150
+                easing.type: Easing.OutQuad
+            }
+            NumberAnimation {
+                target: playPauseButton
+                property: "opacity"
+                to: 1.0
+                duration: 150
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: playPauseButton
+                property: "scale"
+                to: 1.0
+                duration: 150
+                easing.type: Easing.InQuad
+            }
+        }
+    }
+    
+    // Animation for next/previous buttons when track changes
+    SequentialAnimation {
+        id: trackChangeAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: albumArt
+                property: "opacity"
+                to: 0.3
+                duration: 100
+            }
+            NumberAnimation {
+                target: titleLabel
+                property: "opacity"
+                to: 0.3
+                duration: 100
+            }
+            NumberAnimation {
+                target: artistLabel
+                property: "opacity"
+                to: 0.3
+                duration: 100
+            }
+        }
+        ParallelAnimation {
+            NumberAnimation {
+                target: albumArt
+                property: "opacity"
+                to: 1.0
+                duration: 200
+            }
+            NumberAnimation {
+                target: titleLabel
+                property: "opacity"
+                to: 1.0
+                duration: 200
+            }
+            NumberAnimation {
+                target: artistLabel
+                property: "opacity"
+                to: 1.0
+                duration: 200
+            }
+        }
+    }
+
+    Timer {
+        running: MprisController.isPlaying
+        interval: 1000
+        repeat: true
+        onTriggered: {
+            if (MprisController.activePlayer) {
+                MprisController.activePlayer.positionChanged()
+            }
+        }
+    }
+}
