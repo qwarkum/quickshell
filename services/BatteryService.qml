@@ -7,8 +7,8 @@ import qs.icons
 import qs.styles
 
 Singleton {
-    readonly property int criticalPercentage: DefaultStyle.configs.batteryCriticalPercentage
-    readonly property int fullyChargedPercentage: DefaultStyle.configs.batteryFullyChargedPercentage
+    readonly property int criticalPercentage: Appearance.configs.batteryCriticalPercentage
+    readonly property int fullyChargedPercentage: Appearance.configs.batteryFullyChargedPercentage
 
     property real percentage: UPower.displayDevice.percentage
     property bool available: UPower.displayDevice.isLaptopBattery
@@ -24,23 +24,25 @@ Singleton {
     property string batteryIcon: getBatteryIcon()
 
     function getProgressColor() {
-        if (BatteryService.isCritical) return DefaultStyle.colors.batteryLowOnBackground
-        if (BatteryService.isFullyCharged) return DefaultStyle.colors.batteryChargedOnBackground
-        if (BatteryService.isCharging) return DefaultStyle.colors.batteryChargingOnBackground
-        return DefaultStyle.colors.white
+        if (BatteryService.isCritical) return Appearance.colors.batteryLowOnBackground
+        if (BatteryService.isFullyCharged) return Appearance.colors.batteryChargedOnBackground
+        if (BatteryService.isCharging) return Appearance.colors.batteryChargingOnBackground
+        return Appearance.colors.white
     }
 
     function getProgressBackground() {
-        if (BatteryService.isCritical) return DefaultStyle.colors.batteryLowBackground
-        if (BatteryService.isFullyCharged) return DefaultStyle.colors.batteryChargedBackground
-        if (BatteryService.isCharging) return DefaultStyle.colors.batteryChargingBackground
-        return DefaultStyle.colors.batteryDefaultOnBackground
+        if (BatteryService.isCritical) return Appearance.colors.batteryLowBackground
+        if (BatteryService.isFullyCharged) return Appearance.colors.batteryChargedBackground
+        if (BatteryService.isCharging) return Appearance.colors.batteryChargingBackground
+        return Appearance.colors.batteryDefaultOnBackground
     }
 
     function getBatteryIcon() {
-        // if (BatteryService.isFullyCharged) return "battery_status_good"
-        if (BatteryService.isCharging || BatteryService.isFullyCharged) return "electric_bolt" // "battery_charging_full" 
-        // if (BatteryService.isCritical) return "battery_saver"
-        return "battery_full"
+        // if (BatteryService.isFullyCharged) return "battery_android_share"
+        // if (BatteryService.isCharging) return "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
+        if (BatteryService.isFullyCharged) return "battery_status_good"
+        if (BatteryService.isCharging || BatteryService.isFullyCharged) return "battery_charging_full" // "battery_charging_full" "battery_android_bolt" 
+        if (BatteryService.isCritical) return "battery_plus"
+        return "battery_full" // "battery_android_full"
     }
 }

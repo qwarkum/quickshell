@@ -12,10 +12,14 @@ ToolTip {
         const ans = (extraVisibleCondition && (parent.hovered === undefined || parent?.hovered)) || alternativeVisibleCondition
         return ans
     }
-    verticalPadding: 5
-    horizontalPadding: 10    
+    verticalPadding: 10
+    horizontalPadding: 30
     opacity: internalVisibleCondition ? 1 : 0
     visible: opacity > 0
+
+    Behavior on opacity {
+        animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+    }
 
     background: null
     
@@ -28,11 +32,18 @@ ToolTip {
             id: backgroundRectangle
             anchors.bottom: contentItemBackground.bottom
             anchors.horizontalCenter: contentItemBackground.horizontalCenter
-            color: DefaultStyle.colors.grey
-            radius: 7
+            color: Appearance.colors.moduleBackground
+            radius: Appearance.configs.windowRadius
             width: internalVisibleCondition ? (tooltipTextObject.width + 2 * padding) : 0
             height: internalVisibleCondition ? (tooltipTextObject.height + 2 * padding) : 0
             clip: true
+
+            Behavior on width {
+                animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+            }
+            Behavior on height {
+                animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+            }
 
             StyledText {
                 id: tooltipTextObject
@@ -40,7 +51,7 @@ ToolTip {
                 text: content
                 font.pixelSize: 14
                 font.hintingPreference: Font.PreferNoHinting // Prevent shaky text
-                color: DefaultStyle.colors.white
+                color: Appearance.colors.brightGrey
                 wrapMode: Text.Wrap
             }
         }   

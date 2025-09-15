@@ -17,8 +17,8 @@ Item {
         id: audioService
     }
 
-    Layout.preferredWidth: DefaultStyle.configs.rightSidebarModuleWidth
-    Layout.preferredHeight: DefaultStyle.configs.moduleHeight
+    Layout.preferredWidth: Appearance.configs.rightContentModuleWidth
+    Layout.preferredHeight: Appearance.configs.moduleHeight
 
     MaterialSymbol {
         id: icon
@@ -29,7 +29,7 @@ Item {
             if (audioService.volume < 0.39) return "volume_down"
             return "volume_up"
         }
-        color: DefaultStyle.colors.white
+        color: Appearance.colors.white
 
         iconSize: 20
     }

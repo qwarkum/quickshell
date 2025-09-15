@@ -7,7 +7,7 @@ import qs.icons
 
 PanelWindow {
     id: calendarPanel
-    implicitWidth: 420 + DefaultStyle.configs.panelRadius * 2
+    implicitWidth: 420 + Appearance.configs.panelRadius * 2
     implicitHeight: 300
     color: "transparent"
     visible: false
@@ -52,12 +52,12 @@ PanelWindow {
     Rectangle {
         id: panelContainer
         anchors.fill: parent
-        anchors.rightMargin: DefaultStyle.configs.panelRadius
-        anchors.leftMargin: DefaultStyle.configs.panelRadius
-        radius: DefaultStyle.configs.panelRadius
+        anchors.rightMargin: Appearance.configs.panelRadius
+        anchors.leftMargin: Appearance.configs.panelRadius
+        radius: Appearance.configs.panelRadius
         topLeftRadius: 0
         topRightRadius: 0
-        color: DefaultStyle.colors.panelBackground
+        color: Appearance.colors.panelBackground
         
         // Slide from top animation
         transform: Translate {
@@ -67,27 +67,27 @@ PanelWindow {
         Rectangle {
             RoundCorner {
                 corner: RoundCorner.CornerEnum.TopRight
-                implicitSize: DefaultStyle.configs.panelRadius
-                color: DefaultStyle.colors.panelBackground
+                implicitSize: Appearance.configs.panelRadius
+                color: Appearance.colors.panelBackground
                 anchors {
                     top: parent.top
                     left: parent.left
-                    leftMargin: -DefaultStyle.configs.panelRadius
+                    leftMargin: -Appearance.configs.panelRadius
                 }
             }
             RoundCorner {
                 corner: RoundCorner.CornerEnum.TopLeft
-                implicitSize: DefaultStyle.configs.panelRadius
-                color: DefaultStyle.colors.panelBackground
+                implicitSize: Appearance.configs.panelRadius
+                color: Appearance.colors.panelBackground
                 anchors {
                     top: parent.top
                     right: parent.right
-                    rightMargin: -DefaultStyle.configs.panelRadius
+                    rightMargin: -Appearance.configs.panelRadius
                 }
             }
             anchors.fill: parent
-            color: DefaultStyle.colors.panelBackground
-            radius: DefaultStyle.configs.panelRadius
+            color: Appearance.colors.panelBackground
+            radius: Appearance.configs.panelRadius
         }
 
         ColumnLayout {
@@ -110,10 +110,10 @@ PanelWindow {
                     Text {
                         id: prevMonthArrow
                         text: Icons.step_backward
-                        color: DefaultStyle.colors.brightGrey
+                        color: Appearance.colors.brightGrey
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                         
                         // Animation properties
@@ -138,11 +138,11 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onEntered: {
                                 prevMonthArrow.targetScale = 1.1
-                                prevMonthArrow.color = DefaultStyle.colors.white
+                                prevMonthArrow.color = Appearance.colors.white
                             }
                             onExited: {
                                 prevMonthArrow.targetScale = 1.0
-                                prevMonthArrow.color = DefaultStyle.colors.brightGrey
+                                prevMonthArrow.color = Appearance.colors.brightGrey
                             }
                             onPressed: prevMonthArrow.isPressed = true
                             onReleased: prevMonthArrow.isPressed = false
@@ -155,20 +155,20 @@ PanelWindow {
                         Layout.preferredWidth: 80
                         horizontalAlignment: Text.AlignHCenter
                         text: Qt.formatDateTime(selectedDate, "MMMM")
-                        color: DefaultStyle.colors.white
+                        color: Appearance.colors.white
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                     }
 
                     Text {
                         id: nextMonthArrow
                         text: Icons.step_forward
-                        color: DefaultStyle.colors.brightGrey
+                        color: Appearance.colors.brightGrey
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                         
                         // Animation properties
@@ -193,11 +193,11 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onEntered: {
                                 nextMonthArrow.targetScale = 1.1
-                                nextMonthArrow.color = DefaultStyle.colors.white
+                                nextMonthArrow.color = Appearance.colors.white
                             }
                             onExited: {
                                 nextMonthArrow.targetScale = 1.0
-                                nextMonthArrow.color = DefaultStyle.colors.brightGrey
+                                nextMonthArrow.color = Appearance.colors.brightGrey
                             }
                             onPressed: nextMonthArrow.isPressed = true
                             onReleased: nextMonthArrow.isPressed = false
@@ -216,10 +216,10 @@ PanelWindow {
                     Text {
                         id: prevYearArrow
                         text: Icons.step_backward
-                        color: DefaultStyle.colors.brightGrey
+                        color: Appearance.colors.brightGrey
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                         
                         // Animation properties
@@ -244,11 +244,11 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onEntered: {
                                 prevYearArrow.targetScale = 1.1
-                                prevYearArrow.color = DefaultStyle.colors.white
+                                prevYearArrow.color = Appearance.colors.white
                             }
                             onExited: {
                                 prevYearArrow.targetScale = 1.0
-                                prevYearArrow.color = DefaultStyle.colors.brightGrey
+                                prevYearArrow.color = Appearance.colors.brightGrey
                             }
                             onPressed: prevYearArrow.isPressed = true
                             onReleased: prevYearArrow.isPressed = false
@@ -260,20 +260,20 @@ PanelWindow {
                         id: yearLabel
                         horizontalAlignment: Text.AlignRight
                         text: Qt.formatDateTime(selectedDate, "yyyy")
-                        color: DefaultStyle.colors.white
+                        color: Appearance.colors.white
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                     }
 
                     Text {
                         id: nextYearArrow
                         text: Icons.step_forward
-                        color: DefaultStyle.colors.brightGrey
+                        color: Appearance.colors.brightGrey
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                         
                         // Animation properties
@@ -298,11 +298,11 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onEntered: {
                                 nextYearArrow.targetScale = 1.1
-                                nextYearArrow.color = DefaultStyle.colors.white
+                                nextYearArrow.color = Appearance.colors.white
                             }
                             onExited: {
                                 nextYearArrow.targetScale = 1.0
-                                nextYearArrow.color = DefaultStyle.colors.brightGrey
+                                nextYearArrow.color = Appearance.colors.brightGrey
                             }
                             onPressed: nextYearArrow.isPressed = true
                             onReleased: nextYearArrow.isPressed = false
@@ -326,10 +326,10 @@ PanelWindow {
                         width: calendarGrid.cellWidth
                         horizontalAlignment: Text.AlignHCenter
                         text: modelData
-                        color: DefaultStyle.colors.brightGrey
+                        color: Appearance.colors.brightGrey
                         font {
                             pixelSize: 14
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                         }
                     }
                 }
@@ -361,9 +361,9 @@ PanelWindow {
                             radius: 7
                             color: {
                                 if (isCurrentDay) {
-                                    return DefaultStyle.colors.white
+                                    return Appearance.colors.white
                                 } else if (isSelectedDay) {
-                                    return DefaultStyle.colors.grey
+                                    return Appearance.colors.grey
                                 } else {
                                     return "transparent"
                                 }
@@ -411,16 +411,16 @@ PanelWindow {
                                 text: dayDelegate.date.getDate()
                                 color: {
                                     if (dayDelegate.isCurrentDay) {
-                                        return DefaultStyle.colors.panelBackground
+                                        return Appearance.colors.panelBackground
                                     } else if (dayDelegate.isCurrentMonth) {
-                                        return DefaultStyle.colors.white
+                                        return Appearance.colors.white
                                     } else {
-                                        return DefaultStyle.colors.grey
+                                        return Appearance.colors.grey
                                     }
                                 }
                                 font {
                                     pixelSize: 12
-                                    family: DefaultStyle.fonts.rubik
+                                    family: Appearance.fonts.rubik
                                 }
                             }
 

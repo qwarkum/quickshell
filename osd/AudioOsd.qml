@@ -27,21 +27,21 @@ Scope {
 
         PanelWindow {
             anchors.top: true
-            margins.top: DefaultStyle.configs.barHeight / 2
+            margins.top: Appearance.configs.barHeight / 2
             exclusiveZone: 0
 
-            implicitWidth: DefaultStyle.configs.osdWidth
-            implicitHeight: DefaultStyle.configs.osdHeight
+            implicitWidth: Appearance.configs.osdWidth
+            implicitHeight: Appearance.configs.osdHeight
             color: "transparent"
 
             mask: Region {}
 
             Rectangle {
                 anchors.fill: parent
-                radius: DefaultStyle.configs.windowRadius
-                color: DefaultStyle.colors.osdBackground
-                border.color: DefaultStyle.colors.osdBorder
-                border.width: DefaultStyle.configs.windowBorderWidth
+                radius: Appearance.configs.windowRadius
+                color: Appearance.colors.osdBackground
+                border.color: Appearance.colors.osdBorder
+                border.width: Appearance.configs.windowBorderWidth
                 
 
                 RowLayout {
@@ -63,7 +63,7 @@ Scope {
                                 centerIn: parent
                                 alignWhenCentered: !root.rotateIcon
                             }
-                            color: DefaultStyle.colors.white
+                            color: Appearance.colors.white
                             text: audioService.muted ? "volume_off" : "volume_up"
 
                             iconSize: 30
@@ -79,20 +79,20 @@ Scope {
                             Layout.rightMargin: valueProgressBar.height / 2 // Align text with progressbar radius curve's left end
 
                             Text {
-                                color: DefaultStyle.colors.white
+                                color: Appearance.colors.white
                                 font {
                                     pixelSize: 14
-                                    family: DefaultStyle.fonts.rubik
+                                    family: Appearance.fonts.rubik
                                 }
                                 Layout.fillWidth: true
                                 text: "Volume"
                             }
 
                             Text {
-                                color: DefaultStyle.colors.white
+                                color: Appearance.colors.white
                                 font {
                                     pixelSize: 14
-                                    family: DefaultStyle.fonts.rubik
+                                    family: Appearance.fonts.rubik
                                 }
                                 Layout.fillWidth: false
                                 text: Math.round(audioService.volume * 100)

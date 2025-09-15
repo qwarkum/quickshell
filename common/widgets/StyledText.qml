@@ -7,9 +7,9 @@ Text {
     verticalAlignment: Text.AlignVCenter
     font {
         hintingPreference: Font.PreferFullHinting
-        family: DefaultStyle.fonts.rubik
+        family: Appearance.fonts.rubik
         pixelSize: 15
     }
-    color: DefaultStyle.colors.panelBackground
-    linkColor: DefaultStyle.colors.white
+    color: Appearance.colors.panelBackground
+    linkColor: Appearance.colors.white
 }

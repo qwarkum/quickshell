@@ -27,10 +27,10 @@ Item {
     Rectangle {
         anchors.centerIn: parent
         width: dateTimeModule.width + 25
-        height: DefaultStyle.configs.moduleHeight
-        color: DefaultStyle.colors.moduleBackground
-        border.color: DefaultStyle.colors.moduleBorder
-        border.width: DefaultStyle.configs.windowBorderWidth
+        height: Appearance.configs.moduleHeight
+        color: Appearance.colors.moduleBackground
+        border.color: Appearance.colors.moduleBorder
+        border.width: Appearance.configs.windowBorderWidth
         radius: height / 2
         clip: true
 
@@ -49,29 +49,29 @@ Item {
 
             Text {
                 text: Qt.formatDateTime(clock.date, "hh:mm:ss")
-                color: DefaultStyle.colors.white
+                color: Appearance.colors.white
                 font {
                     pixelSize: 13
-                    family: DefaultStyle.fonts.rubik
+                    family: Appearance.fonts.rubik
                 }
                 Layout.preferredWidth: font.pixelSize * 4
             }
 
             Text {
                 text: Icons.dot
-                color: DefaultStyle.colors.white
+                color: Appearance.colors.white
                 font {
                     pixelSize: 13
-                    family: DefaultStyle.fonts.rubik
+                    family: Appearance.fonts.rubik
                 }
             }
 
             Text {
                 text: Qt.formatDateTime(clock.date, "dddd, dd.MM")
-                color: DefaultStyle.colors.white
+                color: Appearance.colors.white
                 font {
                     pixelSize: 13
-                    family: DefaultStyle.fonts.rubik
+                    family: Appearance.fonts.rubik
                 }
             }
         }

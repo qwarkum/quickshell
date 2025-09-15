@@ -44,13 +44,13 @@ Item {
     Rectangle {
         id: mediaModule
         width: mediaLayout.implicitWidth
-        height: DefaultStyle.configs.moduleHeight
+        height: Appearance.configs.moduleHeight
         radius: height / 2
         anchors.verticalCenter: parent.verticalCenter
 
-        color: DefaultStyle.colors.moduleBackground
-        border.color: DefaultStyle.colors.moduleBorder
-        border.width: DefaultStyle.configs.windowBorderWidth
+        color: Appearance.colors.moduleBackground
+        border.color: Appearance.colors.moduleBorder
+        border.width: Appearance.configs.windowBorderWidth
 
         RowLayout {
             id: mediaLayout
@@ -63,21 +63,21 @@ Item {
                 lineWidth: 2
                 value: MprisController.activePlayer?.position / MprisController.activePlayer?.length || 0
                 implicitSize: 26
-                colSecondary: MprisController.activePlayer ? DefaultStyle.colors.grey : "transparent"
-                colPrimary: MprisController.activePlayer ? DefaultStyle.colors.white : "transparent"
+                colSecondary: MprisController.activePlayer ? Appearance.colors.grey : "transparent"
+                colPrimary: MprisController.activePlayer ? Appearance.colors.white : "transparent"
                 enableAnimation: true
 
                 Text {
                     id: playPauseButton
                     anchors.centerIn: parent
-                    color: MprisController.activePlayer ? DefaultStyle.colors.white : DefaultStyle.colors.brightGrey
+                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.brightGrey
                     text: {
                         if (!MprisController.activePlayer) return Icons.music
                         return MprisController.isPlaying ? Icons.media_pause : Icons.media_play
                     }
                     font {
                         pixelSize: 13
-                        family: DefaultStyle.fonts.rubik
+                        family: Appearance.fonts.rubik
                     }
 
                     MouseArea {
@@ -99,11 +99,11 @@ Item {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     text: MprisController.activeTrack?.title || "No media"
-                    color: MprisController.activePlayer ? DefaultStyle.colors.white : DefaultStyle.colors.brightGrey
+                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.brightGrey
                     scale: 0.95
                     font {
                         pixelSize: 13
-                        family: DefaultStyle.fonts.rubik
+                        family: Appearance.fonts.rubik
                     }
                     elide: Text.ElideRight
                 }

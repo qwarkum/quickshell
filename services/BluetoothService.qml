@@ -17,12 +17,17 @@ Singleton {
     property string bluetoothDeviceAddress: ""
     property bool bluetoothEnabled: false
     property bool bluetoothConnected: false
-    property string bluetoothIcon: BluetoothService.bluetooth_connected ? "bluetooth_connected" : BluetoothService.bluetoothEnabled ? "bluetooth" : "bluetooth_disabled"
+    property string bluetoothIcon: bluetoothConnected ? "bluetooth_connected" : bluetoothEnabled ? "bluetooth" : "bluetooth_disabled"
 
     function update() {
         updateBluetoothDevice.running = true
         updateBluetoothStatus.running = true
         updateBluetoothEnabled.running = true
+    }
+
+    function toggleBluetooth(): void {
+        const cmd = !bluetoothEnabled ? "on" : "off";
+        toggleBluetoothProc.exec(["bluetoothctl", "power", cmd]);
     }
 
     Timer {
@@ -33,6 +38,10 @@ Singleton {
             update()
             interval = root.updateInterval
         }
+    }
+
+    Process {
+        id: toggleBluetoothProc
     }
 
     // Check if Bluetooth is enabled (controller powered on)

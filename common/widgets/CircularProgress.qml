@@ -11,8 +11,8 @@ Item {
     property int implicitSize: 30
     property int lineWidth: 2
     property real value: 0
-    property color colPrimary: DefaultStyle.colors.white
-    property color colSecondary: DefaultStyle.colors.grey
+    property color colPrimary: Appearance.colors.white
+    property color colSecondary: Appearance.colors.grey
     property real gapAngle: 360 / 18
     property bool fill: false
     property int fillOverflow: 2

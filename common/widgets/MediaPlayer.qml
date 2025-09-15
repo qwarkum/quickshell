@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml.Models
 import Quickshell
+import Quickshell.Wayland
 import Quickshell.Services.Mpris
 import Qt5Compat.GraphicalEffects
 import qs.icons
@@ -13,10 +14,11 @@ import qs.common.utils
 
 PanelWindow {
     id: mediaPopup
-    implicitWidth: 440 + DefaultStyle.configs.panelRadius * 2
+    implicitWidth: 440 + Appearance.configs.panelRadius * 2
     implicitHeight: 170
     color: "transparent"
     visible: false
+    WlrLayershell.namespace: "quickshell:mediaPlayer"
 
     anchors.top: true
     anchors.left: true
@@ -98,12 +100,12 @@ PanelWindow {
     Rectangle {
         id: panelContainer
         anchors.fill: parent
-        anchors.rightMargin: DefaultStyle.configs.panelRadius
-        anchors.leftMargin: DefaultStyle.configs.panelRadius
-        radius: DefaultStyle.configs.panelRadius
+        anchors.rightMargin: Appearance.configs.panelRadius
+        anchors.leftMargin: Appearance.configs.panelRadius
+        radius: Appearance.configs.panelRadius
         topLeftRadius: 0
         topRightRadius: 0
-        color: DefaultStyle.colors.panelBackground
+        color: Appearance.colors.panelBackground
         
         // Slide from top animation - same as calendar panel
         transform: Translate {
@@ -112,22 +114,22 @@ PanelWindow {
 
         RoundCorner {
             corner: RoundCorner.CornerEnum.TopRight
-            implicitSize: DefaultStyle.configs.panelRadius
-            color: DefaultStyle.colors.panelBackground
+            implicitSize: Appearance.configs.panelRadius
+            color: Appearance.colors.panelBackground
             anchors {
                 top: parent.top
                 left: parent.left
-                leftMargin: -DefaultStyle.configs.panelRadius
+                leftMargin: -Appearance.configs.panelRadius
             }
         }
         RoundCorner {
             corner: RoundCorner.CornerEnum.TopLeft
-            implicitSize: DefaultStyle.configs.panelRadius
-            color: DefaultStyle.colors.panelBackground
+            implicitSize: Appearance.configs.panelRadius
+            color: Appearance.colors.panelBackground
             anchors {
                 top: parent.top
                 right: parent.right
-                rightMargin: -DefaultStyle.configs.panelRadius
+                rightMargin: -Appearance.configs.panelRadius
             }
         }
 
@@ -148,55 +150,55 @@ PanelWindow {
                     id: albumArtContainer
                     Layout.preferredWidth: 140
                     Layout.preferredHeight: 140
-                    color: DefaultStyle.colors.moduleBackground
-                    radius: DefaultStyle.configs.windowRadius
+                    color: Appearance.colors.moduleBackground
+                    radius: Appearance.configs.windowRadius
 
                     Image {
-    id: albumArt
-    anchors.fill: parent
-    cache: true
-    fillMode: Image.PreserveAspectFit
-    source: MprisController.activeTrack?.artUrl || ""
-    asynchronous: true
-    sourceSize.width: 140
-    sourceSize.height: 140
-    scale: 0.95
-    Behavior on scale { 
-        NumberAnimation { 
-            duration: 300; 
-            easing.type: Easing.OutBack
-        } 
-    }
+                        id: albumArt
+                        anchors.fill: parent
+                        cache: true
+                        fillMode: Image.PreserveAspectFit
+                        source: MprisController.activeTrack?.artUrl || ""
+                        asynchronous: true
+                        sourceSize.width: 140
+                        sourceSize.height: 140
+                        scale: 0.95
+                        Behavior on scale { 
+                            NumberAnimation { 
+                                duration: 300; 
+                                easing.type: Easing.OutBack
+                            } 
+                        }
 
-    property bool adapt: true
+                        property bool adapt: true
 
-    layer.enabled: true
-    layer.effect: OpacityMask {
-        maskSource: Item {
-            width: albumArt.width
-            height: albumArt.height
-            Rectangle {
-                anchors.centerIn: parent
-                width: albumArt.adapt ? albumArt.width : Math.min(albumArt.width, albumArt.height)
-                height: albumArt.adapt ? albumArt.height : width
-                radius: DefaultStyle.configs.windowRadius
-            }
-        }
-    }
-    
-    Component.onCompleted: {
-        // Pop in when component is loaded
-        scale = 1.0;
-    }
-    
-    onSourceChanged: {
-        // Scale animation when album art changes
-        if (source !== "") {
-            scale = 0.9;
-            scale = 1.0;
-        }
-    }
-}
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Item {
+                                width: albumArt.width
+                                height: albumArt.height
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: albumArt.adapt ? albumArt.width : Math.min(albumArt.width, albumArt.height)
+                                    height: albumArt.adapt ? albumArt.height : width
+                                    radius: Appearance.configs.windowRadius
+                                }
+                            }
+                        }
+                        
+                        Component.onCompleted: {
+                            // Pop in when component is loaded
+                            scale = 1.0;
+                        }
+                        
+                        onSourceChanged: {
+                            // Scale animation when album art changes
+                            if (source !== "") {
+                                scale = 0.9;
+                                scale = 1.0;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -213,52 +215,52 @@ PanelWindow {
                     spacing: 4
 
                     Text {
-    id: titleLabel
-    Layout.fillWidth: true
-    text: MprisController.activeTrack?.title || "Unknown"
-    font {
-        pixelSize: 16
-        family: DefaultStyle.fonts.rubik
-    }
-    elide: Text.ElideRight
-    color: DefaultStyle.colors.white
-    scale: 0.95
-    Behavior on scale { 
-        NumberAnimation { 
-            duration: 300; 
-            easing.type: Easing.OutBack
-        } 
-    }
-    
-    Component.onCompleted: {
-        // Pop in when component is loaded
-        scale = 1.0;
-    }
-}
+                        id: titleLabel
+                        Layout.fillWidth: true
+                        text: MprisController.activeTrack?.title || "Unknown"
+                        font {
+                            pixelSize: 16
+                            family: Appearance.fonts.rubik
+                        }
+                        elide: Text.ElideRight
+                        color: Appearance.colors.white
+                        scale: 0.95
+                        Behavior on scale { 
+                            NumberAnimation { 
+                                duration: 300; 
+                                easing.type: Easing.OutBack
+                            } 
+                        }
+                        
+                        Component.onCompleted: {
+                            // Pop in when component is loaded
+                            scale = 1.0;
+                        }
+                    }
 
                     Text {
-    id: artistLabel
-    Layout.fillWidth: true
-    text: MprisController.activeTrack?.artist
-    font {
-        pixelSize: 12
-        family: DefaultStyle.fonts.rubik
-    }
-    elide: Text.ElideRight
-    color: DefaultStyle.colors.brightGrey
-    scale: 0.95
-    Behavior on scale { 
-        NumberAnimation { 
-            duration: 300; 
-            easing.type: Easing.OutBack
-        } 
-    }
-    
-    Component.onCompleted: {
-        // Pop in when component is loaded
-        scale = 1.0;
-    }
-}
+                        id: artistLabel
+                        Layout.fillWidth: true
+                        text: MprisController.activeTrack?.artist
+                        font {
+                            pixelSize: 12
+                            family: Appearance.fonts.rubik
+                        }
+                        elide: Text.ElideRight
+                        color: Appearance.colors.brightGrey
+                        scale: 0.95
+                        Behavior on scale { 
+                            NumberAnimation { 
+                                duration: 300; 
+                                easing.type: Easing.OutBack
+                            } 
+                        }
+                        
+                        Component.onCompleted: {
+                            // Pop in when component is loaded
+                            scale = 1.0;
+                        }
+                    }
                 }
 
                 // Middle section - Progress bar
@@ -296,9 +298,9 @@ PanelWindow {
                             text: StringUtil.parseMediaTime(MprisController.activePlayer?.position || 0)
                             font {
                                 pixelSize: 12
-                                family: DefaultStyle.fonts.rubik
+                                family: Appearance.fonts.rubik
                             }
-                            color: DefaultStyle.colors.brightGrey
+                            color: Appearance.colors.brightGrey
                             opacity: 1
                             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                         }
@@ -310,9 +312,9 @@ PanelWindow {
                             text: StringUtil.parseMediaTime(MprisController.activePlayer?.length || 0)
                             font {
                                 pixelSize: 12
-                                family: DefaultStyle.fonts.rubik
+                                family: Appearance.fonts.rubik
                             }
-                            color: DefaultStyle.colors.brightGrey
+                            color: Appearance.colors.brightGrey
                             opacity: 1
                             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                         }
@@ -333,7 +335,7 @@ PanelWindow {
                             font.pixelSize: 20
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            color: MprisController.canGoPrevious ? DefaultStyle.colors.white : DefaultStyle.colors.grey
+                            color: MprisController.canGoPrevious ? Appearance.colors.white : Appearance.colors.grey
                             
                             // Animation properties
                             property real targetScale: 1.0
@@ -373,7 +375,7 @@ PanelWindow {
                             font.pixelSize: 28
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            color: MprisController.canTogglePlaying ? DefaultStyle.colors.white : DefaultStyle.colors.grey
+                            color: MprisController.canTogglePlaying ? Appearance.colors.white : Appearance.colors.grey
                             
                             // Animation properties
                             property real targetScale: 1.0
@@ -413,7 +415,7 @@ PanelWindow {
                             font.pixelSize: 20
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            color: MprisController.canGoNext ? DefaultStyle.colors.white : DefaultStyle.colors.grey
+                            color: MprisController.canGoNext ? Appearance.colors.white : Appearance.colors.grey
                             
                             // Animation properties
                             property real targetScale: 1.0
@@ -458,7 +460,7 @@ PanelWindow {
                         radius: 100
                         
                         // Background animation
-                        color: copyMouse.containsMouse ? DefaultStyle.colors.darkGrey : Qt.lighter(DefaultStyle.colors.moduleBackground, 1.1)
+                        color: copyMouse.containsMouse ? Appearance.colors.darkGrey : Qt.lighter(Appearance.colors.moduleBackground, 1.1)
                         Behavior on color {
                             ColorAnimation { duration: 150 }
                         }
@@ -468,7 +470,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: "content_copy"
                             iconSize: 18
-                            color: copyMouse.containsMouse ? DefaultStyle.colors.brightGrey : DefaultStyle.colors.grey
+                            color: copyMouse.containsMouse ? Appearance.colors.brightGrey : Appearance.colors.grey
 
                             Behavior on color {
                                 ColorAnimation { duration: 150 }
@@ -520,7 +522,7 @@ PanelWindow {
                             width: playerSelector.width
                             height: playerSelector.expanded ? Math.min(playerList.contentHeight, 120) : 0
                             visible: playerSelector.expanded
-                            color: DefaultStyle.colors.moduleBackground
+                            color: Appearance.colors.moduleBackground
                             radius: playerSelector.radius
                             clip: true
                             
@@ -556,7 +558,7 @@ PanelWindow {
                                 delegate: Rectangle {
                                     width: playerList.width
                                     height: 25
-                                    color: mouseArea.containsMouse ? DefaultStyle.colors.darkGrey : DefaultStyle.colors.moduleBackground
+                                    color: mouseArea.containsMouse ? Appearance.colors.darkGrey : Appearance.colors.moduleBackground
                                     radius: playerSelector.radius
                                     
                                     // Background color animation
@@ -581,10 +583,10 @@ PanelWindow {
                                         Text {
                                             Layout.fillWidth: true
                                             text: modelData.identity
-                                            color: DefaultStyle.colors.white
+                                            color: Appearance.colors.white
                                             font {
                                                 pixelSize: 12
-                                                family: DefaultStyle.fonts.rubik
+                                                family: Appearance.fonts.rubik
                                             }
                                             elide: Text.ElideRight
                                         }
@@ -619,7 +621,7 @@ PanelWindow {
                         // Current Player Selector
                         Rectangle {
                             id: playerSelectorWrapper
-                            color: DefaultStyle.colors.moduleBackground
+                            color: Appearance.colors.moduleBackground
                             width: parent.width
                             height: 25
                             anchors.bottom: parent.bottom
@@ -637,7 +639,7 @@ PanelWindow {
                                 property bool expanded: false
                                 
                                 // Background color animation on hover and press
-                                color: mouseArea.containsMouse && Mpris.players.values.length > 1 ? DefaultStyle.colors.darkGrey : DefaultStyle.colors.moduleBackground
+                                color: mouseArea.containsMouse && Mpris.players.values.length > 1 ? Appearance.colors.darkGrey : Appearance.colors.moduleBackground
                                 Behavior on color {
                                     ColorAnimation { duration: 150 }
                                 }
@@ -672,10 +674,10 @@ PanelWindow {
                                     Text {
                                         Layout.fillWidth: true
                                         text: MprisController.activePlayer ? MprisController.activePlayer.identity : "No players"
-                                        color: DefaultStyle.colors.white
+                                        color: Appearance.colors.white
                                         font {
                                             pixelSize: 12
-                                            family: DefaultStyle.fonts.rubik
+                                            family: Appearance.fonts.rubik
                                         }
                                         elide: Text.ElideRight
                                     }
@@ -703,7 +705,7 @@ PanelWindow {
                         height: playerSelector.height
                         radius: 100
                         
-                        color: closeMouse.containsMouse ? DefaultStyle.colors.darkGrey : Qt.lighter(DefaultStyle.colors.moduleBackground, 1.1)
+                        color: closeMouse.containsMouse ? Appearance.colors.darkGrey : Qt.lighter(Appearance.colors.moduleBackground, 1.1)
                         Behavior on color {
                             ColorAnimation { duration: 150 }
                         }
@@ -713,7 +715,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: "delete"
                             iconSize: 20
-                            color: closeMouse.containsMouse ? DefaultStyle.colors.brightGrey : DefaultStyle.colors.grey
+                            color: closeMouse.containsMouse ? Appearance.colors.brightGrey : Appearance.colors.grey
 
                             Behavior on color {
                                 ColorAnimation { duration: 150 }
@@ -797,53 +799,52 @@ PanelWindow {
     }
     
     // Animation for next/previous buttons when track changes
-    // Animation for next/previous buttons when track changes
-SequentialAnimation {
-    id: trackChangeAnimation
-    ParallelAnimation {
-        NumberAnimation {
-            target: albumArt
-            property: "scale"
-            to: 1
-            duration: 150
+    SequentialAnimation {
+        id: trackChangeAnimation
+        ParallelAnimation {
+            NumberAnimation {
+                target: albumArt
+                property: "scale"
+                to: 1
+                duration: 150
+            }
+            NumberAnimation {
+                target: titleLabel
+                property: "scale"
+                to: 0.95
+                duration: 150
+            }
+            NumberAnimation {
+                target: artistLabel
+                property: "scale"
+                to: 0.95
+                duration: 150
+            }
         }
-        NumberAnimation {
-            target: titleLabel
-            property: "scale"
-            to: 0.95
-            duration: 150
-        }
-        NumberAnimation {
-            target: artistLabel
-            property: "scale"
-            to: 0.95
-            duration: 150
+        ParallelAnimation {
+            NumberAnimation {
+                target: albumArt
+                property: "scale"
+                to: 1.03
+                duration: 250
+                easing.type: Easing.OutBack
+            }
+            NumberAnimation {
+                target: titleLabel
+                property: "scale"
+                to: 1.0
+                duration: 250
+                easing.type: Easing.OutBack
+            }
+            NumberAnimation {
+                target: artistLabel
+                property: "scale"
+                to: 1.0
+                duration: 250
+                easing.type: Easing.OutBack
+            }
         }
     }
-    ParallelAnimation {
-        NumberAnimation {
-            target: albumArt
-            property: "scale"
-            to: 1.03
-            duration: 250
-            easing.type: Easing.OutBack
-        }
-        NumberAnimation {
-            target: titleLabel
-            property: "scale"
-            to: 1.0
-            duration: 250
-            easing.type: Easing.OutBack
-        }
-        NumberAnimation {
-            target: artistLabel
-            property: "scale"
-            to: 1.0
-            duration: 250
-            easing.type: Easing.OutBack
-        }
-    }
-}
 
     Timer {
         running: MprisController.isPlaying

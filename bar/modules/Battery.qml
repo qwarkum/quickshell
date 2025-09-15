@@ -23,7 +23,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             lineWidth: 2
             value: root.percentage
-            implicitSize: 28
+            implicitSize: 30
             colSecondary: BatteryService.progressBackground
             colPrimary: BatteryService.progressColor
             enableAnimation: true
@@ -34,7 +34,7 @@ Item {
                 text: BatteryService.batteryIcon
                 color: BatteryService.progressColor
                 
-                iconSize: 18
+                iconSize: 20
                 fill: 1
             }
         }

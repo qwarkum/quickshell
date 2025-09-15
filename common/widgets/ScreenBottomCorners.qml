@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 import qs.styles
@@ -8,13 +9,15 @@ import qs.common.widgets
 Variants {
     id: root
     model: Quickshell.screens
-    property bool visible: true
+    property bool visible: Appearance.controlls.cornersVisible
 
     PanelWindow {
         required property var modelData
         screen: modelData
         exclusiveZone: 0
-        visible: root.visible
+        visible: Appearance.controlls.cornersVisible
+        WlrLayershell.namespace: "quickshell:screenCorners"
+        WlrLayershell.layer: WlrLayer.Overlay
 
         // Panel positioning and appearance
         anchors {
@@ -22,13 +25,13 @@ Variants {
             left: true
             right: true
         }
-        implicitHeight: DefaultStyle.configs.barHeight - DefaultStyle.configs.panelRadius
+        implicitHeight: Appearance.configs.barHeight - Appearance.configs.panelRadius
         color: "transparent"
 
         // Add rounded corners using the RoundCorner component
         RoundCorner {
             corner: RoundCorner.CornerEnum.BottomLeft
-            implicitSize: DefaultStyle.configs.panelRadius
+            implicitSize: Appearance.configs.panelRadius
             color: "black"
             anchors {
                 top: parent.top
@@ -38,7 +41,7 @@ Variants {
 
         RoundCorner {
             corner: RoundCorner.CornerEnum.BottomRight
-            implicitSize: DefaultStyle.configs.panelRadius
+            implicitSize: Appearance.configs.panelRadius
             color: "black"
             anchors {
                 top: parent.top

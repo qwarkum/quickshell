@@ -18,5 +18,5 @@ Text {
             "opsz": iconSize,
         }
     }
-    color: DefaultStyle.colors.white
+    color: Appearance.colors.white
 }

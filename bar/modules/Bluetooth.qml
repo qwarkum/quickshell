@@ -8,12 +8,12 @@ import qs.common.widgets
 
 Item {
     id: root
-    Layout.preferredWidth: DefaultStyle.configs.rightSidebarModuleWidth
+    Layout.preferredWidth: Appearance.configs.rightContentModuleWidth
 
     MaterialSymbol {
         id: bluetoothIcon
         anchors.centerIn: parent
-        text: BluetoothService.bluetoothIcon
+        text: BluetoothStatus.connected ? "bluetooth_connected" : BluetoothStatus.enabled ? "bluetooth" : "bluetooth_disabled"
 
         iconSize: 18
     }

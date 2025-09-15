@@ -1,8 +1,8 @@
 import Quickshell.Io
 
 IpcHandler {
-    id: wallpaperHandler
-    target: "wallpaperChanger"
+    id: barHandler
+    target: "sidebarRight"
 
     property var root: null
 

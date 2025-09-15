@@ -5,11 +5,13 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Hyprland
 import qs.common.ipcHandlers
 import qs.styles
 
 PanelWindow {
-    id: wallpaperChangerPanel
+    id: wallpaperSelectorPanel
 
     property real slideProgress: 1
     property bool animationRunning: false
@@ -20,6 +22,24 @@ PanelWindow {
     property string searchText: ""
     property bool useCarousel: filteredModel().length > visibleItems - 1
     property int filteredCount: filteredModel().length
+
+    implicitWidth: 1500
+    implicitHeight: 310
+    color: "transparent"
+    visible: false
+    focusable: true
+    anchors.bottom: true
+    exclusiveZone: 0
+    WlrLayershell.namespace: "quickshell:wallpaperSelector"
+    
+    HyprlandFocusGrab {
+        id: grab
+        windows: [ wallpaperSelectorPanel ]
+        active: wallpaperSelectorPanel.visible
+        onCleared: () => {
+            if (!active) wallpaperSelectorPanel.toggle()
+        }
+    }
 
     Component.onCompleted: toggle()
 
@@ -67,14 +87,6 @@ PanelWindow {
         }
     }
 
-    implicitWidth: 1500
-    implicitHeight: 400
-    color: "transparent"
-    visible: false
-    focusable: true
-    anchors.bottom: true
-    exclusiveZone: 0
-
     FolderListModel {
         id: folderModel
         folder: wallpapersPath
@@ -116,38 +128,38 @@ PanelWindow {
         }
     }
 
-    WallpaperChangerIpcHandler {
-        root: wallpaperChangerPanel
+    WallpaperSelectorIpcHandler {
+        root: wallpaperSelectorPanel
     }
 
     Rectangle {
         id: panelContainer
         anchors.fill: parent
-        anchors.leftMargin: DefaultStyle.configs.panelRadius
-        anchors.rightMargin: DefaultStyle.configs.panelRadius
-        radius: DefaultStyle.configs.panelRadius
+        anchors.leftMargin: Appearance.configs.panelRadius
+        anchors.rightMargin: Appearance.configs.panelRadius
+        radius: Appearance.configs.panelRadius
         bottomLeftRadius: 0
         bottomRightRadius: 0
-        color: DefaultStyle.colors.panelBackground
+        color: Appearance.colors.panelBackground
 
         RoundCorner {
             corner: RoundCorner.CornerEnum.BottomRight
-            implicitSize: DefaultStyle.configs.panelRadius
-            color: DefaultStyle.colors.panelBackground
+            implicitSize: Appearance.configs.panelRadius
+            color: Appearance.colors.panelBackground
             anchors {
                 bottom: parent.bottom
                 left: parent.left
-                leftMargin: -DefaultStyle.configs.panelRadius
+                leftMargin: -Appearance.configs.panelRadius
             }
         }
         RoundCorner {
             corner: RoundCorner.CornerEnum.BottomLeft
-            implicitSize: DefaultStyle.configs.panelRadius
-            color: DefaultStyle.colors.panelBackground
+            implicitSize: Appearance.configs.panelRadius
+            color: Appearance.colors.panelBackground
             anchors {
                 bottom: parent.bottom
                 right: parent.right
-                rightMargin: -DefaultStyle.configs.panelRadius
+                rightMargin: -Appearance.configs.panelRadius
             }
         }
 
@@ -206,14 +218,15 @@ PanelWindow {
                 readonly property real thumbWidth: 250
 
                 anchors.fill: parent
-                anchors.margins: 20
+                anchors.margins: 2
+                anchors.bottomMargin: 15
 
                 Rectangle {
                     id: viewport
-                    anchors.centerIn: parent
                     width: parent.width
-                    height: parent.height * 0.7
-                    color: "transparent"
+                    height: parent.height * 0.82
+                    radius: Appearance.configs.panelRadius
+                    color: Appearance.colors.panelBackground
                     clip: true
 
                     PathView {
@@ -241,7 +254,7 @@ PanelWindow {
                         }
 
                         delegate: wallpaperDelegate
-                        onCurrentIndexChanged: wallpaperChangerPanel.currentIndex = currentIndex
+                        onCurrentIndexChanged: wallpaperSelectorPanel.currentIndex = currentIndex
                     }
 
                     FocusScope {
@@ -263,9 +276,9 @@ PanelWindow {
 
                             delegate: Item {
                                 width: galleryRoot.thumbWidth
-                                height: width * 9 / 16 + 30
+                                height: width * 9 / 16
                                 x: staticContainer.startX + index * (galleryRoot.thumbWidth + galleryRoot.gallerySpacing)
-                                y: (parent.height - height) / 2
+                                y: (viewport.height - height) / 2
 
                                 property bool isCurrent: index === staticContainer.staticCurrentIndex
                                 property bool galleryHasFocus: staticContainer.activeFocus
@@ -276,17 +289,19 @@ PanelWindow {
                                     spacing: 10
 
                                     scale: (parent.isCurrent && parent.galleryHasFocus) ? 1.2 : 1.0
-                                    Behavior on scale { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                                    Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
                                     opacity: (parent.isCurrent && parent.galleryHasFocus) ? 1.0 : 0.7
-                                    Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
-
+                                    SequentialAnimation on opacity {
+                                        NumberAnimation { from: 0; to: (isCurrent && galleryHasFocus) ? 1.0 : 0.7; duration: 100 }
+                                    }
+                                    
                                     Rectangle {
                                         width: parent.width
                                         height: width * 9 / 16
-                                        radius: DefaultStyle.configs.windowRadius
+                                        radius: Appearance.configs.windowRadius
                                         clip: true
-                                        color: DefaultStyle.colors.darkGrey
+                                        color: Appearance.colors.darkGrey
 
                                         Image {
                                             id: wallpaperImage
@@ -305,7 +320,7 @@ PanelWindow {
                                                         anchors.centerIn: parent
                                                         width: wallpaperImage.width
                                                         height: wallpaperImage.height
-                                                        radius: DefaultStyle.configs.windowRadius
+                                                        radius: Appearance.configs.windowRadius
                                                     }
                                                 }
                                             }
@@ -326,9 +341,9 @@ PanelWindow {
                                         horizontalAlignment: Text.AlignHCenter
                                         property string baseName: modelData.fileName.replace(/\.[^/.]+$/, "")
                                         text: baseName.length > 30 ? baseName.slice(0, 28) + "..." : baseName
-                                        color: DefaultStyle.colors.white
+                                        color: Appearance.colors.white
                                         font.pixelSize: 14
-                                        font.family: DefaultStyle.fonts.rubik
+                                        font.family: Appearance.fonts.rubik
                                         opacity: (parent.parent.isCurrent && parent.parent.galleryHasFocus) ? 1.0 : 0.5
                                         Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
                                     }
@@ -344,57 +359,67 @@ PanelWindow {
                         bottom: parent.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
-                    width: parent.width * 0.65
+                    width: parent.width * 0.6
                     height: 40
                     spacing: 8
 
-                    // Search box
                     Rectangle {
                         id: searchContainer
                         Layout.fillWidth: true
                         Layout.preferredHeight: parent.height
-                        radius: DefaultStyle.configs.windowRadius
-                        color: DefaultStyle.colors.moduleBackground
+                        radius: Appearance.configs.windowRadius
+                        color: Appearance.colors.moduleBackground
 
-                        TextField {
-                            id: searchField
+                        RowLayout {
                             anchors.fill: parent
-                            anchors.margins: 7
-                            placeholderText: "Search wallpapers ..."
-                            placeholderTextColor: DefaultStyle.colors.grey
-                            color: DefaultStyle.colors.white
-                            font.pixelSize: 16
-                            font.family: DefaultStyle.fonts.rubik
-                            background: Rectangle { color: "transparent" }
+                            anchors.margins: 0
+                            spacing: 5
 
-                            onTextChanged: {
-                                searchText = text
-                                if (wallpaperChangerPanel.useCarousel) {
-                                    wallpaperCarousel.currentIndex = 0
-                                } else {
-                                    staticContainer.staticCurrentIndex = 0
-                                }
+                            // Search icon
+                            MaterialSymbol {
+                                text: "search"
+                                color: Appearance.colors.grey
+                                iconSize: 20
+                                Layout.alignment: Qt.AlignVCenter
+                                leftPadding: 10
                             }
 
-                            Keys.onReturnPressed: {
-                                focus = false
-                                if (useCarousel) {
-                                    wallpaperCarousel.forceActiveFocus()
-                                } else {
-                                    staticContainer.forceActiveFocus()
+                            // Input field
+                            TextField {
+                                id: searchField
+                                placeholderText: "Search wallpapers ..."
+                                placeholderTextColor: Appearance.colors.grey
+                                color: Appearance.colors.white
+                                font.pixelSize: 16
+                                font.family: Appearance.fonts.rubik
+                                background: Rectangle { color: "transparent" }
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                rightPadding: 10
+
+                                onTextChanged: {
+                                    searchText = text
+                                    if (wallpaperSelectorPanel.useCarousel) {
+                                        wallpaperCarousel.currentIndex = 0
+                                    } else {
+                                        staticContainer.staticCurrentIndex = 0
+                                    }
                                 }
-                            }
-                            Keys.onUpPressed: {
-                                focus = false
-                                if (useCarousel) {
-                                    wallpaperCarousel.forceActiveFocus()
-                                } else {
-                                    staticContainer.forceActiveFocus()
+
+                                Keys.onReturnPressed: {
+                                    focus = false
+                                    if (useCarousel) wallpaperCarousel.forceActiveFocus()
+                                    else staticContainer.forceActiveFocus()
                                 }
-                            }
-                            Keys.onEscapePressed: {
-                                text = ""
-                                focus = false
+                                Keys.onUpPressed: {
+                                    focus = false
+                                    if (useCarousel) wallpaperCarousel.forceActiveFocus()
+                                    else staticContainer.forceActiveFocus()
+                                }
+                                Keys.onEscapePressed: {
+                                    text = ""
+                                    focus = false
+                                }
                             }
                         }
                     }
@@ -404,8 +429,8 @@ PanelWindow {
                         Layout.preferredWidth: parent.height
                         Layout.preferredHeight: parent.height
                         background: Rectangle {
-                            color: refreshMouse.containsMouse ? DefaultStyle.colors.darkGrey : DefaultStyle.colors.moduleBackground
-                            radius: DefaultStyle.configs.windowRadius
+                            color: refreshMouse.containsMouse ? Appearance.colors.darkGrey : Appearance.colors.moduleBackground
+                            radius: Appearance.configs.windowRadius
 
                             Behavior on color {
                                 ColorAnimation {
@@ -416,7 +441,7 @@ PanelWindow {
                             MaterialSymbol {
                                 anchors.centerIn: parent
                                 text: "refresh"
-                                color: refreshMouse.containsMouse ? DefaultStyle.colors.brightGrey : DefaultStyle.colors.grey
+                                color: refreshMouse.containsMouse ? Appearance.colors.brightGrey : Appearance.colors.grey
                                 iconSize: 22
 
                                 Behavior on color {
@@ -433,7 +458,7 @@ PanelWindow {
                                 hoverEnabled: true
                             }
                         }
-                        onClicked: wallpaperChangerPanel.refreshWallpapers()
+                        onClicked: wallpaperSelectorPanel.refreshWallpapers()
                     }
                 }
 
@@ -455,17 +480,17 @@ PanelWindow {
             property bool galleryHasFocus: wallpaperCarousel.activeFocus
 
             scale: (isCurrent && galleryHasFocus) ? 1.2 : 1.0
-            Behavior on scale { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+            Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
             opacity: (isCurrent && galleryHasFocus) ? 1.0 : 0.7
-            Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+            Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
             Rectangle {
                 width: parent.width
                 height: width * 9 / 16
-                radius: DefaultStyle.configs.windowRadius
+                radius: Appearance.configs.windowRadius
                 clip: true
-                color: DefaultStyle.colors.darkGrey
+                color: Appearance.colors.darkGrey
 
                 Image {
                     id: wallpaperImage
@@ -492,7 +517,7 @@ PanelWindow {
                                 anchors.centerIn: parent
                                 width: wallpaperImage.width
                                 height: wallpaperImage.height
-                                radius: DefaultStyle.configs.windowRadius
+                                radius: Appearance.configs.windowRadius
                             }
                         }
                     }
@@ -518,9 +543,9 @@ PanelWindow {
                 horizontalAlignment: Text.AlignHCenter
                 property string baseName: modelData.fileName.replace(/\.[^/.]+$/, "")
                 text: baseName.length > 30 ? baseName.slice(0, 28) + "..." : baseName
-                color: DefaultStyle.colors.white
+                color: Appearance.colors.white
                 font.pixelSize: 14
-                font.family: DefaultStyle.fonts.rubik
+                font.family: Appearance.fonts.rubik
                 opacity: (parent.isCurrent && parent.galleryHasFocus) ? 1.0 : 0.5
                 Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
             }
@@ -533,9 +558,9 @@ PanelWindow {
             duration: 300
             easing.type: Easing.OutCubic
             onRunningChanged: {
-                wallpaperChangerPanel.animationRunning = running
-                if (!running && wallpaperChangerPanel.slideProgress === 0)
-                    wallpaperChangerPanel.visible = false
+                wallpaperSelectorPanel.animationRunning = running
+                if (!running && wallpaperSelectorPanel.slideProgress === 0)
+                    wallpaperSelectorPanel.visible = false
             }
         }
     }

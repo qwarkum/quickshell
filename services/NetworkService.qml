@@ -10,30 +10,38 @@ Singleton {
 
     property bool wifi: false
     property bool ethernet: false
-    property bool nmRunning: true
+    property bool wifiEnabled: false
+    property bool nmRunning: false
     property int updateInterval: 1000
     property string networkName: ""
     property int networkStrength: 0
     
     // Material Symbols icon names based on network status
     property string networkIcon: {
-        if (!nmRunning) return "public_off"
+        if (!nmRunning) return "public"
         
         if (ethernet) {
             return "lan"
-        } else if (wifi) {
+        }
+        return wifiIcon
+    }
+    property string wifiIcon: {
+        if (wifi) {
             return networkStrength > 80 ? "signal_wifi_4_bar" :
                    networkStrength > 60 ? "network_wifi_3_bar" :
                    networkStrength > 40 ? "network_wifi_2_bar" :
                    networkStrength > 20 ? "network_wifi_1_bar" :
                    "signal_wifi_0_bar"
-        } else {
-            return "public"
         }
+        if(wifiEnabled) {
+            return "signal_wifi_bad"
+        }
+        return "signal_wifi_off"
     }
 
     function update() {
-        checkNmRunning()
+        nmCheck.running = true
+        wifiStatusProcess.running = true
         if (nmRunning) {
             updateConnectionType.startCheck()
             updateNetworkName.running = true
@@ -47,8 +55,13 @@ Singleton {
         }
     }
 
-    function checkNmRunning() {
-        nmCheck.running = true
+    function enableWifi(enabled = true): void {
+        const cmd = enabled ? "on" : "off";
+        enableWifiProc.exec(["nmcli", "radio", "wifi", cmd]);
+    }
+
+    function toggleWifi(): void {
+        enableWifi(!wifiEnabled);
     }
 
     Timer {
@@ -62,11 +75,30 @@ Singleton {
     }
 
     Process {
+        id: enableWifiProc
+    }
+
+    Process {
         id: nmCheck
         command: ["sh", "-c", "systemctl is-active --quiet NetworkManager && echo running || echo stopped"]
         stdout: SplitParser {
             onRead: data => {
                 root.nmRunning = data.trim() === "running"
+            }
+        }
+    }
+
+    Process {
+        id: wifiStatusProcess
+        command: ["nmcli", "radio", "wifi"]
+        Component.onCompleted: running = true
+        environment: ({
+            LANG: "C",
+            LC_ALL: "C"
+        })
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.wifiEnabled = text.trim() === "enabled";
             }
         }
     }

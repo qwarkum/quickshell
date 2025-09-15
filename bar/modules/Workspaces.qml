@@ -22,6 +22,9 @@ Item {
     property int workspaceCount: 10
     property int backgroundPadding: 3
 
+    property int minAppCount: 2
+    property bool workspaceAppsCounterEnabled: true
+
     // ==== icons/apps ====
     property var workspaceApps: ({})
     property var appIcons: ({})
@@ -39,6 +42,125 @@ Item {
     function refreshAppsIcon() {
         IconUtils.iconFinder.folder = IconUtils.defaultIconsPath
         wsApps.running = true
+    }
+
+    property bool iconsMinimized: false
+
+    Timer {
+        id: pause
+        interval: 700
+        running: false
+        onTriggered: {
+            root.iconsMinimized = true;
+            root.minimizeWorkspaceIcons();
+        }
+    }
+
+    GlobalShortcut {
+        name: "workspaceNumber"
+        description: "Hold to show workspace numbers, release to show icons"
+
+        onPressed: {
+            root.iconsMinimized = true;
+            root.minimizeWorkspaceIcons();
+            // pause.start();
+        }
+        onReleased: {
+            root.iconsMinimized = false;
+            root.minimizeWorkspaceIcons();
+            // pause.stop();
+            // if (root.iconsMinimized) {
+                root.iconsMinimized = false;
+                root.minimizeWorkspaceIcons();
+            // }
+        }
+    }
+
+    function minimizeWorkspaceIcons() {
+        for (var i = 0; i < fgRow.children.length; i++) {
+            var wsItem = fgRow.children[i];
+
+            if (wsItem.apps.length > 0) {
+                var iconsRow = wsItem.children.find(child => child instanceof Row);
+                if (iconsRow) {
+                    if (root.iconsMinimized) {
+                        // =====================
+                        // MINIMIZE
+                        // =====================
+                        iconsRow.anchors.centerIn = undefined;
+                        iconsRow.spacing = 3;
+
+                        var totalIconsWidth = 0;
+                        var padding = 3;
+
+                        for (var j = 0; j < iconsRow.children.length; j++) {
+                            var appsCount = iconsRow.children.find(child => child instanceof Text && child.text.includes("+"));
+                            var iconItem = iconsRow.children[j];
+                            var icon = iconItem.children[0];
+
+                            if (icon) {
+                                icon.scale = 0.7;
+                                iconItem.width = icon.width * 0.5;
+                                iconItem.height = icon.height * 0.5;
+                                totalIconsWidth += iconItem.width;
+                            }
+
+                            // + counter
+                            if (appsCount && appsCount.text.match(/^\+[1-9]\d*$/)) {
+                                padding = -10;
+                                appsCount.font.pixelSize = 8;
+                                appsCount.anchors.verticalCenter = undefined;
+                                appsCount.leftPadding = 4;
+                            }
+                        }
+
+                        totalIconsWidth += iconsRow.spacing * (iconsRow.children.length - 1);
+                        iconsRow.x = wsItem.width - totalIconsWidth + padding;
+                        iconsRow.y = wsItem.height - iconsRow.height + 2;
+
+                    } else {
+                        // =====================
+                        // RESTORE
+                        // =====================
+                        iconsRow.anchors.centerIn = wsItem; // back to center
+                        iconsRow.spacing = 5;               // original spacing
+                        iconsRow.x = 0;
+                        iconsRow.y = 0;
+
+                        for (var j = 0; j < iconsRow.children.length; j++) {
+                            var appsCount = iconsRow.children.find(child => child instanceof Text && child.text.includes("+"));
+                            var iconItem = iconsRow.children[j];
+                            var icon = iconItem.children[0];
+
+                            if (icon) {
+                                icon.scale = 1;
+                                iconItem.width = icon.width;
+                                iconItem.height = icon.height;
+                            }
+
+                            if (appsCount && appsCount.text.match(/^\+[1-9]\d*$/)) {
+                                appsCount.font.pixelSize = 10;
+                                appsCount.anchors.verticalCenter = iconsRow.verticalCenter;
+                                appsCount.leftPadding = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // workspace number visibility
+            var wsNumberText = wsItem.children.find(
+                child => child instanceof Text && child.text == wsItem.workspaceId.toString()
+            );
+            if (wsNumberText) {
+                    wsNumberText.opacity = 1; // show number when minimized
+                if (root.iconsMinimized) {
+                } else {
+                    // only show number for empty workspaces
+                    wsNumberText.opacity = wsItem.apps.length === 0 ? 1 : 0;
+                }
+            }
+        }
     }
 
     Process {
@@ -70,6 +192,8 @@ Item {
                 }
                 root.workspaceApps = newWorkspaceApps
 
+                root.minimizeWorkspaceIcons()
+
                 // reposition indicator after apps update (lets widths settle)
                 updateIndicatorTimer.start()
             }
@@ -79,8 +203,15 @@ Item {
     Connections {
         target: Hyprland
         function onRawEvent(event) {
-            if(event.name === "openwindow" || event.name === "closewindow") {
+            // console.log(event.name)
+            if(event.name === "openwindow"
+            || event.name === "closewindow"
+            || event.name === "workspace"
+            || event.name === "changefloatingmode") {
                 root.refreshAppsIcon()
+
+                root.minimizeWorkspaceIcons()
+
                 updateIndicatorTimer.start()
             }
         }
@@ -103,15 +234,15 @@ Item {
     Item {
         id: workspaces
         width: fgRow.implicitWidth + 2 * root.backgroundPadding
-        height: DefaultStyle.configs.moduleHeight
+        height: Appearance.configs.moduleHeight
 
         // module background
         Rectangle {
             anchors.fill: parent
             radius: height / 2
-            color: DefaultStyle.colors.moduleBackground
-            border.color: DefaultStyle.colors.moduleBorder
-            border.width: DefaultStyle.configs.windowBorderWidth
+            color: Appearance.colors.moduleBackground
+            border.color: Appearance.colors.moduleBorder
+            border.width: Appearance.configs.windowBorderWidth
         }
 
         // single-shot timer to update/move the indicator after layout settles
@@ -143,9 +274,17 @@ Item {
                 delegate: Rectangle {
                     property int workspaceId: index + 1
                     property var apps: root.workspaceApps[workspaceId] || []
-                    property real targetWidth: (apps.length < 2) ? root.workspaceSize
-                                                    : (apps.length === 2) ? root.workspaceSize * 2
-                                                    : root.workspaceSize * 2.7
+                    property real targetWidth: {
+                        if (apps.length === 0) {
+                            return root.workspaceSize;
+                        } else if (apps.length <= root.minAppCount) {
+                            return root.workspaceSize * apps.length;
+                        } else  if(workspaceAppsCounterEnabled) {
+                            return root.workspaceSize * root.minAppCount + root.workspaceSize * 0.7;
+                        } else {
+                            return root.workspaceSize;
+                        }
+                    }
 
                     property bool isOccupied: {
                         var hasWin = false
@@ -162,7 +301,7 @@ Item {
                     width: targetWidth
                     height: root.workspaceSize
                     radius: height / 2
-                    color: isOccupied ? DefaultStyle.colors.workspace : "transparent"
+                    color: isOccupied ? Appearance.colors.workspace : "transparent"
 
                     onWidthChanged: {
                         // schedule indicator update after this delegate's width change (allows animation)
@@ -188,7 +327,7 @@ Item {
             id: activeIndicator
             z: 2
             radius: height / 2
-            color: DefaultStyle.colors.activeWorkspace
+            color: Appearance.colors.activeWorkspace
 
             property real leftPosVal: 0
             property real rightPosVal: 0
@@ -207,9 +346,17 @@ Item {
                 for (var i = 1; i <= root.workspaceCount; i++) {
                     // read apps from workspaceApps (workspace keys might be strings)
                     var apps = root.workspaceApps[i] || root.workspaceApps[String(i)] || []
-                    var w = (apps.length < 2) ? root.workspaceSize
-                            : (apps.length === 2) ? root.workspaceSize * 2
-                            : root.workspaceSize * 2.7
+                    var w = 0;
+                    if (apps.length === 0) {
+                        w = root.workspaceSize;
+                    } else if (apps.length <= root.minAppCount) {
+                        w = root.workspaceSize * apps.length;
+                    } else if (root.workspaceAppsCounterEnabled) {
+                        w = root.workspaceSize * root.minAppCount + root.workspaceSize * 0.7;
+                    } else {
+                        w = root.workspaceSize;
+                    }
+
                     if (i === wsId) {
                         return {
                             left: x,
@@ -295,9 +442,17 @@ Item {
                     property bool isHovered: false
                     property var apps: root.workspaceApps[workspaceId] || []
 
-                    property real targetWidth: (apps.length < 2) ? root.workspaceSize
-                                                    : (apps.length === 2) ? root.workspaceSize * 2
-                                                    : root.workspaceSize * 2.7
+                    property real targetWidth: {
+                        if (apps.length === 0) {
+                            return root.workspaceSize;
+                        } else if (apps.length <= root.minAppCount) {
+                            return root.workspaceSize * apps.length;
+                        } else  if(workspaceAppsCounterEnabled) {
+                            return root.workspaceSize * root.minAppCount + root.workspaceSize * 0.7;
+                        } else {
+                            return root.workspaceSize;
+                        }
+                    }
                     width: targetWidth
 
                     Behavior on width {
@@ -308,11 +463,11 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: wsItem.workspaceId
-                        color : wsItem.isActive  ? DefaultStyle.colors.moduleBackground
-                            : wsItem.isHovered ? DefaultStyle.colors.brightGrey
-                            : DefaultStyle.colors.emptyWorkspace
+                        color : wsItem.isActive  ? Appearance.colors.moduleBackground
+                            : wsItem.isHovered ? Appearance.colors.brightGrey
+                            : Appearance.colors.emptyWorkspace
                         font {
-                            family: DefaultStyle.fonts.rubik
+                            family: Appearance.fonts.rubik
                             pixelSize: 12
                         }
                         opacity: wsItem.apps.length === 0 ? 1 : 0
@@ -322,7 +477,7 @@ Item {
                     }
 
                     Row {
-                        spacing: 4
+                        spacing: 5
                         anchors.centerIn: parent
                         opacity: wsItem.apps.length > 0 ? 1 : 0
 
@@ -334,16 +489,16 @@ Item {
                         }
 
                         Repeater {
-                            model: Math.min(2, wsItem.apps.length)
+                            model: Math.min(root.minAppCount, wsItem.apps.length)
                             delegate: Item {
                                 width: 16; height: 16
                                 
                                 property bool isNewApp: true
-                                property string iconSource: root.appIcons[wsItem.apps[index]] || root.defaultIconsPath + missingIconImage
+                                property string iconSource: root.appIcons[wsItem.apps[index]] || IconUtils.defaultIconsPath + "window.svg"
                                 
                                 IconImage {
                                     id: iconImage
-                                    width: 16; height: 16
+                                    width: 18; height: 18
                                     source: iconSource
                                     opacity: wsItem.isActive ? 1 : wsItem.isHovered ? 0.85 : 0.65
                                     scale: isNewApp ? 0 : 1
@@ -400,16 +555,15 @@ Item {
                             }
                         }
 
-                        // counter (when > 2 apps)
+                        // counter (when > minAppCount apps)
                         Text {
-                            text: "+" + (wsItem.apps.length - 2)
-                            visible: wsItem.apps.length > 2
+                            text: "+" + (wsItem.apps.length - root.minAppCount)
+                            visible: root.workspaceAppsCounterEnabled && wsItem.apps.length > root.minAppCount
                             anchors.verticalCenter: parent.verticalCenter
-                            color: DefaultStyle.colors.white
+                            color: wsItem.isActive ? Appearance.colors.white : Appearance.colors.brightGrey
                             font.pixelSize: 10
-                            font.family: DefaultStyle.fonts.rubik
+                            font.family: Appearance.fonts.rubik
                             opacity: visible ? 1 : 0
-                            scale: visible ? 1 : 0.5
                             
                             // Animation for counter appearance
                             Behavior on opacity { 
@@ -418,8 +572,8 @@ Item {
                                     easing.type: Easing.OutQuad 
                                 } 
                             }
-                            Behavior on scale {
-                                NumberAnimation {
+                            Behavior on color {
+                                ColorAnimation {
                                     duration: 300
                                     easing.type: Easing.OutBack
                                 }
@@ -469,5 +623,4 @@ Item {
             }
         }
     }
-
 }
