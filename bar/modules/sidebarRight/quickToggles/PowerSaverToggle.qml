@@ -7,7 +7,7 @@ import qs.common.widgets
 
 QuickToggleButton {
     toggled: false
-    buttonIcon: "battery_plus"
+    buttonIcon: "battery_saver"
     onClicked: {}//NetworkService.toggleWifi()
     altAction: () => {
         // Quickshell.execDetached(["bash", "-c", `${Networkservice.ethernet ? Config.options.apps.networkEthernet : Config.options.apps.network}`])

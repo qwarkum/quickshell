@@ -42,7 +42,7 @@ Singleton {
         // if (BatteryService.isCharging) return "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
         if (BatteryService.isFullyCharged) return "battery_status_good"
         if (BatteryService.isCharging || BatteryService.isFullyCharged) return "battery_charging_full" // "battery_charging_full" "battery_android_bolt" 
-        if (BatteryService.isCritical) return "battery_plus"
+        if (BatteryService.isCritical) return "battery_saver"
         return "battery_full" // "battery_android_full"
     }
 }

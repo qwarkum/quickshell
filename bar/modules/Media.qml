@@ -63,14 +63,14 @@ Item {
                 lineWidth: 2
                 value: MprisController.activePlayer?.position / MprisController.activePlayer?.length || 0
                 implicitSize: 26
-                colSecondary: MprisController.activePlayer ? Appearance.colors.grey : "transparent"
+                colSecondary: MprisController.activePlayer ? Appearance.colors.brighterGrey : "transparent"
                 colPrimary: MprisController.activePlayer ? Appearance.colors.white : "transparent"
                 enableAnimation: true
 
                 Text {
                     id: playPauseButton
                     anchors.centerIn: parent
-                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.brightGrey
+                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.silver
                     text: {
                         if (!MprisController.activePlayer) return Icons.music
                         return MprisController.isPlaying ? Icons.media_pause : Icons.media_play
@@ -99,7 +99,7 @@ Item {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     text: MprisController.activeTrack?.title || "No media"
-                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.brightGrey
+                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.silver
                     scale: 0.95
                     font {
                         pixelSize: 13

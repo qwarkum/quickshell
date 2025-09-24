@@ -108,7 +108,7 @@ QtObject {
     property string discord: ""
     property string firefox: "󰈹"
 
-    property string os_icon: "󰣇"
+    property string os_icon: ""
     property string arch_linux: "󰣇"
     property string arco_linux: ""
     property string kali_linux: ""

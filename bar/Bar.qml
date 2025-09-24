@@ -57,7 +57,7 @@ Variants {
                 opacity: barRectangle.opacity // fades with bar
                 visible: opacity > 0.01
 
-                Workspaces { Layout.leftMargin: 5 }
+                Workspaces { Layout.leftMargin: 18 }
                 Media { Layout.leftMargin: 20 }
 
                 Item { Layout.fillWidth: true }

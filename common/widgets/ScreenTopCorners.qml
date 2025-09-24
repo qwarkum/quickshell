@@ -1,7 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
-import QtQuick.Layouts
 import qs.styles
 import qs.bar.modules
 import qs.common.widgets
@@ -11,42 +10,58 @@ Variants {
     model: Quickshell.screens
     property bool visible: Appearance.controlls.barVisible || !Appearance.controlls.gameModeToggled
 
-    PanelWindow {
+    Scope {
         required property var modelData
-        screen: modelData
-        exclusiveZone: -1
-        visible: root.visible
-        WlrLayershell.namespace: "quickshell:screenCorners"
-        WlrLayershell.layer: WlrLayer.Overlay
 
-        // Panel positioning and appearance
-        anchors {
-            top: true
-            left: true
-            right: true
-        }
-            Layout.topMargin:50
-        implicitHeight: Appearance.configs.barHeight - Appearance.configs.panelRadius
-        color: "transparent"
+        // --- Top-left corner ---
+        PanelWindow {
+            screen: modelData
+            exclusiveZone: -1
+            visible: root.visible
+            WlrLayershell.namespace: "quickshell:screenCorners"
+            WlrLayershell.layer: WlrLayer.Overlay
 
-        // Add rounded corners using the RoundCorner component
-        RoundCorner {
-            corner: RoundCorner.CornerEnum.TopLeft
-            implicitSize: Appearance.configs.panelRadius
-            color: "black"
             anchors {
-                top: parent.top
-                left: parent.left
+                top: true
+                left: true
+            }
+
+            implicitWidth: Appearance.configs.panelRadius
+            implicitHeight: Appearance.configs.panelRadius
+            color: "transparent"
+
+            RoundCorner {
+                corner: RoundCorner.CornerEnum.TopLeft
+                implicitSize: Appearance.configs.panelRadius
+                anchors.top: parent.top
+                anchors.left: parent.left
+                color: "black"
             }
         }
 
-        RoundCorner {
-            corner: RoundCorner.CornerEnum.TopRight
-            implicitSize: Appearance.configs.panelRadius
-            color: "black"
+        // --- Top-right corner ---
+        PanelWindow {
+            screen: modelData
+            exclusiveZone: -1
+            visible: root.visible
+            WlrLayershell.namespace: "quickshell:screenCorners"
+            WlrLayershell.layer: WlrLayer.Overlay
+
             anchors {
-                top: parent.top
-                right: parent.right
+                top: true
+                right: true
+            }
+
+            implicitWidth: Appearance.configs.panelRadius
+            implicitHeight: Appearance.configs.panelRadius
+            color: "transparent"
+
+            RoundCorner {
+                corner: RoundCorner.CornerEnum.TopRight
+                implicitSize: Appearance.configs.panelRadius
+                anchors.top: parent.top
+                anchors.right: parent.right
+                color: "black"
             }
         }
     }

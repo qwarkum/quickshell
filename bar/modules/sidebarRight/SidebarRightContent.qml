@@ -35,6 +35,7 @@ Item {
         ColumnLayout {
             anchors {
                 top: parent.top
+                bottom: parent.bottom
                 left: parent.left
                 right: parent.right
                 leftMargin: 20
@@ -47,6 +48,7 @@ Item {
 
             SidebarRightControlls {
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
 

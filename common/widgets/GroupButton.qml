@@ -30,12 +30,12 @@ Button {
     implicitWidth: (root.down && bounce) ? clickedWidth : baseWidth
     implicitHeight: (root.down && bounce) ? clickedHeight : baseHeight
 
-    property color colBackground: "transparent"
+    property color colBackground: Appearance.colors.moduleBackground
     property color colBackgroundHover: Appearance.colors.darkGrey
     property color colBackgroundActive: Appearance.colors.grey
     property color colBackgroundToggled: Appearance.colors.white
     property color colBackgroundToggledHover: Appearance.colors.white
-    property color colBackgroundToggledActive: Appearance.colors.almostWhite
+    property color colBackgroundToggledActive: Appearance.colors.white
 
     property real radius: root.down ? root.buttonRadiusPressed : root.buttonRadius
     property real leftRadius: root.down ? root.buttonRadiusPressed : root.buttonRadius

@@ -10,10 +10,11 @@ Item {
     property real volume: 0
     property bool muted: false
     property bool shouldShowOsd: false
+    property PwNode source: Pipewire.defaultAudioSource
 
     // Pipewire connection
     PwObjectTracker {
-        objects: [ Pipewire.defaultAudioSink ]
+        objects: [ Pipewire.defaultAudioSink, source ]
     }
 
     // Volume change detection

@@ -8,7 +8,7 @@ Text {
     property real fill: 0
     renderType: Text.NativeRendering
     font {
-        family: "Material Symbols Rounded"
+        family: Appearance.fonts.materialSymbolsRounded
         pixelSize: iconSize
         weight: iconWeight
         variableAxes: { 

@@ -2,44 +2,59 @@ import QtQuick
 import QtQuick.Layouts
 import qs.styles
 import qs.bar.modules.sidebarRight
+import qs.common.widgets
+import qs.styles
+import qs.services
 
 Item {
     id: sidebarContainer
-    width: rightContentLayout.width + 15
+    width: parent.width
     height: Appearance.configs.moduleHeight
 
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        color: Appearance.colors.moduleBackground
-        border.color: Appearance.colors.moduleBorder
-        border.width: Appearance.configs.windowBorderWidth
-        radius: height / 2
-        opacity: mouse.containsMouse || sidebarRight.visible ? 1 : 0
-        
-        Behavior on opacity {
-            NumberAnimation { duration: 150 }
-        }
-    }
+    RippleButton {
+        id: button
 
-    MouseArea {
-        id: mouse
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
+        property real contentPadding: 10
+
+        implicitHeight: 30
+        implicitWidth: rightContentLayout.implicitWidth + rightContentLayout.spacing * 2
+        leftPadding: contentPadding + 3 // bluetooth icon looks wider, so + 2
+        rightPadding: contentPadding
+        buttonRadius: Appearance.configs.full
+        colBackground: Appearance.colors.panelBackground
+        colBackgroundHover: Appearance.colors.darkGrey
+        colRipple: Appearance.colors.brightGrey
+        colBackgroundToggled: Appearance.colors.brightGrey
+        colBackgroundToggledHover: Appearance.colors.brightGrey
+        colRippleToggled: Appearance.colors.grey
+
+        toggled: sidebarRight.visible
+
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        width: rightContentLayout.implicitWidth + leftPadding + rightPadding
+
+        onPressed: {
             sidebarRight.toggle()
+        }
+
+        // RowLayout content anchored to the right
+        RowLayout {
+            id: rightContentLayout
+            spacing: 0
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: button.contentPadding
+
+            Audio {}
+            Mic {}
+            Network { Layout.rightMargin: 10 }
+            Bluetooth {}
         }
     }
     
-    RowLayout {
-        id: rightContentLayout
-        anchors.centerIn: parent
-        spacing: 10
-        
-        Audio {}
-        Network {}
-        Bluetooth {}
+    AudioService {
+        id: audioService
     }
 
     SidebarRight {

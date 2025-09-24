@@ -110,7 +110,7 @@ PanelWindow {
                     Text {
                         id: prevMonthArrow
                         text: Icons.step_backward
-                        color: Appearance.colors.brightGrey
+                        color: Appearance.colors.silver
                         font {
                             pixelSize: 14
                             family: Appearance.fonts.rubik
@@ -142,7 +142,7 @@ PanelWindow {
                             }
                             onExited: {
                                 prevMonthArrow.targetScale = 1.0
-                                prevMonthArrow.color = Appearance.colors.brightGrey
+                                prevMonthArrow.color = Appearance.colors.silver
                             }
                             onPressed: prevMonthArrow.isPressed = true
                             onReleased: prevMonthArrow.isPressed = false
@@ -165,7 +165,7 @@ PanelWindow {
                     Text {
                         id: nextMonthArrow
                         text: Icons.step_forward
-                        color: Appearance.colors.brightGrey
+                        color: Appearance.colors.silver
                         font {
                             pixelSize: 14
                             family: Appearance.fonts.rubik
@@ -197,7 +197,7 @@ PanelWindow {
                             }
                             onExited: {
                                 nextMonthArrow.targetScale = 1.0
-                                nextMonthArrow.color = Appearance.colors.brightGrey
+                                nextMonthArrow.color = Appearance.colors.silver
                             }
                             onPressed: nextMonthArrow.isPressed = true
                             onReleased: nextMonthArrow.isPressed = false
@@ -216,7 +216,7 @@ PanelWindow {
                     Text {
                         id: prevYearArrow
                         text: Icons.step_backward
-                        color: Appearance.colors.brightGrey
+                        color: Appearance.colors.silver
                         font {
                             pixelSize: 14
                             family: Appearance.fonts.rubik
@@ -248,7 +248,7 @@ PanelWindow {
                             }
                             onExited: {
                                 prevYearArrow.targetScale = 1.0
-                                prevYearArrow.color = Appearance.colors.brightGrey
+                                prevYearArrow.color = Appearance.colors.silver
                             }
                             onPressed: prevYearArrow.isPressed = true
                             onReleased: prevYearArrow.isPressed = false
@@ -270,7 +270,7 @@ PanelWindow {
                     Text {
                         id: nextYearArrow
                         text: Icons.step_forward
-                        color: Appearance.colors.brightGrey
+                        color: Appearance.colors.silver
                         font {
                             pixelSize: 14
                             family: Appearance.fonts.rubik
@@ -302,7 +302,7 @@ PanelWindow {
                             }
                             onExited: {
                                 nextYearArrow.targetScale = 1.0
-                                nextYearArrow.color = Appearance.colors.brightGrey
+                                nextYearArrow.color = Appearance.colors.silver
                             }
                             onPressed: nextYearArrow.isPressed = true
                             onReleased: nextYearArrow.isPressed = false
@@ -326,7 +326,7 @@ PanelWindow {
                         width: calendarGrid.cellWidth
                         horizontalAlignment: Text.AlignHCenter
                         text: modelData
-                        color: Appearance.colors.brightGrey
+                        color: Appearance.colors.silver
                         font {
                             pixelSize: 14
                             family: Appearance.fonts.rubik

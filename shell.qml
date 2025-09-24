@@ -3,6 +3,7 @@ import "./bar"
 import "./osd"
 import qs.common.widgets
 import qs.bar.modules.sidebarRight
+import qs.notificationPopup
 
 Scope {
     LazyLoader {active: true; component: Bar {} }
@@ -17,4 +18,5 @@ Scope {
     LazyLoader {active: true; component: WallpaperSelector {} }
     LazyLoader {active: true; component: SessionScreen {} }
 
+    LazyLoader { active: true; component: NotificationPopup {} }
 }

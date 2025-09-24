@@ -12,7 +12,7 @@ ToolTip {
         const ans = (extraVisibleCondition && (parent.hovered === undefined || parent?.hovered)) || alternativeVisibleCondition
         return ans
     }
-    verticalPadding: 10
+    verticalPadding: 8
     horizontalPadding: 30
     opacity: internalVisibleCondition ? 1 : 0
     visible: opacity > 0
@@ -51,7 +51,7 @@ ToolTip {
                 text: content
                 font.pixelSize: 14
                 font.hintingPreference: Font.PreferNoHinting // Prevent shaky text
-                color: Appearance.colors.brightGrey
+                color: Appearance.colors.silver
                 wrapMode: Text.Wrap
             }
         }   

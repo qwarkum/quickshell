@@ -20,7 +20,7 @@ PanelWindow {
         { label: "Shutdown", icon: "power_settings_new", command: ["systemctl", "poweroff"] },
         { label: "Reboot", icon: "refresh", command: ["systemctl", "reboot"] },
         { label: "Lock", icon: "lock", command: ["hyprlock"] },
-        { label: "Suspend", icon: "bedtime", command: ["sh", "-c", "systemctl suspend | hyprlock"] },
+        { label: "Suspend", icon: "bedtime", command: ["sh", "-c", "systemctl suspend"] },
         { label: "Logout", icon: "logout", command: ["hyprctl", "dispatch", "exit"] },
         { label: "Hibernate", icon: "mode_cool", command: ["systemctl", "hibernate"] },
         { label: "Reboot to Firmware", icon: "settings_applications", command: ["systemctl", "reboot", "--firmware-setup"] },
@@ -166,8 +166,8 @@ PanelWindow {
                                 height: 140
                                 radius: index === sessionScreen.selectedIndex ? 100 : 30
                                 color: index === sessionScreen.selectedIndex
-                                    ? Appearance.colors.brightGrey
-                                    : Appearance.colors.moduleBackground
+                                    ? Appearance.colors.extraBrightGrey
+                                    : Appearance.colors.darkGrey
 
                                 Behavior on color { ColorAnimation { duration: 200 } }
                                 Behavior on radius { NumberAnimation { duration: 200 } }
@@ -217,7 +217,7 @@ PanelWindow {
                         width: Math.min(selectedLabelText.implicitWidth + 40, parent.width - 40)
                         height: 40
                         radius: 20
-                        color: Appearance.colors.moduleBackground
+                        color: Appearance.colors.darkGrey
                         opacity: sessionScreen.selectedIndex >= 0 ? 1 : 0
                         
                         Behavior on opacity { NumberAnimation { duration: 200 } }

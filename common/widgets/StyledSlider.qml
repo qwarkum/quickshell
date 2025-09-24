@@ -17,7 +17,7 @@ Slider {
     enum Configuration {
         XXS = 6,
         XS = 12,
-        S = 18,
+        S = 22,
         M = 30,
         L = 42,
         XL = 72

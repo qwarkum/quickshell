@@ -157,7 +157,7 @@ PanelWindow {
                         id: albumArt
                         anchors.fill: parent
                         cache: true
-                        fillMode: Image.PreserveAspectFit
+                        fillMode: Image.PreserveAspectCrop
                         source: MprisController.activeTrack?.artUrl || ""
                         asynchronous: true
                         sourceSize.width: 140
@@ -219,7 +219,7 @@ PanelWindow {
                         Layout.fillWidth: true
                         text: MprisController.activeTrack?.title || "Unknown"
                         font {
-                            pixelSize: 16
+                            pixelSize: 18
                             family: Appearance.fonts.rubik
                         }
                         elide: Text.ElideRight
@@ -243,11 +243,11 @@ PanelWindow {
                         Layout.fillWidth: true
                         text: MprisController.activeTrack?.artist
                         font {
-                            pixelSize: 12
+                            pixelSize: 14
                             family: Appearance.fonts.rubik
                         }
                         elide: Text.ElideRight
-                        color: Appearance.colors.brightGrey
+                        color: Appearance.colors.silver
                         scale: 0.95
                         Behavior on scale { 
                             NumberAnimation { 
@@ -297,10 +297,10 @@ PanelWindow {
                             id: currentTime
                             text: StringUtil.parseMediaTime(MprisController.activePlayer?.position || 0)
                             font {
-                                pixelSize: 12
+                                pixelSize: 13
                                 family: Appearance.fonts.rubik
                             }
-                            color: Appearance.colors.brightGrey
+                            color: Appearance.colors.silver
                             opacity: 1
                             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                         }
@@ -311,10 +311,10 @@ PanelWindow {
                             id: totalTime
                             text: StringUtil.parseMediaTime(MprisController.activePlayer?.length || 0)
                             font {
-                                pixelSize: 12
+                                pixelSize: 13
                                 family: Appearance.fonts.rubik
                             }
-                            color: Appearance.colors.brightGrey
+                            color: Appearance.colors.silver
                             opacity: 1
                             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                         }
@@ -335,7 +335,7 @@ PanelWindow {
                             font.pixelSize: 20
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            color: MprisController.canGoPrevious ? Appearance.colors.white : Appearance.colors.grey
+                            color: MprisController.canGoPrevious ? Appearance.colors.white : Appearance.colors.brighterGrey
                             
                             // Animation properties
                             property real targetScale: 1.0
@@ -375,7 +375,7 @@ PanelWindow {
                             font.pixelSize: 28
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            color: MprisController.canTogglePlaying ? Appearance.colors.white : Appearance.colors.grey
+                            color: MprisController.canTogglePlaying ? Appearance.colors.white : Appearance.colors.brighterGrey
                             
                             // Animation properties
                             property real targetScale: 1.0
@@ -415,7 +415,7 @@ PanelWindow {
                             font.pixelSize: 20
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
-                            color: MprisController.canGoNext ? Appearance.colors.white : Appearance.colors.grey
+                            color: MprisController.canGoNext ? Appearance.colors.white : Appearance.colors.brighterGrey
                             
                             // Animation properties
                             property real targetScale: 1.0
@@ -457,7 +457,7 @@ PanelWindow {
                         id: copyButtonWrapper
                         width: playerSelector.height
                         height: playerSelector.height
-                        radius: 100
+                        radius: Appearance.configs.full
                         
                         // Background animation
                         color: copyMouse.containsMouse ? Appearance.colors.darkGrey : Qt.lighter(Appearance.colors.moduleBackground, 1.1)
@@ -470,7 +470,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: "content_copy"
                             iconSize: 18
-                            color: copyMouse.containsMouse ? Appearance.colors.brightGrey : Appearance.colors.grey
+                            color: copyMouse.containsMouse ? Appearance.colors.silver : Appearance.colors.brighterGrey
 
                             Behavior on color {
                                 ColorAnimation { duration: 150 }
@@ -572,20 +572,21 @@ PanelWindow {
                                         spacing: 8
                                         
                                         Image {
-                                            Layout.preferredWidth: 15
-                                            Layout.preferredHeight: 15
+                                            Layout.preferredWidth: 17
+                                            Layout.preferredHeight: 17
                                             source: modelData ? IconUtils.findIconForApp(modelData.desktopEntry || "") : ""
-                                            sourceSize.width: 15
-                                            sourceSize.height: 15
+                                            sourceSize.width: 17
+                                            sourceSize.height: 17
+                                            opacity: 0.8
                                             fillMode: Image.PreserveAspectFit
                                         }
                                         
                                         Text {
                                             Layout.fillWidth: true
                                             text: modelData.identity
-                                            color: Appearance.colors.white
+                                            color: Appearance.colors.silver
                                             font {
-                                                pixelSize: 12
+                                                pixelSize: 14
                                                 family: Appearance.fonts.rubik
                                             }
                                             elide: Text.ElideRight
@@ -625,7 +626,7 @@ PanelWindow {
                             width: parent.width
                             height: 25
                             anchors.bottom: parent.bottom
-                            radius: 100
+                            radius: Appearance.configs.full
                             topRightRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
                             topLeftRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
                             
@@ -660,13 +661,13 @@ PanelWindow {
                                     // Player icon
                                     Image {
                                         id: playerIcon
-                                        Layout.preferredWidth: 15
-                                        Layout.preferredHeight: 15
+                                        Layout.preferredWidth: 17
+                                        Layout.preferredHeight: 17
                                         source: MprisController.activePlayer ? IconUtils.findIconForApp(MprisController.activePlayer.desktopEntry || "") : ""
-                                        sourceSize.width: 15
-                                        sourceSize.height: 15
+                                        sourceSize.width: 17
+                                        sourceSize.height: 17
                                         fillMode: Image.PreserveAspectFit
-                                        opacity: 1
+                                        opacity: 0.8
                                         Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
                                     }
                                     
@@ -674,9 +675,9 @@ PanelWindow {
                                     Text {
                                         Layout.fillWidth: true
                                         text: MprisController.activePlayer ? MprisController.activePlayer.identity : "No players"
-                                        color: Appearance.colors.white
+                                        color: Appearance.colors.silver
                                         font {
-                                            pixelSize: 12
+                                            pixelSize: 14
                                             family: Appearance.fonts.rubik
                                         }
                                         elide: Text.ElideRight
@@ -715,7 +716,7 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: "delete"
                             iconSize: 20
-                            color: closeMouse.containsMouse ? Appearance.colors.brightGrey : Appearance.colors.grey
+                            color: closeMouse.containsMouse ? Appearance.colors.silver : Appearance.colors.brighterGrey
 
                             Behavior on color {
                                 ColorAnimation { duration: 150 }

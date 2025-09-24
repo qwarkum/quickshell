@@ -8,20 +8,22 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import qs.common.ipcHandlers
+import qs.common.components
 import qs.styles
 
 PanelWindow {
-    id: wallpaperSelectorPanel
+    id: root
 
     property real slideProgress: 1
     property bool animationRunning: false
 
-    property string wallpapersPath: "file:///home/qwarkum/pictures/wallpapers/"
     property int currentIndex: 0
     property int visibleItems: 5
     property string searchText: ""
     property bool useCarousel: filteredModel().length > visibleItems - 1
     property int filteredCount: filteredModel().length
+    property string wallpapersPath: Directories.wallpapers
+    property string currentWallpaperPath: Directories.currentWallpaper
 
     implicitWidth: 1500
     implicitHeight: 310
@@ -34,10 +36,10 @@ PanelWindow {
     
     HyprlandFocusGrab {
         id: grab
-        windows: [ wallpaperSelectorPanel ]
-        active: wallpaperSelectorPanel.visible
+        windows: [ root ]
+        active: root.visible
         onCleared: () => {
-            if (!active) wallpaperSelectorPanel.toggle()
+            if (!active) root.toggle()
         }
     }
 
@@ -45,36 +47,31 @@ PanelWindow {
 
     function refreshWallpapers() {
         folderModel.folder = ""
-        folderModel.folder = wallpapersPath
+        folderModel.folder = Directories.wallpapersNotTrimed
     }
 
     function applyCurrentWallpaper() {
         if (folderModel.count === 0)
             return
 
-        var url
-        if (useCarousel) {
-            url = folderModel.get(wallpaperCarousel.currentIndex, "fileUrl")
-        } else {
-            var fileName = filteredModel()[staticContainer.staticCurrentIndex].fileName
-            for (var i = 0; i < folderModel.count; i++) {
-                if (folderModel.get(i, "fileName") === fileName) {
-                    url = folderModel.get(i, "fileUrl")
-                    break
-                }
-            }
-        }
-
-        if (!url)
+        var selected = filteredModel()[root.currentIndex]
+        if (!selected)
             return
 
-        applyWallpaperProc.wallpaperPath = url.toString().replace("file://", "")
+        applyWallpaperProc.fileName = selected.fileName
         applyWallpaperProc.running = true
 
-        applyCurrentWallpaperWallpaperProc.wallpaperPath = url.toString().replace("file://", "")
-        applyCurrentWallpaperWallpaperProc.running = true
+        applyCurrentWallpaperProc.fileName = selected.fileName
+        applyCurrentWallpaperProc.running = true
+
+        notifier.topic = "Wallpaper"
+        notifier.appName = "Wallpaper Selector"
+        notifier.message = "Wallpaper changed to %1".arg(selected.fileName)
+        notifier.running = true
+
         toggle()
     }
+
 
     function toggle() {
         if (slideProgress > 0) {
@@ -89,7 +86,7 @@ PanelWindow {
 
     FolderListModel {
         id: folderModel
-        folder: wallpapersPath
+        folder: Directories.wallpapersNotTrimed
         nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.webp"]
         showDirs: false
     }
@@ -110,26 +107,43 @@ PanelWindow {
 
     Process {
         id: applyWallpaperProc
-        property string wallpaperPath: ""
-        command: ["swww", "img", "-t", "fade", wallpaperPath]
+        property string fileName: ""
+        command: ["swww", "img", "-t", "fade", root.wallpapersPath + "/" + fileName]
 
         onExited: function(exitCode, exitStatus) {
-            console.log("Wallpaper applied:", wallpaperPath, "| exit code:", exitCode)
+            console.log("Wallpaper applied:", root.wallpapersPath + "/" + fileName, "| exit code:", exitCode)
         }
     }
 
     Process {
-        id: applyCurrentWallpaperWallpaperProc
-        property string wallpaperPath: ""
-        command: ["cp", wallpaperPath, "/home/qwarkum/pictures/wallpapers/.current"]
+        id: applyCurrentWallpaperProc
+        property string fileName: ""
+        command: ["cp", root.wallpapersPath + "/" + fileName, root.currentWallpaperPath]
 
         onExited: function(exitCode, exitStatus) {
-            console.log("Current wallpaper applied:", wallpaperPath, "| exit code:", exitCode)
+            console.log("Current wallpaper applied:", root.wallpapersPath + "/" + fileName, "| exit code:", exitCode)
         }
     }
 
+    Process {
+        id: notifier
+
+        property string topic: "Hello"
+        property string message: "Nothing here ("
+        property string urgency: "normal"
+        property string appName: "Quickshell"
+
+        command: [
+            "notify-send", 
+            "-u", urgency,
+            "-a", appName,
+            topic,
+            message
+        ]
+    }
+
     WallpaperSelectorIpcHandler {
-        root: wallpaperSelectorPanel
+        root: root
     }
 
     Rectangle {
@@ -254,7 +268,7 @@ PanelWindow {
                         }
 
                         delegate: wallpaperDelegate
-                        onCurrentIndexChanged: wallpaperSelectorPanel.currentIndex = currentIndex
+                        onCurrentIndexChanged: root.currentIndex = currentIndex
                     }
 
                     FocusScope {
@@ -378,7 +392,7 @@ PanelWindow {
                             // Search icon
                             MaterialSymbol {
                                 text: "search"
-                                color: Appearance.colors.grey
+                                color: Appearance.colors.brighterGrey
                                 iconSize: 20
                                 Layout.alignment: Qt.AlignVCenter
                                 leftPadding: 10
@@ -388,7 +402,7 @@ PanelWindow {
                             TextField {
                                 id: searchField
                                 placeholderText: "Search wallpapers ..."
-                                placeholderTextColor: Appearance.colors.grey
+                                placeholderTextColor: Appearance.colors.brighterGrey
                                 color: Appearance.colors.white
                                 font.pixelSize: 16
                                 font.family: Appearance.fonts.rubik
@@ -399,7 +413,7 @@ PanelWindow {
 
                                 onTextChanged: {
                                     searchText = text
-                                    if (wallpaperSelectorPanel.useCarousel) {
+                                    if (root.useCarousel) {
                                         wallpaperCarousel.currentIndex = 0
                                     } else {
                                         staticContainer.staticCurrentIndex = 0
@@ -441,7 +455,7 @@ PanelWindow {
                             MaterialSymbol {
                                 anchors.centerIn: parent
                                 text: "refresh"
-                                color: refreshMouse.containsMouse ? Appearance.colors.brightGrey : Appearance.colors.grey
+                                color: refreshMouse.containsMouse ? Appearance.colors.silver : Appearance.colors.brighterGrey
                                 iconSize: 22
 
                                 Behavior on color {
@@ -458,7 +472,7 @@ PanelWindow {
                                 hoverEnabled: true
                             }
                         }
-                        onClicked: wallpaperSelectorPanel.refreshWallpapers()
+                        onClicked: root.refreshWallpapers()
                     }
                 }
 
@@ -558,9 +572,9 @@ PanelWindow {
             duration: 300
             easing.type: Easing.OutCubic
             onRunningChanged: {
-                wallpaperSelectorPanel.animationRunning = running
-                if (!running && wallpaperSelectorPanel.slideProgress === 0)
-                    wallpaperSelectorPanel.visible = false
+                root.animationRunning = running
+                if (!running && root.slideProgress === 0)
+                    root.visible = false
             }
         }
     }

@@ -5,12 +5,13 @@ import qs.styles
 GroupButton {
     id: button
     property string buttonIcon
-    property bool enableFill
+    property bool materialSymbol: true
+    property bool enableFill: true
     baseWidth: 50
     baseHeight: 50
     clickedWidth: baseWidth + 20
     toggled: false
-    buttonRadius: Appearance.configs.panelRadius
+    buttonRadius: toggled ? Appearance.configs.panelRadius : Appearance.configs.full
     buttonRadiusPressed: Math.min(baseHeight, baseWidth) / 2 - 10
 
     contentItem: MaterialSymbol {
@@ -21,6 +22,7 @@ GroupButton {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: buttonIcon
+        font.family: materialSymbol ? Appearance.fonts.materialSymbolsRounded : Appearance.fonts.jetbrainsMonoNerd
 
         Behavior on color {
             animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)

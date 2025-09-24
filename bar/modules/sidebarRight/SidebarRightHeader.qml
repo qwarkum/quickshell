@@ -28,7 +28,7 @@ Item {
                 text: Icons.os_icon
                 color: Appearance.colors.white
                 font {
-                    family: Appearance.fonts.jetbrains
+                    family: Appearance.fonts.jetbrainsMonoNerd
                     pixelSize: 32
                 }
             }

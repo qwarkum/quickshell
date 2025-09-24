@@ -7,16 +7,21 @@ QtObject {
     readonly property QtObject colors: QtObject {
         property color white: "#f0f0f0"
         property color almostWhite: '#d4d4d4'
-        property color red: "#be4444"
         property color blue: "#7cbed8"
-        property color darkGrey: "#333333"
-        property color grey: "#494949"
-        property color brightGrey: "#808080"
+        property color darkRed: '#523f3f'
+        property color red: '#614343'
+        property color brightRed: '#855353'
+        property color greyRed: '#3d3030'
+        property color darkGrey: '#252525'
+        property color grey: '#2e2e2e'
+        property color brightGrey: '#3a3a3a'
+        property color brighterGrey: '#444444'
+        property color silver: '#666666'
         property color extraBrightGrey: "#a0a0a0"
         
         // Panel
         property color panelBackground: "#141414"
-        property color moduleBackground: "#202020"
+        property color moduleBackground: '#1d1d1d'
         // property color moduleBackground: "transparent"
         property color moduleBorder: "transparent"
         property color panelBorder: "transparent"
@@ -26,7 +31,7 @@ QtObject {
         property color osdBorder: darkGrey
 
         // Battery
-        property color batteryDefaultOnBackground: grey
+        property color batteryDefaultOnBackground: brighterGrey
         property color batteryLowBackground: "#7c2929"
         property color batteryLowOnBackground: "#ff8585"
         property color batteryChargedBackground: "#3a7c29"
@@ -39,7 +44,7 @@ QtObject {
         // property color workspace: "#2b2b2b"
         property color freeWorkspace: "transparent"
         property color activeWorkspace: "#50f0f0f0"
-        // property color activeWorkspace: "#7c585858"
+        // property color activeWorkspace: extraBrightGrey
         property color emptyWorkspace: "#5f5f5f"
         property color activeWorkspaceBorder: "#8f8f8f"
         property color hoverBackgroundColor: "transparent"
@@ -55,7 +60,9 @@ QtObject {
 
     readonly property QtObject configs: QtObject {
         property int windowRadius: 10
+        property int widgetRadius: 15
         property int panelRadius: 20
+        property int full: 999
         property double windowBorderWidth: 1
         property double panelBorderWidth: 1
 
@@ -66,7 +73,7 @@ QtObject {
         property int barHeight: 40
         property int sidebarWidth: 500
 
-        property int batteryCriticalPercentage: 15
+        property int batteryCriticalPercentage: 20
         property int batteryFullyChargedPercentage: 95
 
         property int rightContentModuleWidth: 20
@@ -74,7 +81,8 @@ QtObject {
 
     readonly property QtObject fonts: QtObject {
         property string rubik: "Rubik"
-        property string jetbrains: "JetBrainsMono Nerd Font"
+        property string jetbrainsMonoNerd: "jetbrainsMonoNerdMono Nerd Font"
+        property string materialSymbolsRounded: "Material Symbols Rounded"
     }
 
     readonly property QtObject animation: QtObject {

@@ -12,7 +12,7 @@ Item {
     property int lineWidth: 2
     property real value: 0
     property color colPrimary: Appearance.colors.white
-    property color colSecondary: Appearance.colors.grey
+    property color colSecondary: Appearance.colors.brightGrey
     property real gapAngle: 360 / 18
     property bool fill: false
     property int fillOverflow: 2

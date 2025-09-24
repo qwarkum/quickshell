@@ -14,7 +14,7 @@ QuickToggleButton {
         Appearance.controlls.gameModeToggled = !Appearance.controlls.gameModeToggled
         if (Appearance.controlls.gameModeToggled) {
             Appearance.controlls.cornersVisible = !Appearance.controlls.cornersVisible
-            TimeUtil.sleep(500, function() {
+            TimeUtil.sleep(300, function() {
                 Quickshell.execDetached(["bash", "-c", `hyprctl --batch "keyword animations:enabled 0;
                                                     keyword decoration:shadow:enabled 0;
                                                     keyword decoration:blur:enabled 0;
