@@ -7,7 +7,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
-import qs.common.ipcHandlers
 import qs.common.components
 import qs.styles
 
@@ -51,12 +50,19 @@ PanelWindow {
     }
 
     function applyCurrentWallpaper() {
-        if (folderModel.count === 0)
+        if (folderModel.count === 0) {
             return
+        }
 
-        var selected = filteredModel()[root.currentIndex]
-        if (!selected)
+        // Ensure we're using the correct current index based on the active view
+        var actualCurrentIndex = useCarousel ? wallpaperCarousel.currentIndex : staticContainer.staticCurrentIndex
+        var selected = filteredModel()[actualCurrentIndex]
+        
+        if (!selected) {
             return
+        }
+
+        console.log("Applying wallpaper:", selected.fileName, "at index:", actualCurrentIndex)
 
         applyWallpaperProc.fileName = selected.fileName
         applyWallpaperProc.running = true
@@ -68,6 +74,9 @@ PanelWindow {
         notifier.appName = "Wallpaper Selector"
         notifier.message = "Wallpaper changed to %1".arg(selected.fileName)
         notifier.running = true
+
+        applyWalTheme.fileName = selected.fileName
+        applyWalTheme.running = true
 
         toggle()
     }
@@ -126,6 +135,16 @@ PanelWindow {
     }
 
     Process {
+        id: applyWalTheme
+        property string fileName: ""
+        command: ["wal", "-i", root.wallpapersPath + "/" + fileName]
+
+        onExited: function(exitCode, exitStatus) {
+            console.log("Wal theme applied:", root.wallpapersPath + "/" + fileName, "| exit code:", exitCode)
+        }
+    }
+
+    Process {
         id: notifier
 
         property string topic: "Hello"
@@ -142,8 +161,13 @@ PanelWindow {
         ]
     }
 
-    WallpaperSelectorIpcHandler {
-        root: root
+    IpcHandler {
+        id: wallpaperHandler
+        target: "wallpaperSelector"
+
+        function toggle() {
+            root.toggle();
+        }
     }
 
     Rectangle {
@@ -186,8 +210,10 @@ PanelWindow {
                 if (!searchField.activeFocus) {
                     if (useCarousel) {
                         wallpaperCarousel.decrementCurrentIndex()
+                        root.currentIndex = wallpaperCarousel.currentIndex  // Sync
                     } else if (staticContainer.staticCurrentIndex > 0) {
                         staticContainer.staticCurrentIndex--
+                        root.currentIndex = staticContainer.staticCurrentIndex  // Sync
                     }
                 }
             }
@@ -195,8 +221,10 @@ PanelWindow {
                 if (!searchField.activeFocus) {
                     if (useCarousel) {
                         wallpaperCarousel.incrementCurrentIndex()
+                        root.currentIndex = wallpaperCarousel.currentIndex  // Sync
                     } else if (staticContainer.staticCurrentIndex < filteredModel().length - 1) {
                         staticContainer.staticCurrentIndex++
+                        root.currentIndex = staticContainer.staticCurrentIndex  // Sync
                     }
                 }
             }
@@ -258,6 +286,23 @@ PanelWindow {
 
                         Keys.onDownPressed: searchField.forceActiveFocus()
 
+                        // ADD THIS: Forward all text input to search field
+                        Keys.onPressed: (event) => {
+                            if (event.text && event.text.length === 1 && 
+                                event.key !== Qt.Key_Enter && event.key !== Qt.Key_Return &&
+                                event.key !== Qt.Key_Left && event.key !== Qt.Key_Right &&
+                                event.key !== Qt.Key_Up && event.key !== Qt.Key_Down &&
+                                event.key !== Qt.Key_Escape) {
+                                
+                                searchField.forceActiveFocus()
+                                searchField.text = searchField.text.slice(0, searchField.cursorPosition) + 
+                                                event.text + searchField.text.slice(searchField.cursorPosition)
+                                searchField.cursorPosition += 1
+                                
+                                event.accepted = true
+                            }
+                        }
+
                         path: Path {
                             startX: (viewport.width - (galleryRoot.thumbWidth * (Math.min(visibleItems + 2, filteredModel().length)) + galleryRoot.gallerySpacing * (Math.min(visibleItems + 1, filteredModel().length - 1)))) / 2
                             startY: viewport.height/2
@@ -268,7 +313,10 @@ PanelWindow {
                         }
 
                         delegate: wallpaperDelegate
-                        onCurrentIndexChanged: root.currentIndex = currentIndex
+                        onCurrentIndexChanged: {
+                            if (!useCarousel) return
+                            root.currentIndex = currentIndex
+                        }
                     }
 
                     FocusScope {
@@ -315,7 +363,7 @@ PanelWindow {
                                         height: width * 9 / 16
                                         radius: Appearance.configs.windowRadius
                                         clip: true
-                                        color: Appearance.colors.darkGrey
+                                        color: Appearance.colors.darkSecondary
 
                                         Image {
                                             id: wallpaperImage
@@ -345,6 +393,7 @@ PanelWindow {
                                             cursorShape: Qt.PointingHandCursor
                                             onClicked: {
                                                 staticContainer.staticCurrentIndex = index
+                                                root.currentIndex = index  // Explicitly sync with root
                                                 applyCurrentWallpaper()
                                             }
                                         }
@@ -355,7 +404,7 @@ PanelWindow {
                                         horizontalAlignment: Text.AlignHCenter
                                         property string baseName: modelData.fileName.replace(/\.[^/.]+$/, "")
                                         text: baseName.length > 30 ? baseName.slice(0, 28) + "..." : baseName
-                                        color: Appearance.colors.white
+                                        color: Appearance.colors.textMain
                                         font.pixelSize: 14
                                         font.family: Appearance.fonts.rubik
                                         opacity: (parent.parent.isCurrent && parent.parent.galleryHasFocus) ? 1.0 : 0.5
@@ -392,7 +441,7 @@ PanelWindow {
                             // Search icon
                             MaterialSymbol {
                                 text: "search"
-                                color: Appearance.colors.brighterGrey
+                                color: Appearance.colors.bright
                                 iconSize: 20
                                 Layout.alignment: Qt.AlignVCenter
                                 leftPadding: 10
@@ -401,9 +450,11 @@ PanelWindow {
                             // Input field
                             TextField {
                                 id: searchField
-                                placeholderText: "Search wallpapers ..."
-                                placeholderTextColor: Appearance.colors.brighterGrey
-                                color: Appearance.colors.white
+                                placeholderText: "Search wallpapers"
+                                placeholderTextColor: Appearance.colors.bright
+                                color: Appearance.colors.textMain
+                                selectedTextColor: Appearance.colors.moduleBackground
+                                selectionColor: Appearance.colors.extraBrightSecondary
                                 font.pixelSize: 16
                                 font.family: Appearance.fonts.rubik
                                 background: Rectangle { color: "transparent" }
@@ -443,7 +494,7 @@ PanelWindow {
                         Layout.preferredWidth: parent.height
                         Layout.preferredHeight: parent.height
                         background: Rectangle {
-                            color: refreshMouse.containsMouse ? Appearance.colors.darkGrey : Appearance.colors.moduleBackground
+                            color: refreshMouse.containsMouse ? Appearance.colors.darkSecondary : Appearance.colors.moduleBackground
                             radius: Appearance.configs.windowRadius
 
                             Behavior on color {
@@ -455,7 +506,7 @@ PanelWindow {
                             MaterialSymbol {
                                 anchors.centerIn: parent
                                 text: "refresh"
-                                color: refreshMouse.containsMouse ? Appearance.colors.silver : Appearance.colors.brighterGrey
+                                color: refreshMouse.containsMouse ? Appearance.colors.bright : Appearance.colors.bright
                                 iconSize: 22
 
                                 Behavior on color {
@@ -496,7 +547,7 @@ PanelWindow {
             scale: (isCurrent && galleryHasFocus) ? 1.2 : 1.0
             Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
-            opacity: (isCurrent && galleryHasFocus) ? 1.0 : 0.7
+            opacity: (isCurrent && galleryHasFocus) ? 1.0 : 0.8
             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
             Rectangle {
@@ -504,7 +555,7 @@ PanelWindow {
                 height: width * 9 / 16
                 radius: Appearance.configs.windowRadius
                 clip: true
-                color: Appearance.colors.darkGrey
+                color: Appearance.colors.darkSecondary
 
                 Image {
                     id: wallpaperImage
@@ -547,6 +598,7 @@ PanelWindow {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         wallpaperCarousel.currentIndex = index
+                        root.currentIndex = index  // Explicitly sync with root
                         applyCurrentWallpaper()
                     }
                 }
@@ -557,10 +609,10 @@ PanelWindow {
                 horizontalAlignment: Text.AlignHCenter
                 property string baseName: modelData.fileName.replace(/\.[^/.]+$/, "")
                 text: baseName.length > 30 ? baseName.slice(0, 28) + "..." : baseName
-                color: Appearance.colors.white
+                color: Appearance.colors.textMain
                 font.pixelSize: 14
                 font.family: Appearance.fonts.rubik
-                opacity: (parent.isCurrent && parent.galleryHasFocus) ? 1.0 : 0.5
+                opacity: (parent.isCurrent && parent.galleryHasFocus) ? 1.0 : 0.9
                 Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
             }
         }

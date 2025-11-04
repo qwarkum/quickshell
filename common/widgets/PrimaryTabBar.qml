@@ -9,8 +9,8 @@ ColumnLayout {
     required property var tabButtonList // Something like [{"icon": "notifications", "name": Translation.tr("Notifications")}, {"icon": "volume_up", "name": Translation.tr("Volume mixer")}]
     required property var externalTrackedTab
     property bool enableIndicatorAnimation: false
-    property color colIndicator: Appearance.colors.white
-    property color colBorder: Appearance.colors.grey
+    property color colIndicator: Appearance.colors.main
+    property color colBorder: Appearance.colors.secondary
     signal currentIndexChanged(int index)
 
     property bool centerTabBar: parent.width > 500

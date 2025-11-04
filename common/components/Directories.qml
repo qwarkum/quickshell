@@ -18,10 +18,15 @@ Singleton {
     readonly property string music: StandardPaths.standardLocations(StandardPaths.MusicLocation)[0]
     readonly property string videos: StandardPaths.standardLocations(StandardPaths.MoviesLocation)[0]
     
+    readonly property string todoPath: trimFileProtocol(`${Directories.state}/user/todo.json`)
+    readonly property string shellConfigName: "config.json"
+    readonly property string shellConfigPath: `${Directories.shellConfig}/${Directories.shellConfigName}`
+    
     readonly property string wallpapersNotTrimed: `${Directories.pictures}/wallpapers`
     readonly property string wallpapers: trimFileProtocol(`${Directories.pictures}/wallpapers`)
     readonly property string currentWallpaper: trimFileProtocol(`${Directories.pictures}/wallpapers/.current`)
-    property string notificationsPath: trimFileProtocol(`${Directories.cache}/notifications/notifications.json`)
+    readonly property string notificationsPath: trimFileProtocol(`${Directories.cache}/notifications/notifications.json`)
+    readonly property string pywalJsonPath: trimFileProtocol(`${Directories.genericCache}/wal/colors.json`)
 
     function trimFileProtocol(str) {
         return str.startsWith("file://") ? str.slice(7) : str;

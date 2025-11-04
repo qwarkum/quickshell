@@ -2,25 +2,23 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Mpris
 import qs.icons
 import qs.styles
 import qs.services
 import qs.common.widgets
-import qs.common.ipcHandlers
+import qs.common.mediaPlayer
 
 Item {
     id: mediaPlayerRoot
     visible: MprisController.activePlayer
+    implicitWidth: mediaModule.width
     opacity: visible ? 1 : 0  // Simple opacity control
     
     // Smooth fade animation
     Behavior on opacity {
         NumberAnimation { duration: 200 }
-    }
-
-    MediaIpcHandler {
-        root: mediaPlayer
     }
 
     Connections {
@@ -63,14 +61,14 @@ Item {
                 lineWidth: 2
                 value: MprisController.activePlayer?.position / MprisController.activePlayer?.length || 0
                 implicitSize: 26
-                colSecondary: MprisController.activePlayer ? Appearance.colors.brighterGrey : "transparent"
-                colPrimary: MprisController.activePlayer ? Appearance.colors.white : "transparent"
+                colSecondary: MprisController.activePlayer ? Appearance.colors.batteryDefaultOnBackground : "transparent"
+                colPrimary: MprisController.activePlayer ? Appearance.colors.main : "transparent"
                 enableAnimation: true
 
                 Text {
                     id: playPauseButton
                     anchors.centerIn: parent
-                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.silver
+                    color: MprisController.activePlayer ? Appearance.colors.main : Appearance.colors.bright
                     text: {
                         if (!MprisController.activePlayer) return Icons.music
                         return MprisController.isPlaying ? Icons.media_pause : Icons.media_play
@@ -93,24 +91,22 @@ Item {
                 Layout.preferredHeight: parent.height
                 Layout.rightMargin: 10
                 
-                Text {
+                StyledText {
                     id: trackTitle
                     width: parent.width
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     text: MprisController.activeTrack?.title || "No media"
-                    color: MprisController.activePlayer ? Appearance.colors.white : Appearance.colors.silver
-                    scale: 0.95
-                    font {
-                        pixelSize: 13
-                        family: Appearance.fonts.rubik
-                    }
+                    color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.bright
+                    font.pixelSize: 14
                     elide: Text.ElideRight
                 }
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: mediaPlayer.toggle()
+                    onClicked: {
+                        Config.mediaPlayerOpen = true
+                    }
                     cursorShape: Qt.PointingHandCursor
                 }
             }
@@ -193,10 +189,5 @@ Item {
                 easing.type: Easing.InQuad
             }
         }
-    }
-
-    MediaPlayer {
-        id: mediaPlayer
-        item: mediaModule
     }
 }

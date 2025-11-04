@@ -25,16 +25,17 @@ Slider {
 
     property var configuration: StyledSlider.Configuration.XXS
 
-    property bool toolTipVisible: false
+    property bool toolTipVisible: true
+    property bool toolTipWithDelay: false
 
     property real handleDefaultWidth: 3
     property real handlePressedWidth: 1.5
 
-    property color highlightColor: Appearance.colors.white
-    property color trackColor: Appearance.colors.grey
-    property color handleColor: Appearance.colors.white
-    property color dotColor: Appearance.colors.grey
-    property color dotColorHighlighted: Appearance.colors.white
+    property color highlightColor: Appearance.colors.main
+    property color trackColor: Appearance.colors.secondary
+    property color handleColor: Appearance.colors.main
+    property color dotColor: Appearance.colors.secondary
+    property color dotColorHighlighted: Appearance.colors.main
     property real unsharpenRadius: configuration / 7
     property real trackWidth: configuration
     property real trackRadius: trackWidth >= StyledSlider.Configuration.XL ? 21
@@ -75,6 +76,7 @@ Slider {
     }
 
     MouseArea {
+        id: sliderMouse
         anchors.fill: parent
         onPressed: (mouse) => mouse.accepted = false
         cursorShape: root.pressed ? Qt.ClosedHandCursor : Qt.PointingHandCursor 
@@ -122,7 +124,7 @@ Slider {
                 required property real modelData
                 value: modelData
                 anchors.verticalCenter: parent.verticalCenter
-                visible: root.value < 0.98
+                visible: root.value < 0.99
             }
         }
     }
@@ -138,9 +140,9 @@ Slider {
         color: root.handleColor
 
         StyledToolTip {
-            visible: toolTipVisible
-            extraVisibleCondition: root.pressed
+            extraVisibleCondition: root.pressed && root.toolTipVisible
             content: root.tooltipContent
+            delayEnabled: toolTipWithDelay
         }
     }
 }

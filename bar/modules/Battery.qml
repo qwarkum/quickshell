@@ -7,35 +7,61 @@ import qs.services
 import qs.common.widgets
 
 Item {
-    id: root
-    implicitWidth: rowLayout.implicitWidth + rowLayout.spacing * 2
-    implicitHeight: 32
+    id: batteryRoot
+    implicitWidth: batteryModule.width
     
     property real percentage: BatteryService.percentage
 
-    RowLayout {
-        id: rowLayout
-        spacing: 8
-        anchors.centerIn: parent
+    Rectangle {
+        id: batteryModule
+        width: batteryLayout.implicitWidth
+        height: Appearance.configs.moduleHeight
+        radius: height / 2
+        anchors.verticalCenter: parent.verticalCenter
 
-        CircularProgress {
-            id: batteryProgress
-            Layout.alignment: Qt.AlignVCenter
-            lineWidth: 2
-            value: root.percentage
-            implicitSize: 30
-            colSecondary: BatteryService.progressBackground
-            colPrimary: BatteryService.progressColor
-            enableAnimation: true
+        color: Appearance.colors.moduleBackground
+        border.color: Appearance.colors.moduleBorder
+        border.width: Appearance.configs.windowBorderWidth
 
-            MaterialSymbol {
-                id: batteryIcon
-                anchors.centerIn: parent
-                text: BatteryService.batteryIcon
-                color: BatteryService.progressColor
+        RowLayout {
+            id: batteryLayout
+            anchors.fill: parent
+            anchors.leftMargin: batteryProgress.lineWidth
+
+            CircularProgress {
+                id: batteryProgress
+                Layout.alignment: Qt.AlignVCenter
+                lineWidth: 2
+                value: batteryRoot.percentage
+                implicitSize: 26
+                colSecondary: BatteryService.progressBackground
+                colPrimary: BatteryService.progressColor
+                enableAnimation: true
+
+                MaterialSymbol {
+                    id: batteryIcon
+                    anchors.centerIn: parent
+                    text: BatteryService.batteryIcon
+                    color: BatteryService.progressColor
+                    iconSize: 18
+                    fill: 1
+                }
+            }
+
+            Item {
+                Layout.preferredWidth: 20
+                Layout.preferredHeight: parent.height
+                Layout.rightMargin: 10
                 
-                iconSize: 20
-                fill: 1
+                StyledText {
+                    id: batteryPercentage
+                    width: parent.width
+                    anchors.centerIn: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    text: (percentage * 100).toFixed(0)
+                    color: BatteryService.progressColor
+                    font.pixelSize: 16
+                }
             }
         }
     }

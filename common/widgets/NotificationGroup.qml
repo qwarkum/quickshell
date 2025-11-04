@@ -22,9 +22,9 @@ MouseArea { // Notification group area
 
     property real dragConfirmThreshold: 70 // Drag further to discard notification
     property real dismissOvershoot: 20 // Account for gaps and bouncy animations
-    property var qmlParent: root.parent.parent // There's something between this and the parent ListView
-    property var parentDragIndex: qmlParent.dragIndex
-    property var parentDragDistance: qmlParent.dragDistance
+    property var qmlParent: root.parent?.parent // There's something between this and the parent ListView
+    property var parentDragIndex: qmlParent?.dragIndex
+    property var parentDragDistance: qmlParent?.dragDistance
     property var dragIndexDiff: Math.abs(parentDragIndex - index)
     property real xOffset: dragIndexDiff == 0 ? Math.max(0, parentDragDistance) : 
         parentDragDistance > dragConfirmThreshold ? 0 :
@@ -111,7 +111,7 @@ MouseArea { // Notification group area
         id: background
         anchors.left: parent.left
         width: parent.width
-        color: popup ? Appearance.colors.panelBackground : Appearance.colors.darkGrey
+        color: popup ? Appearance.colors.panelBackground : Appearance.colors.darkSecondary
         radius: popup ? Appearance.configs.panelRadius : Appearance.configs.windowRadius
         anchors.leftMargin: root.xOffset
 
@@ -187,10 +187,10 @@ MouseArea { // Notification group area
                                 notificationGroup?.notifications[0]?.summary) || ""
                             font.pixelSize: topRow.showAppName ?
                                 topRow.fontSize :
-                                14
+                                15
                             color: topRow.showAppName
-                                ? Appearance.colors.extraBrightGrey
-                                : Appearance.colors.white
+                                ? Appearance.colors.textSecondary
+                                : Appearance.colors.textMain
                         }
                         StyledText {
                             id: timeText
@@ -199,7 +199,7 @@ MouseArea { // Notification group area
                             horizontalAlignment: Text.AlignLeft
                             text: NotificationUtils.getFriendlyNotifTimeString(notificationGroup?.time)
                             font.pixelSize: topRow.fontSize
-                            color: Appearance.colors.extraBrightGrey
+                            color: Appearance.colors.textSecondary
                         }
                     }
                     NotificationGroupExpandButton {
@@ -218,7 +218,7 @@ MouseArea { // Notification group area
                     }
                 }
 
-                StyledListView { // Notification body (expanded)
+                ListView { // Notification body (expanded)
                     id: notificationsColumn
                     implicitHeight: contentHeight
                     Layout.fillWidth: true

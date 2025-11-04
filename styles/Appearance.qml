@@ -1,66 +1,67 @@
 pragma Singleton
 import QtQuick
+import qs.common.utils
 
 QtObject {
     id: root
     
     readonly property QtObject colors: QtObject {
-        property color white: "#f0f0f0"
-        property color almostWhite: '#d4d4d4'
-        property color blue: "#7cbed8"
-        property color darkRed: '#523f3f'
-        property color red: '#614343'
-        property color brightRed: '#855353'
-        property color greyRed: '#3d3030'
-        property color darkGrey: '#252525'
-        property color grey: '#2e2e2e'
-        property color brightGrey: '#3a3a3a'
-        property color brighterGrey: '#444444'
-        property color silver: '#666666'
-        property color extraBrightGrey: "#a0a0a0"
-        
-        // Panel
-        property color panelBackground: "#141414"
-        property color moduleBackground: '#1d1d1d'
-        // property color moduleBackground: "transparent"
-        property color moduleBorder: "transparent"
-        property color panelBorder: "transparent"
+        // Base colors - reference Theme directly
+        property color main: Theme.main
+        property color textMain: Theme.textMain
+        property color textSecondary: Theme.textSecondary
+        property color almostMain: Theme.almostMain
+        property color closeToMain: Theme.closeToMain
+        property color blue: Theme.blue
+        property color darkUrgent: Theme.darkUrgent
+        property color urgent: Theme.urgent
+        property color brightUrgent: Theme.brightUrgent
+        property color lightUrgent: Theme.lightUrgent
+        property color lighterUrgent: Theme.lighterUrgent
+        property color extraLightUrgent: Theme.extraLightUrgent
+        property color secondaryUrgent: Theme.secondaryUrgent
+        property color darkSecondary: Theme.darkSecondary
+        property color secondary: Theme.secondary
+        property color brightSecondary: Theme.brightSecondary
+        property color brighterSecondary: Theme.brighterSecondary
+        property color extraBrighterSecondary: Theme.extraBrighterSecondary
+        property color bright: Theme.bright
+        property color extraBrightSecondary: Theme.extraBrightSecondary
 
-        // OSD
-        property color osdBackground: panelBackground
-        property color osdBorder: darkGrey
+        // Panel - reference Theme
+        property color panelBackground: Theme.panelBackground
+        property color moduleBackground: Theme.moduleBackground
+        property color moduleBorder: Theme.moduleBorder
+        property color panelBorder: Theme.panelBorder
 
-        // Battery
-        property color batteryDefaultOnBackground: brighterGrey
-        property color batteryLowBackground: "#7c2929"
-        property color batteryLowOnBackground: "#ff8585"
-        property color batteryChargedBackground: "#3a7c29"
-        property color batteryChargedOnBackground: "#b5fd94"
-        property color batteryChargingBackground: "#29627c"
-        property color batteryChargingOnBackground: "#94e8fd"
+        // OSD - reference Theme
+        property color osdBackground: Theme.osdBackground
+        property color osdBorder: Theme.osdBorder
 
-        // Workspace
-        property color workspace: panelBackground
-        // property color workspace: "#2b2b2b"
-        property color freeWorkspace: "transparent"
-        property color activeWorkspace: "#50f0f0f0"
-        // property color activeWorkspace: extraBrightGrey
-        property color emptyWorkspace: "#5f5f5f"
-        property color activeWorkspaceBorder: "#8f8f8f"
-        property color hoverBackgroundColor: "transparent"
-        property color hoverBorderColor: "transparent"
-        property color blurBackground: "#80000000"
-    }
+        // Battery - reference Theme
+        property color batteryDefaultOnBackground: Theme.batteryDefaultOnBackground
+        property color batteryLowBackground: Theme.batteryLowBackground
+        property color batteryLowOnBackground: Theme.batteryLowOnBackground
+        property color batteryChargedBackground: Theme.batteryChargedBackground
+        property color batteryChargedOnBackground: Theme.batteryChargedOnBackground
+        property color batteryChargingBackground: Theme.batteryChargingBackground
+        property color batteryChargingOnBackground: Theme.batteryChargingOnBackground
 
-    property QtObject controlls: QtObject {
-        property bool cornersVisible: true
-        property bool barVisible: true
-        property bool gameModeToggled: false
+        // Workspace - reference Theme
+        property color workspace: Theme.workspace
+        property color freeWorkspace: Theme.freeWorkspace
+        property color activeWorkspace: Theme.activeWorkspace
+        property color emptyWorkspace: Theme.emptyWorkspace
+        property color hoverBackgroundColor: Theme.hoverBackgroundColor
+        property color hoverBorderColor: Theme.hoverBorderColor
+        property color blurBackground: Theme.blurBackground
+        property color dialogBlur: Theme.dialogBlur
     }
 
     readonly property QtObject configs: QtObject {
         property int windowRadius: 10
         property int widgetRadius: 15
+        property int toggledRadius: 17
         property int panelRadius: 20
         property int full: 999
         property double windowBorderWidth: 1
@@ -74,7 +75,7 @@ QtObject {
         property int sidebarWidth: 500
 
         property int batteryCriticalPercentage: 20
-        property int batteryFullyChargedPercentage: 95
+        property int batteryFullyChargedPercentage: 90
 
         property int rightContentModuleWidth: 20
     }

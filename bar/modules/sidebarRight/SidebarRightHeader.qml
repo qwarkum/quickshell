@@ -7,26 +7,32 @@ import qs.icons
 import qs.styles
 import qs.common.utils
 import qs.common.widgets
+import qs.common.components
+import qs.bar.modules.sidebarRight.quickToggles
 
 Item {
-    id: sidebarRightHeaderRoot
-    Layout.topMargin: 10
-    Layout.leftMargin: Appearance.configs.panelRadius / 2
-    Layout.rightMargin: Appearance.configs.panelRadius / 2
-    Layout.preferredHeight: 32
+    implicitHeight: Math.max(uptimeContainer.implicitHeight, systemButtonsRow.implicitHeight)
 
-    RowLayout {
-        id: headerBar
-        anchors.fill: parent
-        spacing: 12
-
-        // Left side (OS icon + uptime)
-        RowLayout {
+    Rectangle {
+        id: uptimeContainer
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            left: parent.left
+        }
+        color: Appearance.colors.moduleBackground
+        radius: height / 2
+        implicitWidth: uptimeRow.implicitWidth + 24
+        implicitHeight: uptimeRow.implicitHeight + 8
+        
+        Row {
+            id: uptimeRow
+            anchors.centerIn: parent
             spacing: 8
-
             Text {
+                anchors.verticalCenter: parent.verticalCenter
                 text: Icons.os_icon
-                color: Appearance.colors.white
+                color: Appearance.colors.textMain
                 font {
                     family: Appearance.fonts.jetbrainsMonoNerd
                     pixelSize: 32
@@ -34,71 +40,70 @@ Item {
             }
 
             Text {
+                anchors.verticalCenter: parent.verticalCenter
                 text: "Uptime: " + TimeUtil.uptime
-                color: Appearance.colors.white
+                color: Appearance.colors.textMain
                 font {
                     pixelSize: 16
                     family: Appearance.fonts.rubik
                 }
             }
         }
+    }
 
-        Item { Layout.fillWidth: true }
+    ButtonGroup {
+        id: systemButtonsRow
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            right: parent.right
+        }
+        color: Appearance.colors.moduleBackground
+        padding: 4
 
-        // Right side (buttons)
-        RowLayout {
-            spacing: 15
-
-            MaterialSymbol {
-                text: "refresh"
-                color: Appearance.colors.white
-                iconSize: 22
-
-                Behavior on color { ColorAnimation { duration: 150 } }
-            
-                MouseArea {
-                    id: refreshMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        Hyprland.dispatch("reload");
-                        Quickshell.reload(true);
-                    }
-                }
+        QuickToggleButton {
+            colBackground: Appearance.colors.moduleBackground
+            toggled: Config.editMode
+            visible: Config.options.sidebar.quickToggles.style === "android"
+            buttonIcon: "edit"
+            onClicked: Config.editMode = !Config.editMode
+            StyledToolTip {
+                content: "Edit quick toggles" + (Config.editMode ? "\nLMB to enable/disable\nRMB to toggle size\nScroll to swap position" : "")
             }
-
-            MaterialSymbol {
-                text: "settings"
-                color: Appearance.colors.white
-                iconSize: 22
-
-                Behavior on color { ColorAnimation { duration: 150 } }
-            
-                MouseArea {
-                    id: settingsMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                }
+        }
+        QuickToggleButton {
+            colBackground: Appearance.colors.moduleBackground
+            toggled: false
+            buttonIcon: "refresh"
+            onClicked: {
+                Hyprland.dispatch("reload");
+                Quickshell.reload(true);
             }
-
-            MaterialSymbol {
-                text: "power_settings_new"
-                color: Appearance.colors.white
-                iconSize: 22
-
-                Behavior on color { ColorAnimation { duration: 150 } }
-
-                MouseArea {
-                    id: powerMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        sessionScreen.toggle()
-                    }
-                }
+            StyledToolTip {
+                content: "Reload Hyprland & Quickshell"
+            }
+        }
+        QuickToggleButton {
+            colBackground: Appearance.colors.moduleBackground
+            toggled: false
+            buttonIcon: "settings"
+            onClicked: {
+                // GlobalStates.sidebarRightOpen = false;
+                // Quickshell.execDetached(["qs", "-p", root.settingsQmlPath]);
+            }
+            StyledToolTip {
+                content: "Settings"
+            }
+        }
+        QuickToggleButton {
+            colBackground: Appearance.colors.moduleBackground
+            toggled: false
+            buttonIcon: "power_settings_new"
+            onClicked: {
+                Config.sessionOpen = true
+            }
+            StyledToolTip {
+                content: "Session"
             }
         }
     }

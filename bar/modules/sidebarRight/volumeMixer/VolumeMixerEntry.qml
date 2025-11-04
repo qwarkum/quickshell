@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
+import qs.common.components
 import qs.common.widgets
 import qs.common.utils
 import qs.styles
@@ -27,16 +28,16 @@ Item {
             sourceSize.width: size
             sourceSize.height: size
             fillMode: Image.PreserveAspectCrop
-            source: IconUtils.findIconForApp(root.node.name)
+            source: Quickshell.iconPath(AppSearch.guessIcon((root.node.name)))
         }
 
         ColumnLayout {
             Layout.fillWidth: true
 
-            Text {
+            StyledText {
                 Layout.fillWidth: true
-                font.pixelSize: 14
-                color: Appearance.colors.white
+                font.pixelSize: 15
+                color: Appearance.colors.textMain
                 elide: Text.ElideRight
                 text: {
                     // application.name -> description -> name
@@ -49,9 +50,9 @@ Item {
             StyledSlider {
                 id: slider
                 value: root.node.audio.volume
+                onMoved: root.node.audio.volume = value
                 configuration: StyledSlider.Configuration.S
-                onValueChanged: root.node.audio.volume = value
-                toolTipVisible: true
+                toolTipWithDelay: true
             }
         }
     }

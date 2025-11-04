@@ -14,9 +14,9 @@ RippleButton { // Expand button
     Layout.fillHeight: false
 
     buttonRadius: Appearance.configs.full
-    colBackground: Appearance.colors.grey
-    colBackgroundHover: Appearance.colors.brightGrey
-    colRipple: Appearance.colors.brighterGrey
+    colBackground: Appearance.colors.secondary
+    colBackgroundHover: Appearance.colors.brightSecondary
+    colRipple: Appearance.colors.brighterSecondary
 
     contentItem: Item {
         anchors.centerIn: parent
@@ -30,12 +30,12 @@ RippleButton { // Expand button
                 visible: root.count > 1
                 text: root.count
                 font.pixelSize: root.fontSize
-                color: Appearance.colors.white
+                color: Appearance.colors.textSecondary
             }
             MaterialSymbol {
                 text: "keyboard_arrow_down"
                 iconSize: root.iconSize
-                color: Appearance.colors.white
+                color: Appearance.colors.textSecondary
                 rotation: expanded ? 180 : 0
                 Behavior on rotation {
                     animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)

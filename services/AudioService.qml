@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
+import qs.styles
 
 Item {
     id: root
@@ -9,17 +10,25 @@ Item {
     // Audio properties
     property real volume: 0
     property bool muted: false
+    property bool micMuted: false
     property bool shouldShowOsd: false
-    property PwNode source: Pipewire.defaultAudioSource
 
     // Pipewire connection
     PwObjectTracker {
-        objects: [ Pipewire.defaultAudioSink, source ]
+        objects: [ Pipewire.defaultAudioSink, Pipewire.defaultAudioSource ]
+    }
+
+    Connections {
+        target: Pipewire.defaultAudioSource?.audio ?? null
+
+        function onMutedChanged() {
+            root.micMuted = Pipewire.defaultAudioSource.audio.muted
+        }
     }
 
     // Volume change detection
     Connections {
-        target: Pipewire.defaultAudioSink?.audio
+        target: Pipewire.defaultAudioSink?.audio ?? null
 
         function onVolumeChanged() {
             root.volume = Pipewire.defaultAudioSink.audio.volume
@@ -37,7 +46,10 @@ Item {
     Timer {
         id: hideTimer
         interval: 1000
-        onTriggered: root.shouldShowOsd = false
+        onTriggered: {
+            root.shouldShowOsd = false
+            Config.audioOsdOpen = false
+        }
     }
 
     // Process for mute control
@@ -73,6 +85,7 @@ Item {
 
     function showOsd() {
         root.shouldShowOsd = true
+        Config.audioOsdOpen = true
         hideTimer.restart()
     }
 
@@ -81,6 +94,9 @@ Item {
         if (Pipewire.defaultAudioSink?.audio) {
             volume = Pipewire.defaultAudioSink.audio.volume
             muted = Pipewire.defaultAudioSink.audio.muted
+        }
+        if (Pipewire.defaultAudioSource?.audio) {
+            micMuted = Pipewire.defaultAudioSource.audio.muted
         }
     }
 }

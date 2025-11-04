@@ -30,13 +30,15 @@ Button {
     implicitWidth: (root.down && bounce) ? clickedWidth : baseWidth
     implicitHeight: (root.down && bounce) ? clickedHeight : baseHeight
 
-    property color colBackground: Appearance.colors.moduleBackground
-    property color colBackgroundHover: Appearance.colors.darkGrey
-    property color colBackgroundActive: Appearance.colors.grey
-    property color colBackgroundToggled: Appearance.colors.white
-    property color colBackgroundToggledHover: Appearance.colors.white
-    property color colBackgroundToggledActive: Appearance.colors.white
+    property color colBackground: Appearance.colors.panelBackground
+    property color colBackgroundHover: Appearance.colors.secondary
+    property color colBackgroundActive: Appearance.colors.darkSecondary
+    property color colBackgroundToggled: Appearance.colors.main
+    property color colBackgroundToggledHover: Appearance.colors.main
+    property color colBackgroundToggledActive: Appearance.colors.main
 
+    property int borderWidth: 0
+    property color borderColor: Appearance.colors.secondary
     property real radius: root.down ? root.buttonRadiusPressed : root.buttonRadius
     property real leftRadius: root.down ? root.buttonRadiusPressed : root.buttonRadius
     property real rightRadius: root.down ? root.buttonRadiusPressed : root.buttonRadius
@@ -115,6 +117,10 @@ Button {
         bottomLeftRadius: root.leftRadius
         bottomRightRadius: root.rightRadius
         implicitHeight: 50
+        border {
+            width: root.borderWidth
+            color: root.borderColor
+        }
 
         color: root.color
         Behavior on color {

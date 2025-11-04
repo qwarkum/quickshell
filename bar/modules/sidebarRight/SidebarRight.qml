@@ -1,23 +1,24 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import qs.styles
+import qs.services
 import qs.common.widgets
-import qs.common.ipcHandlers
 
 PanelWindow {
     id: sidebarRight
 
-    property real slideProgress: 1
+    property real slideProgress: 0
     property bool animationRunning: false
     property string uptimeText: ""
 
     implicitWidth: Appearance.configs.sidebarWidth
     color: "transparent"
-    visible: false
+    visible: slideProgress > 0
     focusable: true
     anchors {
         top: true
@@ -26,50 +27,61 @@ PanelWindow {
     }
     exclusiveZone: 0
     WlrLayershell.namespace: "quickshell:sidebarRight"
-    // WlrLayershell.layer: WlrLayer.Top
 
+    // Initialize panel state based on Config
     Component.onCompleted: {
-        toggle()
+        slideProgress = Config.sidebarRightOpen ? 1 : 0
     }
 
     function toggle() {
-        if (slideProgress > 0) {
-            slideProgress = 0
-        } else {
-            if (!visible) {
+        Config.sidebarRightOpen = !Config.sidebarRightOpen
+    }
+
+    // Connections to Config property
+    Connections {
+        target: Config
+        function onSidebarRightOpenChanged() {
+            if (Config.sidebarRightOpen) {
                 visible = true
+                slideProgress = 1
+                Notifications.timeoutAll();
+                Notifications.markAllRead();
+            } else {
+                slideProgress = 0
             }
-            slideProgress = 1
         }
     }
 
-    SidebarRightIpcHandler {
-        root: sidebarRight
+    // IPC handler
+    IpcHandler {
+        id: barHandler
+        target: "sidebarRight"
+        function toggle() {
+            sidebarRight.toggle()
+        }
     }
 
-    SessionScreen {
-        id: sessionScreen
-    }
-
-    SidebarRightContent {
+    Loader {
+        id: sidebarContentLoader
+        active: visible
         anchors.fill: parent
-        Layout.preferredHeight: 80
-    }
 
-    FocusScope {
-        id: sidebarRightFocusRoot
-        anchors.fill: parent
-        focus: true
+        focus: Config.sidebarRightOpen
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_Escape) {
+                Config.sidebarRightOpen = false
+            }
+        }
 
-        Keys.onEscapePressed: toggle()
+        sourceComponent: SidebarRightContent {}
     }
 
     HyprlandFocusGrab {
         id: grab
         windows: [ sidebarRight ]
         active: sidebarRight.visible
-        onCleared: () => {
-            if (!active) sidebarRight.toggle()
+        onCleared: {
+            if (!active) Config.sidebarRightOpen = false
         }
     }
 
@@ -80,8 +92,9 @@ PanelWindow {
             easing.type: Easing.OutCubic
             onRunningChanged: {
                 sidebarRight.animationRunning = running
-                if (!running && sidebarRight.slideProgress === 0)
+                if (!running && slideProgress === 0) {
                     sidebarRight.visible = false
+                }
             }
         }
     }

@@ -7,10 +7,12 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import QtQml
 import Qt.labs.folderlistmodel
+import Qt5Compat.GraphicalEffects
 import qs.icons
 import qs.styles
 import qs.common.utils
 import qs.common.widgets
+import qs.common.components
 
 Item {
     id: root
@@ -21,13 +23,18 @@ Item {
 
     property int workspaceSpacing: 4
     property int workspaceSize: 26
-    property int workspaceCount: 10
+    property int workspaceCount: 7  // Number of workspaces visible at once
     property int backgroundPadding: 3
 
     property int minAppCount: 2
     property bool workspaceAppsCounterEnabled: true
     property bool showNumbers: false
-    property bool enableNumbers: true
+    property bool enableNumbers: false
+
+    // ==== grouping ====
+    property int totalWorkspaces: 10  // Your total number of workspaces in Hyprland
+    property int currentGroup: Math.floor((activeWorkspaceId - 1) / workspaceCount)
+    property int workspaceOffset: currentGroup * workspaceCount
 
     // ==== icons/apps ====
     property var workspaceApps: ({})
@@ -39,8 +46,16 @@ Item {
     property int previousActiveWorkspaceId: activeWorkspaceId
 
     function refreshAppsIcon() {
-        IconUtils.iconFinder.folder = IconUtils.defaultIconsPath
         wsApps.running = true
+    }
+
+    // Update workspace offset when active workspace changes
+    onActiveWorkspaceIdChanged: {
+        var newGroup = Math.floor((activeWorkspaceId - 1) / workspaceCount)
+        if (newGroup !== currentGroup) {
+            currentGroup = newGroup
+            workspaceOffset = currentGroup * workspaceCount
+        }
     }
 
 
@@ -48,13 +63,19 @@ Item {
         name: "workspaceNumber"
         description: "Hold to show workspace numbers, release to show icons"
 
-        onPressed: showNumbers = true
-        onReleased: showNumbers = false
+        onPressed: {
+            showNumbers = true
+            // GlobalStates.overviewOpen = true
+        }
+        onReleased:{
+            showNumbers = false
+            // GlobalStates.overviewOpen = false
+        }
     }
 
     Process {
         id: wsApps
-        command: ["sh", "-c", "hyprctl clients -j | jq -r 'group_by(.workspace.id)[] | \"\\(.[0].workspace.id):\\(map(.class) | join(\",\"))\"'" ]
+        command: ["sh", "-c", "hyprctl clients -j | jq -r 'group_by(.workspace.id)[] | \"\\(.[0].workspace.id):\\(map(.class) | join(\",\"))\"'"]
         stdout: StdioCollector {
             onStreamFinished: {
                 var rawWorkspaces = text.trim().split('\n')
@@ -72,9 +93,6 @@ Item {
                             var app = apps[j].trim()
                             if (app) {
                                 newWorkspaceApps[workspaceId].push(app)
-                                if (!root.appIcons[app]) {
-                                    root.appIcons[app] = IconUtils.findIconForApp(app)
-                                }
                             }
                         }
                     }
@@ -87,7 +105,7 @@ Item {
 
     Connections {
         target: Hyprland
-        function onRawEvent(_) {
+        function onRawEvent() {
             root.refreshAppsIcon()
         }
     }
@@ -135,7 +153,7 @@ Item {
 
         Timer {
             id: updateIndicatorTimer
-            interval: 20
+            interval: 40
             repeat: false
             onTriggered: {
                 if (!activeIndicator) return
@@ -156,7 +174,8 @@ Item {
             Repeater {
                 model: root.workspaceCount
                 delegate: Rectangle {
-                    property int workspaceId: index + 1
+                    property int workspaceId: workspaceOffset + index + 1
+                    property int displayNumber: workspaceId
                     property var apps: root.workspaceApps[workspaceId] || []
 
                     property real targetWidth: {
@@ -206,7 +225,7 @@ Item {
             }
         }
 
-        // active indicator (only animated thing left)
+        // active indicator
         Rectangle {
             id: activeIndicator
             z: 2
@@ -216,6 +235,7 @@ Item {
             property real leftPosVal: 0
             property real rightPosVal: 0
             property real targetHeight: root.workspaceSize
+            property bool isAnimatingGroupChange: false
 
             x: leftPosVal
             width: Math.abs(rightPosVal - leftPosVal)
@@ -238,7 +258,17 @@ Item {
                         return { left: left, right: right, height: child.height }
                     }
                 }
-                return { left: bgLayout.x, right: bgLayout.x + root.workspaceSize, height: root.workspaceSize }
+                return null
+            }
+
+            function computeEdgesForPosition(positionIndex) {
+                if (positionIndex >= 0 && positionIndex < bgLayout.children.length) {
+                    var child = bgLayout.children[positionIndex]
+                    var left = child.x + bgLayout.x
+                    var right = left + child.width
+                    return { left: left, right: right, height: child.height }
+                }
+                return null
             }
 
             NumberAnimation { id: leftAnim; target: activeIndicator; property: "leftPosVal" }
@@ -246,31 +276,107 @@ Item {
             NumberAnimation { id: heightAnim; target: activeIndicator; property: "targetHeight" }
 
             function moveToWorkspace(oldId, newId) {
-                var edges = computeEdgesForWorkspace(newId)
-                if (oldId === undefined || oldId === null || oldId === newId) {
-                    leftPosVal = edges.left
-                    rightPosVal = edges.right
-                    targetHeight = edges.height
-                    return
-                }
+                if (isAnimatingGroupChange) return
+                
+                var oldGroup = oldId ? Math.floor((oldId - 1) / root.workspaceCount) : -1
+                var newGroup = Math.floor((newId - 1) / root.workspaceCount)
+                                
+                // If switching groups, we need to animate from the equivalent position
+                if (oldGroup !== -1 && oldGroup !== newGroup) {
+                    isAnimatingGroupChange = true
+                    
+                    var oldPositionInGroup = (oldId - 1) % root.workspaceCount
+                    var newPositionInGroup = (newId - 1) % root.workspaceCount
+                                        
+                    // For group transitions, we animate from the equivalent position in the NEW group layout
+                    var startEdges = computeEdgesForPosition(oldPositionInGroup)
+                    var endEdges = computeEdgesForPosition(newPositionInGroup)
+                    
+                    if (!startEdges || !endEdges) {
+                        console.log("Failed to compute edges for group transition")
+                        isAnimatingGroupChange = false
+                        return
+                    }
+                    
+                    leftAnim.stop(); rightAnim.stop(); heightAnim.stop()
 
-                var movingRight = (newId > oldId)
-                leftAnim.stop(); rightAnim.stop(); heightAnim.stop()
+                    // Set initial position to start edges
+                    leftPosVal = startEdges.left
+                    rightPosVal = startEdges.right
+                    targetHeight = startEdges.height
 
-                if (movingRight) {
-                    leftAnim.duration = 220; leftAnim.easing.type = Easing.OutQuad
-                    rightAnim.duration = 120; rightAnim.easing.type = Easing.OutCubic
+                    // Determine animation direction within the group
+                    var movingRightInGroup = (newPositionInGroup > oldPositionInGroup)
+                    
+                    // Apply the same asymmetric timing for group transitions
+                    if (movingRightInGroup) {
+                        // Moving right within group: left edge moves faster, right edge follows
+                        leftAnim.duration = 200; leftAnim.easing.type = Easing.OutQuad
+                        rightAnim.duration = 100; rightAnim.easing.type = Easing.OutCubic
+                    } else {
+                        // Moving left within group: right edge moves faster, left edge follows  
+                        leftAnim.duration = 100; leftAnim.easing.type = Easing.OutCubic
+                        rightAnim.duration = 200; rightAnim.easing.type = Easing.OutQuad
+                    }
+                    heightAnim.duration = 180; heightAnim.easing.type = Easing.InOutQuad
+
+                    leftAnim.from = startEdges.left
+                    leftAnim.to = endEdges.left
+                    rightAnim.from = startEdges.right
+                    rightAnim.to = endEdges.right
+                    heightAnim.from = startEdges.height
+                    heightAnim.to = endEdges.height
+
+                    leftAnim.start()
+                    rightAnim.start()
+                    heightAnim.start()
+                    
+                    // Reset flag when animation completes
+                    var resetTimer = Qt.createQmlObject(`
+                        import QtQuick
+                        Timer {
+                            interval: 250  // Slightly longer than the longest animation
+                            running: true
+                            onTriggered: {
+                                parent.isAnimatingGroupChange = false
+                                this.destroy()
+                            }
+                        }
+                    `, this)
+                    
                 } else {
-                    leftAnim.duration = 120; leftAnim.easing.type = Easing.OutCubic
-                    rightAnim.duration = 220; rightAnim.easing.type = Easing.OutQuad
+                    // Same group - normal animation
+                    var edges = computeEdgesForWorkspace(newId)
+                    if (!edges) {
+                        console.log("Failed to compute edges for workspace:", newId)
+                        return
+                    }
+                    
+                    if (oldId === undefined || oldId === null || oldId === newId) {
+                        leftPosVal = edges.left
+                        rightPosVal = edges.right
+                        targetHeight = edges.height
+                        return
+                    }
+
+                    var movingRight = (newId > oldId)
+                    leftAnim.stop(); rightAnim.stop(); heightAnim.stop()
+
+                    if (movingRight) {
+                        leftAnim.duration = 250; leftAnim.easing.type = Easing.OutQuad
+                        rightAnim.duration = 100; rightAnim.easing.type = Easing.OutCubic
+                    } else {
+                        leftAnim.duration = 100; leftAnim.easing.type = Easing.OutCubic
+                        rightAnim.duration = 250; rightAnim.easing.type = Easing.OutQuad
+                    }
+                    heightAnim.duration = 180; heightAnim.easing.type = Easing.InOutQuad
+
+                    leftAnim.from = leftPosVal; leftAnim.to = edges.left
+                    rightAnim.from = rightPosVal; rightAnim.to = edges.right
+                    heightAnim.from = targetHeight; heightAnim.to = edges.height
+
+                    leftAnim.start(); rightAnim.start(); heightAnim.start()
                 }
-                heightAnim.duration = 180; heightAnim.easing.type = Easing.InOutQuad
-
-                leftAnim.from = leftPosVal; leftAnim.to = edges.left
-                rightAnim.from = rightPosVal; rightAnim.to = edges.right
-                heightAnim.from = targetHeight; heightAnim.to = edges.height
-
-                leftAnim.start(); rightAnim.start(); heightAnim.start()
             }
         }
 
@@ -291,7 +397,8 @@ Item {
                 model: root.workspaceCount
                 delegate: Item {
                     id: wsItem
-                    property int workspaceId: index + 1
+                    property int workspaceId: workspaceOffset + index + 1
+                    property int displayNumber: workspaceId
                     property bool isActive: workspaceId === root.activeWorkspaceId
                     property bool isHovered: false
                     property var apps: root.workspaceApps[workspaceId] || []
@@ -321,11 +428,11 @@ Item {
                     StyledText {
                         id: numberText
                         anchors.centerIn: parent
-                        text: wsItem.workspaceId
+                        text: wsItem.displayNumber
                         color: wsItem.isActive ? Appearance.colors.moduleBackground
-                                            : wsItem.isHovered ? Appearance.colors.extraBrightGrey
+                                            : wsItem.isHovered ? Appearance.colors.extraBrightSecondary
                                             : Appearance.colors.emptyWorkspace
-                        font.pixelSize: 12
+                        font.pixelSize: 14
                         visible: enableNumbers || showNumbers
                         opacity: root.showNumbers ? 1 : (wsItem.apps.length === 0 ? 1 : 0)
 
@@ -342,6 +449,7 @@ Item {
 
                     // Circle symbol
                     MaterialSymbol {
+                        id: wsDot
                         anchors.centerIn: parent
                         text: "circle"
                         iconSize: 6
@@ -349,7 +457,7 @@ Item {
                         opacity: root.showNumbers ? 1 : (wsItem.apps.length === 0 ? 1 : 0)
 
                         color: wsItem.isActive ? Appearance.colors.moduleBackground
-                                            : wsItem.isHovered ? Appearance.colors.extraBrightGrey
+                                            : wsItem.isHovered ? Appearance.colors.extraBrightSecondary
                                             : Appearance.colors.emptyWorkspace
                         fill: 1
 
@@ -370,7 +478,7 @@ Item {
                         opacity: wsItem.apps.length > 0 ? 1 : 0
                         
                         // Position in center when showing icons, bottom right when showing numbers
-                        property real horizontalOffset: root.showNumbers ? (appsCounter.visible ? 20 : (wsItem.apps.length == root.minAppCount) ? 15 : 10) : 0
+                        property real horizontalOffset: root.showNumbers ? (appsCounter.visible ? 22 : (wsItem.apps.length == root.minAppCount) ? 15 : 10) : 0
                         property real verticalOffset: root.showNumbers ? 10 : 0
                         
                         x: parent.width / 2 - width / 2 + horizontalOffset
@@ -394,13 +502,14 @@ Item {
                             delegate: Item {
                                 Layout.preferredWidth: iconImage.width
                                 Layout.preferredHeight: iconImage.height
-                                property string iconSource: root.appIcons[wsItem.apps[index]] || IconUtils.defaultIconsPath + "icon-missing.svg"
+                                property string appName: wsItem.apps[index]
+                                property string iconName: AppSearch.guessIcon(appName)
 
                                 IconImage {
                                     id: iconImage
-                                    width: root.showNumbers ? 14 : 18
-                                    height: root.showNumbers ? 14 : 18
-                                    source: iconSource
+                                    width: root.showNumbers ? 14 : 20
+                                    height: root.showNumbers ? 14 : 20
+                                    source: Quickshell.iconPath(iconName, "tux-penguin")
                                     opacity: wsItem.isActive ? 1 : wsItem.isHovered ? 0.85 : 0.65
 
                                     Behavior on width {
@@ -414,6 +523,24 @@ Item {
                                     }
                                 }
 
+                                Loader {
+                                    active: Config.iconOverlayEnabled
+                                    anchors.fill: iconImage
+                                    sourceComponent: Item {
+                                        Desaturate {
+                                            id: desaturatedIcon
+                                            visible: false // There's already color overlay
+                                            anchors.fill: parent
+                                            source: iconImage
+                                            desaturation: 0.6
+                                        }
+                                        ColorOverlay {
+                                            anchors.fill: desaturatedIcon
+                                            source: desaturatedIcon
+                                            color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -421,8 +548,9 @@ Item {
                             id: appsCounter
                             text: "+" + (wsItem.apps.length - root.minAppCount)
                             visible: root.workspaceAppsCounterEnabled && wsItem.apps.length > root.minAppCount
-                            color: wsItem.isActive ? Appearance.colors.white : Appearance.colors.silver
-                            font.pixelSize: root.showNumbers ? 8 : 10
+                            color: root.showNumbers ? Appearance.colors.main : 
+                                    wsItem.isActive ? Appearance.colors.moduleBackground : Appearance.colors.main
+                            font.pixelSize: root.showNumbers ? 8 : 12
                             opacity: visible ? 1 : 0
 
                             Behavior on opacity {

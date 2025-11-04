@@ -7,18 +7,18 @@ GroupButton {
     property string buttonIcon
     property bool materialSymbol: true
     property bool enableFill: true
-    baseWidth: 50
-    baseHeight: 50
+    baseWidth: 40
+    baseHeight: 40
     clickedWidth: baseWidth + 20
     toggled: false
-    buttonRadius: toggled ? Appearance.configs.panelRadius : Appearance.configs.full
-    buttonRadiusPressed: Math.min(baseHeight, baseWidth) / 2 - 10
+    buttonRadius: toggled ? Appearance.configs.full : Appearance.configs.full
+    buttonRadiusPressed: Math.min(baseHeight, baseWidth) / 2 - 5
 
     contentItem: MaterialSymbol {
         anchors.centerIn: parent
-        iconSize: 26
+        iconSize: 20
         fill: enableFill && toggled ? 1 : 0
-        color: toggled ? Appearance.colors.panelBackground : Appearance.colors.white
+        color: toggled ? Appearance.colors.panelBackground : Appearance.colors.textMain
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: buttonIcon
@@ -28,5 +28,4 @@ GroupButton {
             animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
         }
     }
-
 }

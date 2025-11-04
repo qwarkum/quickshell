@@ -13,18 +13,18 @@ Rectangle { // App icon
     property var urgency: NotificationUrgency.Normal
     property var image: ""
     property real scale: 1
-    property real size: 38 * scale
+    property real size: 40 * scale
     property real materialIconScale: 0.57
     property real appIconScale: 0.8
     property real smallAppIconScale: 0.49
-    property real materialIconSize: size * materialIconScale
+    property real materialIconSize: (size + 6) * materialIconScale
     property real appIconSize: size * appIconScale
     property real smallAppIconSize: size * smallAppIconScale
 
     implicitWidth: size
     implicitHeight: size
     radius: Appearance.configs.full
-    color: Appearance.colors.brightGrey
+    color: Appearance.colors.brightSecondary
     Loader {
         id: materialSymbolLoader
         active: root.appIcon == ""
@@ -38,8 +38,8 @@ Rectangle { // App icon
             }
             anchors.fill: parent
             color: (root.urgency == NotificationUrgency.Critical) ? 
-                Appearance.colors.brightRed :
-                Appearance.colors.extraBrightGrey
+                Appearance.colors.brightUrgent :
+                Appearance.colors.extraBrightSecondary
             iconSize: root.materialIconSize
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -53,7 +53,7 @@ Rectangle { // App icon
             id: appIconImage
             implicitSize: root.appIconSize
             asynchronous: true
-            source: Quickshell.iconPath(root.appIcon, "icon-missing")
+            source: Quickshell.iconPath(root.appIcon, "tux-penguin")
         }
     }
     Loader {
@@ -95,7 +95,7 @@ Rectangle { // App icon
                 sourceComponent: IconImage {
                     implicitSize: root.smallAppIconSize
                     asynchronous: true
-                    source: Quickshell.iconPath(root.appIcon, "image-missing")
+                    source: Quickshell.iconPath(root.appIcon)
                 }
             }
         }

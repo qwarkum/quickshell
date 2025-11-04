@@ -22,12 +22,12 @@ Button {
     property var altAction // When right clicking
     property var middleClickAction // When middle clicking
 
-    property color colBackground: Appearance.colors.darkGrey
-    property color colBackgroundHover: Appearance.colors.grey
-    property color colBackgroundToggled: Appearance.colors.brightGrey
-    property color colBackgroundToggledHover: Appearance.colors.grey
-    property color colRipple: Appearance.colors.brightGrey
-    property color colRippleToggled: Appearance.colors.grey
+    property color colBackground: Appearance.colors.darkSecondary
+    property color colBackgroundHover: Appearance.colors.secondary
+    property color colBackgroundToggled: Appearance.colors.brightSecondary
+    property color colBackgroundToggledHover: Appearance.colors.secondary
+    property color colRipple: Appearance.colors.brightSecondary
+    property color colRippleToggled: Appearance.colors.secondary
 
     opacity: root.enabled ? 1 : 0.4
     property color buttonColor: root.toggled ? 

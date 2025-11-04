@@ -18,24 +18,24 @@ Item {
 
         implicitHeight: 30
         implicitWidth: rightContentLayout.implicitWidth + rightContentLayout.spacing * 2
-        leftPadding: contentPadding + 3 // bluetooth icon looks wider, so + 2
+        leftPadding: contentPadding + 3 // bluetooth icon looks wider, so +
         rightPadding: contentPadding
         buttonRadius: Appearance.configs.full
         colBackground: Appearance.colors.panelBackground
-        colBackgroundHover: Appearance.colors.darkGrey
-        colRipple: Appearance.colors.brightGrey
-        colBackgroundToggled: Appearance.colors.brightGrey
-        colBackgroundToggledHover: Appearance.colors.brightGrey
-        colRippleToggled: Appearance.colors.grey
+        colBackgroundHover: Appearance.colors.darkSecondary
+        colRipple: Appearance.colors.brightSecondary
+        colBackgroundToggled: Appearance.colors.secondary
+        colBackgroundToggledHover: Appearance.colors.brightSecondary
+        colRippleToggled: Appearance.colors.secondary
 
-        toggled: sidebarRight.visible
+        toggled: Config.sidebarRightOpen
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         width: rightContentLayout.implicitWidth + leftPadding + rightPadding
 
         onPressed: {
-            sidebarRight.toggle()
+            Config.sidebarRightOpen = true
         }
 
         // RowLayout content anchored to the right
@@ -48,6 +48,8 @@ Item {
 
             Audio {}
             Mic {}
+            NotificationsRevealer {}
+            KeyboardLayout {}
             Network { Layout.rightMargin: 10 }
             Bluetooth {}
         }
@@ -55,9 +57,5 @@ Item {
     
     AudioService {
         id: audioService
-    }
-
-    SidebarRight {
-        id: sidebarRight
     }
 }

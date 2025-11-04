@@ -42,7 +42,7 @@ RadioButton {
                 width: checked ? 10 : 4
                 height: checked ? 10 : 4
                 radius: Appearance.configs.full
-                color: Appearance.colors.white
+                color: Appearance.colors.main
                 opacity: checked ? 1 : 0
 
                 Behavior on opacity {

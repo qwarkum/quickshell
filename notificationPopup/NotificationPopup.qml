@@ -18,12 +18,11 @@ Scope {
         component:
         PanelWindow {
             id: root
-            visible: (Notifications.popupList.length > 0)
+            visible: (Notifications.popupList.length > 0) && !Config.sidebarRightOpen
             screen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name) ?? null
 
             WlrLayershell.namespace: "quickshell:notificationPopup"
-            WlrLayershell.layer: WlrLayer.Overlay
-            exclusiveZone: 0
+            exclusiveZone: Hyprland.focusedWorkspace.hasFullscreen ? -1 : 0
 
             anchors {
                 top: true
@@ -36,7 +35,7 @@ Scope {
             }
 
             color: "transparent"
-            implicitWidth: 410
+            implicitWidth: 400 + Appearance.configs.panelRadius * 2
             // implicitHeight: listview.contentHeight + Appearance.configs.panelRadius
 
             RoundCorner {

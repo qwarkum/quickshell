@@ -13,7 +13,7 @@ ScrollBar {
         implicitWidth: 4
         implicitHeight: root.visualSize
         radius: width / 2
-        color: Appearance.colors.white
+        color: Appearance.colors.main
         
         opacity: root.policy === ScrollBar.AlwaysOn || (root.active && root.size < 1.0) ? 0.5 : 0
         Behavior on opacity {

@@ -17,10 +17,10 @@ TabButton {
     implicitWidth: Math.max(tabContentWidth, buttonBackground.implicitWidth, minimumWidth)
 
     property color colBackground: Appearance.colors.moduleBackground
-    property color colBackgroundHover: Appearance.colors.darkGrey
-    property color colRipple: Appearance.colors.grey
-    property color colActive: Appearance.colors.white
-    property color colInactive: Appearance.colors.silver
+    property color colBackgroundHover: Appearance.colors.darkSecondary
+    property color colRipple: Appearance.colors.secondary
+    property color colActive: Appearance.colors.main
+    property color colInactive: Appearance.colors.bright
 
     component RippleAnim: NumberAnimation {
         duration: rippleDuration

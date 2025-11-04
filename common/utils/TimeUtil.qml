@@ -1,8 +1,9 @@
+pragma ComponentBehavior: Bound
+pragma Singleton
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
-pragma Singleton
-pragma ComponentBehavior: Bound
 
 /**
  * Provides formatted device uptime.
@@ -10,15 +11,26 @@ pragma ComponentBehavior: Bound
 Singleton {
     property string uptime: "0m"
 
-    Timer {
-        id: timer
-    }
+    property string time: Qt.formatDateTime(clock.date, "h:mm:ss")
+    property string timeNoSeconds: Qt.formatDateTime(clock.date, "h:mm")
+    property string date: Qt.formatDateTime(clock.date, "dddd, dd.MM")
+    property string dateMonthName: Qt.formatDateTime(clock.date, "dddd, dd MMMM")
+    property string calendarDate: Qt.formatDateTime(clock.date, "dd MMMM, yyyy")
     
     function sleep(delayTime,cb) {
         timer.interval = delayTime;
         timer.repeat = false;
         timer.triggered.connect(cb);
         timer.start();
+    }
+
+    SystemClock {
+        id: clock
+        precision: SystemClock.Seconds
+    }
+
+    Timer {
+        id: timer
     }
 
     Timer {

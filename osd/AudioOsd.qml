@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+import Quickshell.Wayland
 import qs.icons
 import qs.styles
 import qs.services
@@ -22,15 +23,25 @@ Scope {
         id: audioService
     }
 
+    Connections {
+        target: Config
+        function onBrightnessOsdOpenChanged() {
+            if (Config.brightnessOsdOpen) {
+                audioService.shouldShowOsd = false
+            }
+        }
+    }
+
     LazyLoader {
         active: audioService.shouldShowOsd
 
         PanelWindow {
             anchors.top: true
-            margins.top: Appearance.configs.barHeight / 2
+            WlrLayershell.namespace: "quickshell:osd"
+            WlrLayershell.layer: WlrLayer.Top
             exclusiveZone: 0
 
-            implicitWidth: Appearance.configs.osdWidth
+            implicitWidth: Appearance.configs.osdWidth + Appearance.configs.panelRadius * 2
             implicitHeight: Appearance.configs.osdHeight
             color: "transparent"
 
@@ -38,11 +49,35 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
+                anchors.rightMargin: Appearance.configs.panelRadius
+                anchors.leftMargin: Appearance.configs.panelRadius
                 radius: Appearance.configs.windowRadius
+                topLeftRadius: 0
+                topRightRadius: 0
                 color: Appearance.colors.osdBackground
-                border.color: Appearance.colors.osdBorder
-                border.width: Appearance.configs.windowBorderWidth
-                
+                // border.color: Appearance.colors.osdBorder
+                // border.width: Appearance.configs.windowBorderWidth
+
+                RoundCorner {
+                    corner: RoundCorner.CornerEnum.TopRight
+                    implicitSize: Appearance.configs.panelRadius
+                    color: Appearance.colors.panelBackground
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        leftMargin: -Appearance.configs.panelRadius
+                    }
+                }
+                RoundCorner {
+                    corner: RoundCorner.CornerEnum.TopLeft
+                    implicitSize: Appearance.configs.panelRadius
+                    color: Appearance.colors.panelBackground
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                        rightMargin: -Appearance.configs.panelRadius
+                    }
+                }
 
                 RowLayout {
                     id: valueRow
@@ -63,7 +98,7 @@ Scope {
                                 centerIn: parent
                                 alignWhenCentered: !root.rotateIcon
                             }
-                            color: Appearance.colors.white
+                            color: Appearance.colors.textMain
                             text: audioService.muted ? "volume_off" : "volume_up"
 
                             iconSize: 30
@@ -79,7 +114,7 @@ Scope {
                             Layout.rightMargin: valueProgressBar.height / 2 // Align text with progressbar radius curve's left end
 
                             Text {
-                                color: Appearance.colors.white
+                                color: Appearance.colors.textMain
                                 font {
                                     pixelSize: 14
                                     family: Appearance.fonts.rubik
@@ -89,7 +124,7 @@ Scope {
                             }
 
                             Text {
-                                color: Appearance.colors.white
+                                color: Appearance.colors.textMain
                                 font {
                                     pixelSize: 14
                                     family: Appearance.fonts.rubik

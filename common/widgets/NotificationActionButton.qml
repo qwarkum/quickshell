@@ -12,9 +12,9 @@ RippleButton {
     leftPadding: 15
     rightPadding: 15
     buttonRadius: 10
-    colBackground: (urgency == NotificationUrgency.Critical) ? Appearance.colors.darkRed : Appearance.colors.brightGrey
-    colBackgroundHover: (urgency == NotificationUrgency.Critical) ? Appearance.colors.red : Appearance.colors.brighterGrey
-    colRipple: (urgency == NotificationUrgency.Critical) ? Appearance.colors.brightRed : Appearance.colors.silver
+    colBackground: (urgency == NotificationUrgency.Critical) ? Appearance.colors.darkUrgent : Appearance.colors.brightSecondary
+    colBackgroundHover: (urgency == NotificationUrgency.Critical) ? Appearance.colors.urgent : Appearance.colors.brighterSecondary
+    colRipple: (urgency == NotificationUrgency.Critical) ? Appearance.colors.brightUrgent : Appearance.colors.extraBrighterSecondary
 
     contentItem: StyledText {
         horizontalAlignment: Text.AlignHCenter

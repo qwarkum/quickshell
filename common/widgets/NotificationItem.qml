@@ -137,8 +137,8 @@ Item { // Notification item area
 
         color: (expanded && !onlyNotification) ? 
             (notificationObject.urgency == NotificationUrgency.Critical) ? 
-                Appearance.colors.greyRed :
-                Appearance.colors.grey :
+                Appearance.colors.secondaryUrgent :
+                Appearance.colors.secondary :
                 "transparent"
 
         implicitHeight: expanded ? (contentColumn.implicitHeight + padding * 2) : summaryRow.implicitHeight
@@ -166,7 +166,7 @@ Item { // Notification item area
                     id: summaryText
                     visible: !root.onlyNotification
                     font.pixelSize: root.fontSize
-                    color: Appearance.colors.white
+                    color: Appearance.colors.textMain
                     elide: Text.ElideRight
                     text: root.notificationObject.summary || ""
                 }
@@ -178,7 +178,7 @@ Item { // Notification item area
                         animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
                     }
                     font.pixelSize: root.fontSize
-                    color: Appearance.colors.silver
+                    color: Appearance.colors.textSecondary
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap // Needed for proper eliding????
                     maximumLineCount: 1
@@ -201,7 +201,7 @@ Item { // Notification item area
                     }
                     Layout.fillWidth: true
                     font.pixelSize: root.fontSize
-                    color: Appearance.colors.extraBrightGrey
+                    color: Appearance.colors.textSecondary
                     wrapMode: Text.Wrap
                     elide: Text.ElideRight
                     textFormat: Text.RichText
@@ -255,8 +255,8 @@ Item { // Notification item area
                                 horizontalAlignment: Text.AlignHCenter
                                 color: 
                                     // (notificationObject.urgency == NotificationUrgency.Critical) ? 
-                                    // Appearance.colors.red :
-                                    Appearance.colors.white
+                                    // Appearance.colors.urgent :
+                                    Appearance.colors.textMain
                                 text: "delete"
                             }
                         }
@@ -301,8 +301,8 @@ Item { // Notification item area
                                 horizontalAlignment: Text.AlignHCenter
                                 color: 
                                     // (notificationObject.urgency == NotificationUrgency.Critical) ? 
-                                    // Appearance.colors.red :
-                                     Appearance.colors.white
+                                    // Appearance.colors.urgent :
+                                     Appearance.colors.textMain
                                 text: "content_copy"
                             }
                         }

@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
 import qs.styles
@@ -8,15 +9,14 @@ import qs.common.widgets
 Variants {
     id: root
     model: Quickshell.screens
-    property bool visible: Appearance.controlls.cornersVisible
+    property bool visible: Config.cornersVisible && !Hyprland.focusedWorkspace?.hasFullscreen
 
     Scope {
         required property var modelData
 
-        // --- Bottom-left corner ---
         PanelWindow {
             screen: modelData
-            exclusiveZone: 0
+            exclusiveZone: -1
             visible: root.visible
             WlrLayershell.namespace: "quickshell:screenCorners"
             WlrLayershell.layer: WlrLayer.Overlay
@@ -39,13 +39,13 @@ Variants {
             }
         }
 
-        // --- Bottom-right corner ---
         PanelWindow {
             screen: modelData
-            exclusiveZone: 0
+            exclusiveZone: -1
             visible: root.visible
             WlrLayershell.namespace: "quickshell:screenCorners"
             WlrLayershell.layer: WlrLayer.Overlay
+            
 
             anchors {
                 bottom: true

@@ -1,19 +1,25 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import QtQuick
 import qs.styles
-import qs.bar.modules
 import qs.common.widgets
 
 Variants {
     id: root
     model: Quickshell.screens
-    property bool visible: Appearance.controlls.barVisible || !Appearance.controlls.gameModeToggled
+    property bool visible: Config.cornersVisible && !Hyprland.focusedWorkspace?.hasFullscreen
 
     Scope {
         required property var modelData
 
-        // --- Top-left corner ---
+        // Connections {
+        //     target: Config
+        //     function onBarOpenChanged() {
+        //         root.visible = Config.barOpen || (Config.cornersVisible && !Hyprland.focusedWorkspace?.hasFullscreen)
+        //     }
+        // }
+
         PanelWindow {
             screen: modelData
             exclusiveZone: -1
@@ -39,7 +45,6 @@ Variants {
             }
         }
 
-        // --- Top-right corner ---
         PanelWindow {
             screen: modelData
             exclusiveZone: -1

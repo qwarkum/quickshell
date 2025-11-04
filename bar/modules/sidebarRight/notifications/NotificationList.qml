@@ -51,68 +51,45 @@ Item {
             MaterialSymbol {
                 Layout.alignment: Qt.AlignHCenter
                 iconSize: 55
-                color: Appearance.colors.brighterGrey
+                color: Appearance.colors.brighterSecondary
                 text: "notifications_active"
             }
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 font.pixelSize: 16
-                color: Appearance.colors.brighterGrey
+                color: Appearance.colors.brighterSecondary
                 horizontalAlignment: Text.AlignHCenter
                 text: "No notifications"
             }
         }
     }
 
-    Item {
+    ButtonGroup {
         id: statusRow
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
-        Layout.fillWidth: true
-        implicitHeight: Math.max(
-            controls.implicitHeight,
-            statusText.implicitHeight
-        )
-
-        StyledText {
-            id: statusText
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 10
-            horizontalAlignment: Text.AlignHCenter
-            text: "%1 notifications".arg(Notifications.list.length)
-            color: Appearance.colors.extraBrightGrey
-            font.pixelSize: 14
-
-            opacity: Notifications.list.length > 0 ? 1 : 0
-            visible: opacity > 0
-            Behavior on opacity {
-                animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
-            }
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
 
-        ButtonGroup {
-            id: controls
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.rightMargin: 5
-
-            NotificationStatusButton {
-                buttonIcon: "notifications_paused"
-                buttonText: "Silent"
-                toggled: Notifications.silent
-                onClicked: () => {
-                    Notifications.silent = !Notifications.silent;
-                }
+        StatusButton {
+            Layout.fillWidth: false
+            buttonIcon: "notifications_paused"
+            toggled: Notifications.silent
+            onClicked: () => {
+                Notifications.silent = !Notifications.silent;
             }
-            NotificationStatusButton {
-                buttonIcon: "clear_all"
-                buttonText: "Clear"
-                onClicked: () => {
-                    Notifications.discardAllNotifications()
-                }
+        }
+        StatusButton {
+            enabled: false
+            Layout.fillWidth: true
+            buttonText: ("%1 notifications").arg(Notifications.list.length)
+        }
+        StatusButton {
+            Layout.fillWidth: false
+            buttonIcon: "delete_sweep"
+            onClicked: () => {
+                Notifications.discardAllNotifications()
             }
         }
     }

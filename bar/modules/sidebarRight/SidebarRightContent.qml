@@ -32,24 +32,16 @@ Item {
             }
         }
 
-        ColumnLayout {
+        SidebarRightControls {
             anchors {
                 top: parent.top
                 bottom: parent.bottom
                 left: parent.left
                 right: parent.right
-                leftMargin: 20
-                rightMargin: 20
+                margins: 12
             }
-
-            SidebarRightHeader {
-                Layout.fillWidth: true
-            }
-
-            SidebarRightControlls {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
 
         transform: Translate { x: sidebarRightContainer.width * (1 - slideProgress) }

@@ -23,7 +23,7 @@ RippleButton {
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: false
             Layout.leftMargin: 5
-            color: Appearance.colors.white
+            color: Appearance.colors.main
             iconSize: 24
             text: input ? "mic_external_on" : "media_output"
         }
@@ -37,14 +37,14 @@ RippleButton {
                 elide: Text.ElideRight
                 font.pixelSize: 16
                 text: input ? "Input" : "Output"
-                color: Appearance.colors.white
+                color: Appearance.colors.textMain
             }
             StyledText {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 font.pixelSize: 12
                 text: (input ? Pipewire.defaultAudioSource?.description : Pipewire.defaultAudioSink?.description) ?? "Unknown"
-                color: Appearance.colors.extraBrightGrey
+                color: Appearance.colors.extraBrightSecondary
             }
         }
     }

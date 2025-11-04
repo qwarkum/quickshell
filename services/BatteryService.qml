@@ -27,7 +27,7 @@ Singleton {
         if (BatteryService.isCritical) return Appearance.colors.batteryLowOnBackground
         if (BatteryService.isFullyCharged) return Appearance.colors.batteryChargedOnBackground
         if (BatteryService.isCharging) return Appearance.colors.batteryChargingOnBackground
-        return Appearance.colors.white
+        return Appearance.colors.main
     }
 
     function getProgressBackground() {
@@ -38,11 +38,10 @@ Singleton {
     }
 
     function getBatteryIcon() {
-        // if (BatteryService.isFullyCharged) return "battery_android_share"
-        // if (BatteryService.isCharging) return "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
-        if (BatteryService.isFullyCharged) return "battery_status_good"
-        if (BatteryService.isCharging || BatteryService.isFullyCharged) return "battery_charging_full" // "battery_charging_full" "battery_android_bolt" 
-        if (BatteryService.isCritical) return "battery_saver"
+        if (BatteryService.isCritical) return "power"
+        // if (BatteryService.isFullyCharged) return "battery_status_good" "battery_android_share"
+        if (BatteryService.isCharging) return "bolt" // "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
+        if (Config.batterySaverToggled) return "energy_savings_leaf" // "battery_saver"
         return "battery_full" // "battery_android_full"
     }
 }

@@ -8,9 +8,9 @@ function findSuitableMaterialSymbol(summary = "") {
     if(summary.length === 0) return defaultType;
 
     const keywordsToTypes = {
-        'reboot': 'restart_alt',
+        'reboot': 'refresh',
         'recording': 'screen_record',
-        'battery': 'power',
+        'battery': 'battery_alert',
         'power': 'power',
         'wallpaper': 'wallpaper',
         'screenshot': 'screenshot_monitor',
@@ -18,7 +18,7 @@ function findSuitableMaterialSymbol(summary = "") {
         'time': 'scheduleb',
         'installed': 'download',
         'configuration reloaded': 'reset_wrench',
-        'config': 'reset_wrench',
+        'config': 'edit',
         'update': 'update',
         'ai response': 'neurology',
         'control': 'settings',

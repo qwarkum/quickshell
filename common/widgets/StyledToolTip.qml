@@ -6,15 +6,42 @@ import qs.styles
 ToolTip {
     id: root
     property string content
+    property color tooltipColor: Appearance.colors.brightSecondary
     property bool extraVisibleCondition: true
     property bool alternativeVisibleCondition: false
     property bool internalVisibleCondition: {
         const ans = (extraVisibleCondition && (parent.hovered === undefined || parent?.hovered)) || alternativeVisibleCondition
         return ans
     }
-    verticalPadding: 8
-    horizontalPadding: 30
-    opacity: internalVisibleCondition ? 1 : 0
+    property bool shouldBeVisible: false
+    property bool delayEnabled: false
+    verticalPadding: 4
+    horizontalPadding: 7
+    
+    Timer {
+        id: closeDelayTimer
+        interval: 500
+        onTriggered: {
+            if (!root.internalVisibleCondition) {
+                root.shouldBeVisible = false
+            }
+        }
+    }
+    
+    onInternalVisibleConditionChanged: {
+        if (internalVisibleCondition) {
+            shouldBeVisible = true
+            closeDelayTimer.stop()
+        } else {
+            if (delayEnabled) {
+                closeDelayTimer.restart()
+            } else {
+                shouldBeVisible = false
+            }
+        }
+    }
+    
+    opacity: shouldBeVisible ? 1 : 0
     visible: opacity > 0
 
     Behavior on opacity {
@@ -32,10 +59,10 @@ ToolTip {
             id: backgroundRectangle
             anchors.bottom: contentItemBackground.bottom
             anchors.horizontalCenter: contentItemBackground.horizontalCenter
-            color: Appearance.colors.moduleBackground
+            color: tooltipColor
             radius: Appearance.configs.windowRadius
-            width: internalVisibleCondition ? (tooltipTextObject.width + 2 * padding) : 0
-            height: internalVisibleCondition ? (tooltipTextObject.height + 2 * padding) : 0
+            width: shouldBeVisible ? (tooltipTextObject.width + 2 * padding) : 0
+            height: shouldBeVisible ? (tooltipTextObject.height + 2 * padding) : 0
             clip: true
 
             Behavior on width {
@@ -50,8 +77,8 @@ ToolTip {
                 anchors.centerIn: parent
                 text: content
                 font.pixelSize: 14
-                font.hintingPreference: Font.PreferNoHinting // Prevent shaky text
-                color: Appearance.colors.silver
+                font.hintingPreference: Font.PreferNoHinting
+                color: Appearance.colors.textSecondary
                 wrapMode: Text.Wrap
             }
         }   

@@ -34,39 +34,39 @@ Item {
         }
     }
 
+    AudioService {
+        id: audioService
+    }
+
     ColumnLayout {
         anchors.fill: parent
+
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            StyledListView {
+
+            ListView {
                 id: listView
+                anchors.fill: parent
+                anchors.topMargin: 15
                 model: root.appPwNodes
                 clip: true
-                anchors {
-                    fill: parent
-                    topMargin: 10
-                    bottomMargin: 10
-                }
                 spacing: 15
 
                 delegate: VolumeMixerEntry {
-                    // Layout.fillWidth: true
+                    required property var modelData
+                    node: modelData
                     anchors {
                         left: parent.left
                         right: parent.right
                         leftMargin: 10
                         rightMargin: 10
                     }
-                    required property var modelData
-                    node: modelData
                 }
             }
 
-            // Placeholder when list is empty
             Item {
-                anchors.fill: listView
-
+                anchors.fill: parent
                 visible: opacity > 0
                 opacity: (root.appPwNodes.length === 0) ? 1 : 0
 
@@ -84,13 +84,14 @@ Item {
                     MaterialSymbol {
                         Layout.alignment: Qt.AlignHCenter
                         iconSize: 55
-                        color: Appearance.colors.brighterGrey
+                        color: Appearance.colors.brighterSecondary
                         text: "brand_awareness"
                     }
+
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
                         font.pixelSize: 16
-                        color: Appearance.colors.brighterGrey
+                        color: Appearance.colors.brighterSecondary
                         horizontalAlignment: Text.AlignHCenter
                         text: "No audio source"
                     }
@@ -98,18 +99,16 @@ Item {
             }
         }
 
-        // Device selector
         RowLayout {
-            id: deviceSelectorRowLayout
             Layout.fillWidth: true
             Layout.fillHeight: false
-            uniformCellSizes: true
 
             AudioDeviceSelectorButton {
                 Layout.fillWidth: true
                 input: false
                 onClicked: root.showDeviceSelectorDialog(input)
             }
+
             AudioDeviceSelectorButton {
                 Layout.fillWidth: true
                 input: true
@@ -118,10 +117,8 @@ Item {
         }
     }
 
-    // Device selector dialog
     Item {
         anchors.fill: parent
-        z: 9999
 
         visible: opacity > 0
         opacity: root.showDeviceSelector ? 1 : 0
@@ -137,7 +134,7 @@ Item {
             id: scrimOverlay
             anchors.fill: parent
             radius: 12
-            color: "transparent"
+            color: "red"
             MouseArea {
                 hoverEnabled: true
                 anchors.fill: parent
@@ -148,7 +145,7 @@ Item {
 
         Rectangle { // The dialog
             id: dialog
-            color: Appearance.colors.darkGrey
+            color: Appearance.colors.darkSecondary
             radius: 12
             anchors.left: parent.left
             anchors.right: parent.right
@@ -167,13 +164,13 @@ Item {
                     Layout.leftMargin: dialogMargins
                     Layout.rightMargin: dialogMargins
                     Layout.alignment: Qt.AlignLeft
-                    color: Appearance.colors.white
+                    color: Appearance.colors.textMain
                     font.pixelSize: 14
                     text: root.deviceSelectorInput ? "Select input device" : "Select output device"
                 }
 
                 Rectangle {
-                    color: Appearance.colors.grey
+                    color: Appearance.colors.secondary
                     implicitHeight: 1
                     Layout.fillWidth: true
                     Layout.leftMargin: dialogMargins
@@ -234,7 +231,7 @@ Item {
                 }
 
                 Rectangle {
-                    color: Appearance.colors.grey
+                    color: Appearance.colors.secondary
                     implicitHeight: 1
                     Layout.fillWidth: true
                     Layout.leftMargin: dialogMargins

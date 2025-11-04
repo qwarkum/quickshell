@@ -24,9 +24,9 @@ Rectangle {
     }
 
     topLeftRadius: rowLayout.children.length > 0 ? (rowLayout.children[0].radius + padding) : 6
-    bottomLeftRadius: topLeftRadius
+    bottomLeftRadius: rowLayout.children.length > 0 ? (rowLayout.children[0].radius + padding) : 6
     topRightRadius: rowLayout.children.length > 0 ? (rowLayout.children[rowLayout.children.length - 1].radius + padding) : 6
-    bottomRightRadius: topRightRadius
+    bottomRightRadius: rowLayout.children.length > 0 ? (rowLayout.children[rowLayout.children.length - 1].radius + padding) : 6
 
     color: "transparent"
     width: root.contentWidth + padding * 2

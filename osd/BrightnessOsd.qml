@@ -2,102 +2,95 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
+import Quickshell.Wayland
+import Quickshell.Hyprland
 import Quickshell.Io
 import qs.icons
 import qs.styles
+import qs.services
 import qs.common.widgets
-import qs.common.ipcHandlers
 
 Scope {
     id: root
 
-    // Public properties
-    property real brightness: 1
     property bool visible: false
-    
-    // Internal properties
-    property bool _pendingUpdate: false
     property real valueIndicatorVerticalPadding: 9
     property real valueIndicatorLeftPadding: 10
     property real valueIndicatorRightPadding: 20
     
+    // Get the current brightness from the focused monitor
+    property real currentBrightness: {
+        const focusedName = Hyprland.focusedMonitor?.name;
+        const monitor = BrightnessService.monitors.find(m => m.screen.name === focusedName);
+        return monitor ? monitor.brightness : 0.5;
+    }
+    
     Timer {
         id: hideTimer
         interval: 1000
-        onTriggered: root.visible = false
-    }
-
-    function showOsd() {
-        visible = true;
-        hideTimer.restart();
-    }
-
-    function updateBrightness() {
-        brightnessGetProc.running = true;
-    }
-
-    function handleBrightnessChange() {
-        if (_pendingUpdate) {
-            updateBrightness();
+        onTriggered: {
+            root.visible = false
+            Config.brightnessOsdOpen = false
         }
-        _pendingUpdate = false;
-        showOsd();
     }
 
-    function incrementBrightness() {
-        if (_pendingUpdate) return;
-        _pendingUpdate = true;
-        brightnessIncProc.running = true;
-    }
-
-    function decrementBrightness() {
-        if (_pendingUpdate) return;
-        _pendingUpdate = true;
-        brightnessDecProc.running = true;
-    }
-
-    BrightnessIpcHandler {
-        root: root
-    }
-
-    Process {
-        id: brightnessGetProc
-        command: ["brightnessctl", "info"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                var percentMatch = text.match(/\((\d+)%\)/);
-                if (percentMatch && percentMatch[1]) {
-                    var actualValue = parseInt(percentMatch[1]) / 100;
-                    root.brightness = actualValue;
-                }
+    Connections {
+        target: Config
+        function onAudioOsdOpenChanged() {
+            if(Config.audioOsdOpen) {
+                root.visible = false
             }
         }
     }
 
-    Process {
-        id: brightnessIncProc
-        command: ["brightnessctl", "-e4", "-n2", "set", "5%+"]
-        onExited: {handleBrightnessChange()}
+    function showOsd() {
+        visible = true;
+        Config.brightnessOsdOpen = true;
+        hideTimer.restart();
     }
 
-    Process {
-        id: brightnessDecProc
-        command: ["brightnessctl", "-e4", "-n2", "set", "5%-"]
-        onExited: handleBrightnessChange()
+    IpcHandler {
+        id: brightnessHandler
+        target: "brightness"
+
+        function show() {
+            root.showOsd();
+        }
+
+        function increment() {
+            BrightnessService.increaseBrightness();
+            root.showOsd();
+        }
+
+        function decrement() {
+            BrightnessService.decreaseBrightness();
+            root.showOsd();
+        }
     }
 
-    // Initialize brightness on startup
-    Component.onCompleted: updateBrightness()
+    // Listen for brightness changes from the service
+    Connections {
+        target: BrightnessService
+        function onBrightnessChanged() {
+            // Refresh the display when brightness changes
+            if (root.visible) {
+                hideTimer.restart();
+            } else {
+                root.showOsd()
+            }
+        }
+    }
 
     LazyLoader {
         active: root.visible
 
         PanelWindow {
             anchors.top: true
-            margins.top: Appearance.configs.barHeight / 2
+            WlrLayershell.namespace: "quickshell:osd"
+            WlrLayershell.layer: WlrLayer.Top
             exclusiveZone: 0
 
-            implicitWidth: Appearance.configs.osdWidth
+            implicitWidth: Appearance.configs.osdWidth + Appearance.configs.panelRadius * 2
             implicitHeight: Appearance.configs.osdHeight
             color: "transparent"
 
@@ -105,10 +98,33 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
+                anchors.rightMargin: Appearance.configs.panelRadius
+                anchors.leftMargin: Appearance.configs.panelRadius
                 radius: Appearance.configs.windowRadius
+                topLeftRadius: 0
+                topRightRadius: 0
                 color: Appearance.colors.osdBackground
-                border.color: Appearance.colors.osdBorder
-                border.width: Appearance.configs.windowBorderWidth
+
+                RoundCorner {
+                    corner: RoundCorner.CornerEnum.TopRight
+                    implicitSize: Appearance.configs.panelRadius
+                    color: Appearance.colors.panelBackground
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        leftMargin: -Appearance.configs.panelRadius
+                    }
+                }
+                RoundCorner {
+                    corner: RoundCorner.CornerEnum.TopLeft
+                    implicitSize: Appearance.configs.panelRadius
+                    color: Appearance.colors.panelBackground
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                        rightMargin: -Appearance.configs.panelRadius
+                    }
+                }
 
                 RowLayout {
                     id: valueRow
@@ -125,27 +141,24 @@ Scope {
                         Layout.bottomMargin: valueIndicatorVerticalPadding
 
                         MaterialSymbol {
-                            anchors {
-                                centerIn: parent
-                                alignWhenCentered: !root.rotateIcon
-                            }
-                            color: Appearance.colors.white
-                            text: "clear_day"
-
-                            iconSize: 30
+                            anchors.centerIn: parent
+                            color: Appearance.colors.textMain
+                            text: "brightness_6"
+                            iconSize: 31
                         }
                     }
-                    ColumnLayout { // Stuff
+                    
+                    ColumnLayout {
                         Layout.alignment: Qt.AlignVCenter
                         Layout.rightMargin: valueIndicatorRightPadding
                         spacing: 5
 
-                        RowLayout { // Name fill left, value on the right end
-                            Layout.leftMargin: valueProgressBar.height / 2 // Align text with progressbar radius curve's left end
-                            Layout.rightMargin: valueProgressBar.height / 2 // Align text with progressbar radius curve's left end
+                        RowLayout {
+                            Layout.leftMargin: valueProgressBar.height / 2
+                            Layout.rightMargin: valueProgressBar.height / 2
 
                             Text {
-                                color: Appearance.colors.white
+                                color: Appearance.colors.textMain
                                 font {
                                     pixelSize: 14
                                     family: Appearance.fonts.rubik
@@ -155,20 +168,20 @@ Scope {
                             }
 
                             Text {
-                                color: Appearance.colors.white
+                                color: Appearance.colors.textMain
                                 font {
                                     pixelSize: 14
                                     family: Appearance.fonts.rubik
                                 }
                                 Layout.fillWidth: false
-                                text: Math.round(brightness * 100)
+                                text: Math.round(root.currentBrightness * 100)
                             }
                         }
                         
                         StyledProgressBar {
                             id: valueProgressBar
                             Layout.fillWidth: true
-                            value: brightness
+                            value: root.currentBrightness
                         }
                     }
                 }

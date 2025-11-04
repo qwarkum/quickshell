@@ -13,8 +13,8 @@ ProgressBar {
     property real valueBarWidth: 120
     property real valueBarHeight: 4
     property real valueBarGap: 4
-    property color highlightColor: Appearance.colors.white
-    property color trackColor: Appearance.colors.grey
+    property color highlightColor: Appearance.colors.main
+    property color trackColor: Appearance.colors.secondary
     property bool sperm: false // If true, the progress bar will have a wavy fill effect
     property bool animateSperm: false
     property real spermAmplitudeMultiplier: sperm ? 0.5 : 0
