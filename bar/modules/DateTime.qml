@@ -24,7 +24,7 @@ Item {
     Rectangle {
         id: background
         anchors.verticalCenter: parent.verticalCenter
-        width: dateTimeModule.width + 25
+        width: dateTimeModule.width + 35
         height: Appearance.configs.moduleHeight
         color: Appearance.colors.moduleBackground
         border.color: Appearance.colors.moduleBorder
@@ -46,11 +46,12 @@ Item {
             spacing: 5
 
             StyledText {
+                id: time
                 text: TimeUtil.time
                 font {
-                    pixelSize: 16
+                    pixelSize: 15
                 }
-                Layout.preferredWidth: font.pixelSize * 3.8
+                Layout.preferredWidth: font.pixelSize * 4
             }
 
             StyledText {
@@ -63,7 +64,7 @@ Item {
             StyledText {
                 text: TimeUtil.date
                 font {
-                    pixelSize: 16
+                    pixelSize: 15
                 }
             }
         }

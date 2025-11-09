@@ -191,7 +191,7 @@ AbstractQuickPanel {
                     Layout.bottomMargin: -8
                 }
 
-                ListView {
+                StyledListView {
                     id: wifiList
                     Layout.fillWidth: true
                     Layout.preferredHeight: Math.min(contentHeight, 300)

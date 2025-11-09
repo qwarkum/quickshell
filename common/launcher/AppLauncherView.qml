@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.common.components
+import qs.common.widgets
 import qs.styles
 
 ColumnLayout {
@@ -79,7 +80,7 @@ ColumnLayout {
         }
     }
 
-    ListView {
+    StyledListView {
         id: appList
         model: filteredAppModel
         Layout.fillWidth: true

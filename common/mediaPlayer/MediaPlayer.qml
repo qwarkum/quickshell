@@ -19,15 +19,27 @@ PanelWindow {
     id: mediaPopup
     implicitWidth: 440 + Appearance.configs.panelRadius * 2
     implicitHeight: 170
-    margins.left: 350 - (implicitWidth - 226) / 2
     color: "transparent"
     visible: false
     WlrLayershell.namespace: "quickshell:mediaPlayer"
 
-    anchors.top: true
-    anchors.left: true
+    // Find the focused monitor
+    property var focusedScreen: {
+        if (!Hyprland.focusedMonitor) return Quickshell.primaryScreen
+        for (let i = 0; i < Quickshell.screens.length; i++) {
+            if (Quickshell.screens[i].name === Hyprland.focusedMonitor.name) {
+                return Quickshell.screens[i]
+            }
+        }
+        return Quickshell.primaryScreen
+    }
+
+    screen: focusedScreen ?? null
     exclusiveZone: 0
 
+    anchors.top: true
+    anchors.left: true
+    margins.left: screen ? screen.width / 4.5 : 300
 
     // Animation properties - same as calendar panel
     property real slideProgress: 0.0 // 0.0 = hidden, 1.0 = fully visible

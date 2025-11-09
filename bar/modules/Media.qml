@@ -68,9 +68,9 @@ Item {
                 Text {
                     id: playPauseButton
                     anchors.centerIn: parent
-                    color: MprisController.activePlayer ? Appearance.colors.main : Appearance.colors.bright
+                    color: MprisController.activePlayer ? Appearance.colors.main : Appearance.colors.textSecondary
                     text: {
-                        if (!MprisController.activePlayer) return Icons.music
+                        if (!MprisController.activePlayer) return Icons.music_note
                         return MprisController.isPlaying ? Icons.media_pause : Icons.media_play
                     }
                     font {
@@ -79,6 +79,7 @@ Item {
                     }
 
                     MouseArea {
+                        enabled: MprisController.activePlayer
                         anchors.fill: parent
                         onClicked: if (MprisController.canTogglePlaying) MprisController.togglePlaying()
                         cursorShape: Qt.PointingHandCursor
@@ -97,12 +98,13 @@ Item {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     text: MprisController.activeTrack?.title || "No media"
-                    color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.bright
+                    color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.textSecondary
                     font.pixelSize: 14
                     elide: Text.ElideRight
                 }
 
                 MouseArea {
+                    enabled: MprisController.activePlayer
                     anchors.fill: parent
                     onClicked: {
                         Config.mediaPlayerOpen = true

@@ -51,7 +51,8 @@ Item {
             Item {
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: parent.height
-                Layout.rightMargin: 10
+                Layout.leftMargin: 2
+                Layout.rightMargin: 12
                 
                 StyledText {
                     id: batteryPercentage
@@ -60,7 +61,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     text: (percentage * 100).toFixed(0)
                     color: BatteryService.progressColor
-                    font.pixelSize: 16
+                    font.pixelSize: 15
                 }
             }
         }

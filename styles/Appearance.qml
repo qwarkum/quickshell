@@ -12,7 +12,7 @@ QtObject {
         property color textSecondary: Theme.textSecondary
         property color almostMain: Theme.almostMain
         property color closeToMain: Theme.closeToMain
-        property color blue: Theme.blue
+        // property color blue: Theme.blue
         property color darkUrgent: Theme.darkUrgent
         property color urgent: Theme.urgent
         property color brightUrgent: Theme.brightUrgent
@@ -74,7 +74,8 @@ QtObject {
         property int barHeight: 40
         property int sidebarWidth: 500
 
-        property int batteryCriticalPercentage: 20
+        property int batteryLowPercentage: 20
+        property int batteryCriticalPercentage: 5
         property int batteryFullyChargedPercentage: 90
 
         property int rightContentModuleWidth: 20

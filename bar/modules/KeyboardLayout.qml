@@ -12,8 +12,9 @@ Item {
     
     StyledText {
         horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
         text: HyprlandXkb.currentLayoutCode
-        font.pixelSize: 16
+        font.pixelSize: 15
         color: Appearance.colors.textMain
         animateChange: true
     }

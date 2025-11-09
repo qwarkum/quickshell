@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
+import Qt5Compat.GraphicalEffects
 import qs.common.components
 import qs.common.widgets
 import qs.common.utils
@@ -21,14 +22,35 @@ Item {
         anchors.fill: parent
         spacing: 8
 
-        Image {
-            property real size: slider.height * 1.4
+        Item {
+            Layout.preferredWidth: appImage.size
+            Layout.preferredHeight: appImage.size
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            visible: source != ""
-            sourceSize.width: size
-            sourceSize.height: size
-            fillMode: Image.PreserveAspectCrop
-            source: Quickshell.iconPath(AppSearch.guessIcon((root.node.name)))
+            
+            Image {
+                id: appImage
+                property real size: slider.height * 1.4
+                visible: source != ""
+                sourceSize.width: size
+                sourceSize.height: size
+                fillMode: Image.PreserveAspectCrop
+                source: Quickshell.iconPath(AppSearch.guessIcon((root.node.name)))
+            }
+
+            Desaturate {
+                id: desaturatedIcon
+                visible: false // There's already color overlay
+                anchors.fill: parent
+                source: appImage
+                desaturation: 0.6
+            }
+            
+            ColorOverlay {
+                visible: Config.iconOverlayEnabled
+                anchors.fill: desaturatedIcon
+                source: desaturatedIcon
+                color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+            }
         }
 
         ColumnLayout {

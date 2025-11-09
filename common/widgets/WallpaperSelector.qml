@@ -75,8 +75,8 @@ PanelWindow {
         notifier.message = "Wallpaper changed to %1".arg(selected.fileName)
         notifier.running = true
 
-        applyWalTheme.fileName = selected.fileName
-        applyWalTheme.running = true
+        applyMatugenTheme.fileName = selected.fileName
+        applyMatugenTheme.running = true
 
         toggle()
     }
@@ -134,13 +134,23 @@ PanelWindow {
         }
     }
 
+    // Process {
+    //     id: applyWalTheme
+    //     property string fileName: ""
+    //     command: ["wal", "-i", root.wallpapersPath + "/" + fileName]
+
+    //     onExited: function(exitCode, exitStatus) {
+    //         console.log("Wal theme applied:", root.wallpapersPath + "/" + fileName, "| exit code:", exitCode)
+    //     }
+    // }
+
     Process {
-        id: applyWalTheme
+        id: applyMatugenTheme
         property string fileName: ""
-        command: ["wal", "-i", root.wallpapersPath + "/" + fileName]
+        command: ["matugen", "image", root.wallpapersPath + "/" + fileName]
 
         onExited: function(exitCode, exitStatus) {
-            console.log("Wal theme applied:", root.wallpapersPath + "/" + fileName, "| exit code:", exitCode)
+            console.log("Matugen color scheme applied:", root.wallpapersPath + "/" + fileName, "| exit code:", exitCode)
         }
     }
 

@@ -19,4 +19,12 @@ Text {
         }
     }
     color: Appearance.colors.textMain
+
+    // Behavior on fill { // Leaky leaky, no good
+    //     NumberAnimation {
+    //         duration: Appearance?.animation.elementMoveFast.duration ?? 200
+    //         easing.type: Appearance?.animation.elementMoveFast.type ?? Easing.BezierSpline
+    //         easing.bezierCurve: Appearance?.animation.elementMoveFast.bezierCurve ?? [0.34, 0.80, 0.34, 1.00, 1, 1]
+    //     }
+    // }
 }

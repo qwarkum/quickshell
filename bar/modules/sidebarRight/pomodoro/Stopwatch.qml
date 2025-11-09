@@ -79,6 +79,7 @@ Item {
             }
             spacing: 4
             clip: true
+            animateAppearance: true
             popin: true
 
             model: ScriptModel {

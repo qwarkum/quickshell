@@ -218,7 +218,7 @@ MouseArea { // Notification group area
                     }
                 }
 
-                ListView { // Notification body (expanded)
+                StyledListView { // Notification body (expanded)
                     id: notificationsColumn
                     implicitHeight: contentHeight
                     Layout.fillWidth: true

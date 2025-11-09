@@ -23,7 +23,7 @@ Scope {
     LazyLoader {active: true; component: AudioOsd {} }
 
     LazyLoader {active: true; component: MediaPlayer {} }
-    LazyLoader {active: true; component: WallpaperSelector {} }
+    LazyLoader {active: true; component: WallpaperSelector {} } // <-- this shit use a half of RAM
     LazyLoader {active: true; component: SessionScreen {} }
 
     LazyLoader { active: true; component: NotificationPopup {} }

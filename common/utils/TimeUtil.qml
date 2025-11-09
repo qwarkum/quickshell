@@ -11,7 +11,7 @@ import Quickshell.Io
 Singleton {
     property string uptime: "0m"
 
-    property string time: Qt.formatDateTime(clock.date, "h:mm:ss")
+    property string time: Qt.formatDateTime(clock.date, "hh:mm:ss")
     property string timeNoSeconds: Qt.formatDateTime(clock.date, "h:mm")
     property string date: Qt.formatDateTime(clock.date, "dddd, dd.MM")
     property string dateMonthName: Qt.formatDateTime(clock.date, "dddd, dd MMMM")

@@ -53,9 +53,9 @@ Item {
         implicitWidth: workspaceColumnLayout.implicitWidth + padding * 2
         implicitHeight: workspaceColumnLayout.implicitHeight + padding * 2
         radius: Appearance.configs.windowRadius + padding
-        color: Appearance.colors.moduleBackground
+        color: Appearance.colors.panelBackground
         border.width: 1
-        border.color: Appearance.colors.brightSecondary
+        border.color: Appearance.colors.secondary
 
         ColumnLayout { // Workspaces
             id: workspaceColumnLayout
@@ -76,9 +76,9 @@ Item {
                             id: workspace
                             property int colIndex: index
                             property int workspaceValue: root.workspaceGroup * workspacesShown + rowIndex * 5 + colIndex + 1
-                            property color defaultWorkspaceColor: Appearance.colors.darkSecondary
-                            property color hoveredWorkspaceColor: Appearance.colors.secondary
-                            property color hoveredBorderColor: Appearance.colors.brighterSecondary
+                            property color defaultWorkspaceColor: Appearance.colors.moduleBackground
+                            property color hoveredWorkspaceColor: Appearance.colors.darkSecondary
+                            property color hoveredBorderColor: Appearance.colors.brightSecondary
                             property bool hoveredWhileDragging: false
 
                             implicitWidth: root.workspaceImplicitWidth

@@ -51,13 +51,13 @@ Item {
             MaterialSymbol {
                 Layout.alignment: Qt.AlignHCenter
                 iconSize: 55
-                color: Appearance.colors.brighterSecondary
+                color: Appearance.colors.bright
                 text: "notifications_active"
             }
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
-                font.pixelSize: 16
-                color: Appearance.colors.brighterSecondary
+                font.pixelSize: 18
+                color: Appearance.colors.bright
                 horizontalAlignment: Text.AlignHCenter
                 text: "No notifications"
             }

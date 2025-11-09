@@ -120,7 +120,7 @@ Rectangle {
             // text: `${DateTime.collapsedCalendarFormat}   •   ${remainingTasks} task${remainingTasks > 1 ? "s" : ""}`
             text: "%1   •   %2 tasks".arg(TimeUtil.calendarDate).arg(remainingTasks)
             font.pixelSize: 14
-            color: Appearance.colors.extraBrightSecondary
+            color: Appearance.colors.textSecondary
         }
     }
 

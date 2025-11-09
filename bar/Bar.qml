@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.styles
 import qs.bar.modules
+import qs.bar.modules.workspaces
 import qs.common.widgets
 
 Scope {
