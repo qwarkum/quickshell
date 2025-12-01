@@ -30,53 +30,79 @@ ColumnLayout {
     }
 
     function updateFilteredModel() {
-        filteredAppModel.clear()
-        if (filterText === "") {
-            visibleItemCount = 0
-            return
+        filteredAppModel.clear();
+
+        const input = filterText.trim();
+
+        if (input.startsWith("=")) {
+            const expr = input.substring(1).trim();
+            if (expr.length > 0) {
+                let result = searchInput.calculate(expr);
+                // force result to string
+                result = result === undefined ? "" : result.toString();
+
+                filteredAppModel.append({
+                    name: result, // expr + " = " + result,
+                    cmd: "",
+                    iconName: "",
+                    isFormula: true,
+                    formulaResult: result // string
+                });
+            }
+            appList.currentIndex = 0;
+            visibleItemCount = filteredAppModel.count;
+            return;
         }
 
-        // Dynamic app search
-        var results = AppSearch.fuzzyQuery(filterText)
-        for (var i = 0; i < results.length; i++) {
-            var entry = results[i]
+        if (input === "") {
+            visibleItemCount = 0;
+            return;
+        }
+
+        const results = AppSearch.fuzzyQuery(input);
+        for (let i = 0; i < results.length; i++) {
+            const entry = results[i];
             filteredAppModel.append({
                 name: entry.Name || entry.name || entry.DisplayName || entry.displayName || "Unknown",
-                cmd: extractCommandFromEntry(entry),
-                iconName: AppSearch.guessIcon(entry.Name || entry.name),
-                rawEntry: entry
-            })
+                cmd: extractCommandFromEntry(entry) || "",
+                iconName: AppSearch.guessIcon(entry.Name || entry.name) || "",
+                rawEntry: entry,
+                isFormula: false
+            });
         }
 
-        visibleItemCount = filteredAppModel.count
-        if (filteredAppModel.count > 0) appList.currentIndex = 0
+        visibleItemCount = filteredAppModel.count;
+        if (filteredAppModel.count > 0) appList.currentIndex = 0;
     }
 
-    function launchCurrentApp(command: string) {
-        // if(command.startsWith('>')) {
-        //     var execCommand = command.substring(1)
-        //     Quickshell.execDetached(["bash", "-c", execCommand])
-        //     console.log(execCommand)
-        //     return
-        // }
-        if (filteredAppModel.count > 0 && appList.currentIndex >= 0) {
-            let item = filteredAppModel.get(appList.currentIndex)
 
-            if (!item.cmd) {
-                console.log("No command for", item.name)
-                return
+    function launchCurrentApp(command) {
+        if (filteredAppModel.count > 0 && appList.currentIndex >= 0) {
+            let item = filteredAppModel.get(appList.currentIndex);
+
+            if (item.isFormula) {
+                // Copy formula result to clipboard
+                // Quickshell.copyToClipboard(item.formulaResult.toString());
+                // Config.launcherOpen = false;
+                return;
             }
 
-            const runInTerminal = item.rawEntry.runInTerminal || false
-            if (runInTerminal) 
-                Quickshell.execDetached(["kitty", item.cmd])
-            else 
-                Quickshell.execDetached(["bash", "-c", item.cmd])
+            if (!item.cmd) {
+                console.log("No command for", item.name);
+                return;
+            }
 
-            Config.launcherOpen = false
+            const runInTerminal = item.rawEntry.runInTerminal || false;
+            if (runInTerminal) 
+                Quickshell.execDetached(["kitty", item.cmd]);
+            else 
+                Quickshell.execDetached(["bash", "-c", item.cmd]);
+
+            Config.launcherOpen = false;
         } else {
-            Quickshell.execDetached(["bash", "-c", command])
-            Config.launcherOpen = false
+            // Execute typed command if no items
+            Quickshell.execDetached(["bash", "-c", command]);
+            Config.launcherOpen = false;
         }
     }
 

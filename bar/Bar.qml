@@ -16,98 +16,87 @@ Scope {
         id: root
         model: Quickshell.screens
 
-        function toggle() {
-            Config.barOpen = !Config.barOpen
-        }
+        LazyLoader {
+            id: barLoader
+            active: Config.barOpen && !GlobalStates.screenLocked
+            required property ShellScreen modelData
+            component: PanelWindow {
+                id: bar
+                screen: modelData
+                color: "transparent"
+                implicitHeight: Appearance.configs.barHeight
 
-        PanelWindow {
-            id: bar
-            screen: modelData
-            color: "transparent"
-            WlrLayershell.namespace: "quickshell:bar"
-            WlrLayershell.layer: WlrLayer.Overlay
-            
-            // Panel positioning
-            anchors {
-                top: true
-                left: true
-                right: true
-            }
-            implicitHeight: Appearance.configs.barHeight
-            visible: Config.barOpen && !Hyprland.focusedWorkspace?.hasFullscreen
-
-            required property var modelData
-
-            Rectangle {
-                id: barRectangle
-                anchors.fill: parent
-                border.color: Appearance.colors.moduleBorder
-                border.width: Appearance.configs.windowBorderWidth
-                color: Appearance.colors.panelBackground
-
-                // --- Animate opacity and height ---
-                opacity: Config.barOpen ? 1 : 0
-                height: Config.barOpen ? Appearance.configs.barHeight : 0
-
-                Behavior on opacity {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
-                }
-                Behavior on height {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                // WlrLayershell.layer: Hyprland.focusedWorkspace.hasFullscreen ? WlrLayer.Top : WlrLayer.Overlay
+                WlrLayershell.namespace: "quickshell:bar"
+                exclusionMode: ExclusionMode.Ignore
+                exclusiveZone: Appearance.configs.barHeight
+                
+                // Panel positioning
+                anchors {
+                    top: true
+                    left: true
+                    right: true
                 }
 
-                Item {
+                Rectangle {
+                    id: barRectangle
                     anchors.fill: parent
-                    opacity: barRectangle.opacity
-                    visible: opacity > 0.01
+                    border.color: Appearance.colors.moduleBorder
+                    border.width: Appearance.configs.windowBorderWidth
+                    color: Appearance.colors.panelBackground
 
-                    // Left & right sections (edge-aligned)
-                    RowLayout {
-                        id: edgeRow
+                    Item {
                         anchors.fill: parent
-                        anchors.margins: 0
-                        spacing: 0
+                        opacity: barRectangle.opacity
+                        visible: opacity > 0.01
 
-                        // Resources { Layout.leftMargin: 10 }
+                        // Left & right sections (edge-aligned)
+                        RowLayout {
+                            id: edgeRow
+                            anchors.fill: parent
+                            anchors.margins: 0
+                            spacing: 0
 
-                        // Spacer to push right content
-                        Item { Layout.fillWidth: true }
+                            // Resources { Layout.leftMargin: 10 }
 
-                        // Right side
-                        RightContent { Layout.rightMargin: 15 }
-                    }
+                            // Spacer to push right content
+                            Item { Layout.fillWidth: true }
 
-                    // Center group (independent from layout)
-                    RowLayout {
-                        id: centerGroup
-                        anchors.centerIn: parent
-                        spacing: 10
+                            // Right side
+                            RightContent { Layout.rightMargin: 15 }
+                        }
 
-                        Media {}
-                        Workspaces {}
-                        DateTime {}
-                        Battery { Layout.rightMargin: 10 }
+                        // Center group (independent from layout)
+                        RowLayout {
+                            id: centerGroup
+                            anchors.centerIn: parent
+                            spacing: 10
+
+                            Media {}
+                            Workspaces {}
+                            DateTime {}
+                            Battery { Layout.rightMargin: 10 }
+                        }
                     }
                 }
-            }
 
-            BarBottomCorners {
-                id: barBottomCorners
-                visible: Config.cornersVisible && bar.visible
+                BarBottomCorners {
+                    id: barBottomCorners
+                    visible: Config.cornersVisible && bar.visible
 
-                Behavior on visible {
-                    animation: Appearance.animation.elementMove.numberAnimation.createObject(bar)
+                    Behavior on visible {
+                        animation: Appearance.animation.elementMove.numberAnimation.createObject(bar)
+                    }
                 }
             }
         }
     }
 
     IpcHandler {
-        id: barHandler
         target: "bar"
 
         function toggle() {
-            root.toggle();
+            Config.barOpen = !Config.barOpen
         }
     }
 }

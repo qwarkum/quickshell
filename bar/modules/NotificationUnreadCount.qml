@@ -33,7 +33,7 @@ MaterialSymbol {
             anchors.centerIn: parent
             font.pixelSize: 11
             color: Appearance.colors.panelBackground
-            text: Notifications.unread
+            text: Notifications.unread > 9 ? "+" : Notifications.unread 
         }
     }
 }

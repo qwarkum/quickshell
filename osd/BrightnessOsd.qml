@@ -88,7 +88,7 @@ Scope {
             anchors.top: true
             WlrLayershell.namespace: "quickshell:osd"
             WlrLayershell.layer: WlrLayer.Top
-            exclusiveZone: 0
+            exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
 
             implicitWidth: Appearance.configs.osdWidth + Appearance.configs.panelRadius * 2
             implicitHeight: Appearance.configs.osdHeight

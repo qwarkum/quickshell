@@ -36,7 +36,7 @@ Item {
                 implicitSize: 26
                 colSecondary: BatteryService.progressBackground
                 colPrimary: BatteryService.progressColor
-                enableAnimation: true
+                enableAnimation: false
 
                 MaterialSymbol {
                     id: batteryIcon

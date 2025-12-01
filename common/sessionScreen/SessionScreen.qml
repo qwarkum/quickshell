@@ -144,6 +144,7 @@ PanelWindow {
                 Text {
                     text: "Session Options"
                     font.pixelSize: 32
+                    font.weight: Font.Medium
                     font.family: Appearance.fonts.rubik
                     color: Appearance.colors.textMain
                     Layout.alignment: Qt.AlignHCenter
@@ -153,7 +154,7 @@ PanelWindow {
                     text: "Arrow keys to navigate, Enter to select\nEsc or click anywhere to cancel"
                     font.pixelSize: 18
                     font.family: Appearance.fonts.rubik
-                    color: Appearance.colors.textSecondary
+                    color: Appearance.colors.textMain
                     Layout.alignment: Qt.AlignHCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -233,7 +234,11 @@ PanelWindow {
                         color: Appearance.colors.darkSecondary
                         opacity: sessionScreen.selectedIndex >= 0 ? 1 : 0
                         
-                        Behavior on opacity { NumberAnimation { duration: 200 } }
+                        // Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                        Behavior on width {
+                            animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
+                        }
 
                         Text {
                             id: selectedLabelText

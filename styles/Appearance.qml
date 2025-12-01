@@ -83,7 +83,7 @@ QtObject {
 
     readonly property QtObject fonts: QtObject {
         property string rubik: "Rubik"
-        property string jetbrainsMonoNerd: "jetbrainsMonoNerdMono Nerd Font"
+        property string jetbrainsMonoNerd: "JetBrainsMono Nerd Font Mono"
         property string materialSymbolsRounded: "Material Symbols Rounded"
     }
 

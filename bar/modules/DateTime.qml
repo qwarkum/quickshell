@@ -51,7 +51,7 @@ Item {
                 font {
                     pixelSize: 15
                 }
-                Layout.preferredWidth: font.pixelSize * 4
+                Layout.preferredWidth: font.pixelSize * 4.2
             }
 
             StyledText {

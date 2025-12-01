@@ -2,12 +2,15 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Widgets
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import qs.icons
 import qs.styles
 import qs.services
 import qs.common.widgets
+import qs.common.components
 
 Scope {
     id: root
@@ -32,6 +35,8 @@ Scope {
         }
     }
 
+    property string selectedFile: ""
+
     LazyLoader {
         active: audioService.shouldShowOsd
 
@@ -39,7 +44,7 @@ Scope {
             anchors.top: true
             WlrLayershell.namespace: "quickshell:osd"
             WlrLayershell.layer: WlrLayer.Top
-            exclusiveZone: 0
+            exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
 
             implicitWidth: Appearance.configs.osdWidth + Appearance.configs.panelRadius * 2
             implicitHeight: Appearance.configs.osdHeight

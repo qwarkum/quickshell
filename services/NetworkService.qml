@@ -257,10 +257,10 @@ Singleton {
                 const ip = text.trim();
                 if (ip) {
                     root.ipAddress = ip;
-                    console.log("Current IP address:", ip);
+                    // console.log("Current IP address:", ip);
                 } else {
                     root.ipAddress = "Not connected";
-                    console.log("No IP address found");
+                    // console.log("No IP address found");
                 }
             }
         }

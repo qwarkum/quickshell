@@ -20,7 +20,7 @@ GroupButton {
     colBackgroundToggledHover: Appearance.colors.almostMain
     colBackgroundToggledActive: Appearance.colors.closeToMain
     colBackgroundToggled: Appearance.colors.main
-    property color colText: toggled ? Appearance.colors.moduleBackground : Appearance.colors.textSecondary
+    property color colText: toggled ? Appearance.colors.moduleBackground : Appearance.colors.textMain
 
     contentItem: Item {
         id: content

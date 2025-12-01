@@ -88,7 +88,6 @@ PanelWindow {
         }
 
         ListModel { id: filteredAppModel }
-        ListModel { id: fullAppModel } // optional, can keep empty
 
         AppLauncherView {
             id: appLauncherView

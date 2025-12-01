@@ -58,15 +58,20 @@ Scope {
                 color: Appearance.colors.panelBackground
             }
 
-            NotificationListView {
-                id: listview
+            Rectangle {
                 anchors {
                     top: parent.top
-                    bottom: parent.bottom
                     right: parent.right
                 }
                 implicitWidth: parent.width - Appearance.configs.panelRadius
-                popup: true
+                implicitHeight: listview.contentHeight
+                color: Appearance.colors.panelBackground
+                bottomLeftRadius: Appearance.configs.panelRadius
+                NotificationListView {
+                    id: listview
+                    anchors.fill: parent
+                    popup: true
+                }
             }
         }
     }

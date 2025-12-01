@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import Qt.labs.platform
 import QtQuick
 import Quickshell
+import Quickshell.Io
 
 Singleton {
     // XDG Dirs, with "file://"
@@ -18,13 +19,15 @@ Singleton {
     readonly property string music: StandardPaths.standardLocations(StandardPaths.MusicLocation)[0]
     readonly property string videos: StandardPaths.standardLocations(StandardPaths.MoviesLocation)[0]
     
+    property string scriptPath: Quickshell.shellPath("scripts")
     readonly property string todoPath: trimFileProtocol(`${Directories.state}/user/todo.json`)
     readonly property string shellConfigName: "config.json"
     readonly property string shellConfigPath: `${Directories.shellConfig}/${Directories.shellConfigName}`
     
     readonly property string wallpapersNotTrimed: `${Directories.pictures}/wallpapers`
     readonly property string wallpapers: trimFileProtocol(`${Directories.pictures}/wallpapers`)
-    readonly property string currentWallpaper: trimFileProtocol(`${Directories.pictures}/wallpapers/.current`)
+    readonly property string mpvpaperThumbnails: trimFileProtocol(`${Directories.cache}/mpvpaper/thumbnails`)
+    readonly property string currentWallpaperSymlink: trimFileProtocol(`${Directories.pictures}/wallpapers/.current`)
     readonly property string notificationsPath: trimFileProtocol(`${Directories.cache}/notifications/notifications.json`)
     readonly property string pywalJsonPath: trimFileProtocol(`${Directories.genericCache}/wal/colors.json`)
     readonly property string matugenJsonPath: trimFileProtocol(`${Directories.cache}/matugen/colors.json`)

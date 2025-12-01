@@ -140,7 +140,7 @@ Item {
                     values: {
                         // console.log(JSON.stringify(ToplevelManager.toplevels.values.map(t => t), null, 2))
                         return ToplevelManager.toplevels.values.filter((toplevel) => {
-                            const address = `0x${toplevel.HyprlandToplevel.address}`
+                            const address = `0x${toplevel.HyprlandToplevel?.address}`
                             var win = windowByAddress[address]
                             const inWorkspaceGroup = (root.workspaceGroup * root.workspacesShown < win?.workspace?.id && win?.workspace?.id <= (root.workspaceGroup + 1) * root.workspacesShown)
                             return inWorkspaceGroup;
@@ -152,7 +152,7 @@ Item {
                     required property var modelData
                     property int monitorId: windowData?.monitor
                     property var monitor: HyprlandData.monitors[monitorId]
-                    property var address: `0x${modelData.HyprlandToplevel.address}`
+                    property var address: `0x${modelData.HyprlandToplevel?.address}`
                     windowData: windowByAddress[address]
                     toplevel: modelData
                     monitorData: HyprlandData.monitors[monitorId]

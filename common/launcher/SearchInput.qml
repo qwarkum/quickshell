@@ -14,6 +14,53 @@ Rectangle {
 
     property alias searchInput: searchInput
 
+    // A safe advanced math expression parser.
+    function calculate(expr) {
+        let s = expr.toLowerCase().replace(/\s+/g, "");
+
+        // Replace constants
+        s = s.replace(/pi/g, Math.PI);
+        s = s.replace(/\be\b/g, Math.E);
+
+        // Replace ^ with JS power operator
+        s = s.replace(/(\d|\))\s*\^\s*(\d|\()/g, "Math.pow($1,$2)");
+
+        // Functions
+        s = s.replace(/sin\(/g, "Math.sin(");
+        s = s.replace(/cos\(/g, "Math.cos(");
+        s = s.replace(/tan\(/g, "Math.tan(");
+        s = s.replace(/asin\(/g, "Math.asin(");
+        s = s.replace(/acos\(/g, "Math.acos(");
+        s = s.replace(/atan\(/g, "Math.atan(");
+
+        s = s.replace(/sqrt\(/g, "Math.sqrt(");
+        s = s.replace(/abs\(/g, "Math.abs(");
+        s = s.replace(/round\(/g, "Math.round(");
+        s = s.replace(/floor\(/g, "Math.floor(");
+        s = s.replace(/ceil\(/g, "Math.ceil(");
+
+        s = s.replace(/log\(/g, "Math.log10(");
+        s = s.replace(/ln\(/g, "Math.log(");
+
+        // Degrees support: sin(30deg)
+        s = s.replace(/(\d+(\.\d+)?)deg/g, "($1*Math.PI/180)");
+
+        try {
+            let result = Function("return (" + s + ")")();
+
+            // Format numbers with commas
+            if (typeof result === "number" && isFinite(result)) {
+                // Limit decimals to 8 for readability
+                let rounded = Math.round(result * 1e8) / 1e8;
+                return rounded.toLocaleString();
+            }
+
+            return result;
+        } catch (e) {
+            return "";
+        }
+    }
+
     Connections {
         target: Config
         function onLauncherOpenChanged() {

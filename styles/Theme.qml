@@ -56,8 +56,6 @@ Singleton {
             return fallback
 
         const theme = Config.useDarkMode ? "dark" : "light"
-        if (lightThemeColor !== undefined && !Config.useDarkMode)
-            return lightThemeColor
 
         const colorObj = matugenColors[name]
         if (!colorObj)
@@ -67,59 +65,49 @@ Singleton {
     }
 
     function matugenPalette(name, tone, fallback) {
-        if (!matugenPalettes || !Config.useWallpaperColors)
+        if (!matugenPalettes || !Config.useWallpaperColors) {
             return fallback || "transparent"
-
-        const pal = matugenPalettes[name]
-        if (!pal)
-            return fallback || "transparent"
-
-        return pal["_" + tone] || fallback || "transparent"
-    }
-
-    function getSurfaceContainer(level) {
-        if (!matugenColors || !Config.useWallpaperColors) {
-            return Config.useDarkMode ? Qt.lighter(main, 0.1) : Qt.lighter(panelBackground, 0.92)
         }
 
-        const theme = Config.useDarkMode ? "dark" : "light"
-        const containerKey = `surface_container${level ? "_" + level : ""}`
+        const pal = matugenPalettes[name]
+        if (!pal) {
+            return fallback || "transparent"
+        }
 
-        const colorObj = matugenColors[containerKey]
-        if (colorObj)
-            return colorObj[theme] || colorObj.default
-
-        return matugenColor("surface", Config.useDarkMode ? "#141414" : "#dfdfdf")
+        return pal[tone] || fallback || "transparent"
     }
 
     // -------------------------
     // Base color definitions
     // -------------------------
-    property color main: matugenColor("primary", !Config.useDarkMode ? '#5e5e5e' : '#636363')
-    property color textMain: Qt.lighter(main, 1.1)
-    property color textSecondary: matugenColor("secondary", !Config.useDarkMode ? "#565e71" : "#bec6dc")
+    property color main: Config.useDarkMode ? matugenPalette("secondary", 90, "#bec6dc")
+                                            : matugenColor("primary", "#bec6dc")
+    property color textMain: Config.useDarkMode ? Qt.lighter(main, 1.1)
+                                                : Qt.lighter(main, 0.9)
+    property color textSecondary: Config.useDarkMode ? Qt.lighter(main, 0.85)
+                                                     : Qt.lighter(main, 1.1)
     property color almostMain: Qt.lighter(main, 0.85)
     property color closeToMain: Qt.lighter(main, 0.75)
-    property color darkUrgent: ColorUtils.transparentize(matugenColor("error", "#be6262"), 0.5)
-    property color urgent: ColorUtils.transparentize(matugenColor("error", "#da6060"), 0.3)
-    property color brightUrgent: ColorUtils.transparentize(matugenColor("error", "#ff8585"), 0.5)
+    property color darkUrgent: ColorUtils.transparentize(matugenColor("error", "#be6262"), 0.8)
+    property color urgent: ColorUtils.transparentize(matugenColor("error", "#da6060"), 0.6)
+    property color brightUrgent: ColorUtils.transparentize(matugenColor("error", "#ff8585"), 0.7)
     property color lightUrgent: matugenColor("error", "#be6262")
     property color lighterUrgent: matugenColor("error_container", "#da6060")
     property color extraLightUrgent: matugenColor("error", "#ff8585")
     property color secondaryUrgent: ColorUtils.transparentize(lightUrgent, 0.9)
 
     property color darkSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 1.3) : Qt.lighter(moduleBackground, 0.92)
-    property color secondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 1.6) : Qt.lighter(moduleBackground, 0.85)
-    property color brightSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 1.9) : Qt.lighter(moduleBackground, 0.78)
-    property color brighterSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 2.2) : Qt.lighter(moduleBackground, 0.71)
-    property color extraBrighterSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 2.4) : Qt.lighter(moduleBackground, 0.68)
+    property color secondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 1.6) : Qt.lighter(moduleBackground, 0.87)
+    property color brightSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 1.9) : Qt.lighter(moduleBackground, 0.83)
+    property color brighterSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 2.2) : Qt.lighter(moduleBackground, 0.79)
+    property color extraBrighterSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 2.4) : Qt.lighter(moduleBackground, 0.75)
 
     property color bright: Config.useDarkMode ? Qt.lighter(main, 0.5) : Qt.lighter(main, 1.4)
     property color extraBrightSecondary: matugenColor("secondary", !Config.useDarkMode ? "#565e71" : "#bec6dc")
 
     // Panel
-    property color panelBackground: matugenColor("background", !Config.useDarkMode ? "#dfdfdf" : "#141414")
-    property color moduleBackground: Qt.lighter(getSurfaceContainer("low"), Config.useDarkMode ? 1 : 0.95)
+    property color panelBackground: matugenColor("surface_container_lowest", !Config.useDarkMode ? "#dfdfdf" : "#141414")
+    property color moduleBackground: Qt.lighter(matugenColor("surface_container_low"), Config.useDarkMode ? 0.9 : 0.95)
     property color moduleBorder: "transparent"
     property color panelBorder: "transparent"
 
@@ -130,16 +118,16 @@ Singleton {
     // Battery
     property color batteryDefaultOnBackground: Config.useDarkMode ? Qt.lighter(main, 0.4) : Qt.lighter(main, 1.8)
     property color batteryLowBackground: Config.useDarkMode
-        ? ColorUtils.mix(matugenPalette("error", 25, "#7c2929"), "#7c2929", 0.1)
+        ? ColorUtils.mix(matugenPalette("error", 25, "#7c2929"), '#7c2929', 0.1)
         : matugenPalette("error", 70, "#7c2929")
     property color batteryLowOnBackground: Config.useDarkMode
-        ? matugenPalette("error", 60, "#7c2929")
+        ? matugenPalette("error", 70, "#7c2929")
         : ColorUtils.mix(matugenPalette("error", 60, "#7c2929"), "#7c2929", 0.3)
     property color batteryChargedBackground: Config.useDarkMode
         ? ColorUtils.mix(matugenPalette("primary", 40, "#3a7c29"), "#3a7c29", 0.3)
         : ColorUtils.mix(matugenPalette("primary", 0, "#b5fd94"), "#b5fd94", 0.3)
     property color batteryChargedOnBackground: Config.useDarkMode
-        ? ColorUtils.mix(matugenPalette("primary", 90, "#b5fd94"), "#b5fd94", 0.3)
+        ? ColorUtils.mix(matugenPalette("primary", 20, "#b5fd94"), "#b5fd94", 0.1)
         : ColorUtils.mix(matugenPalette("primary", 40, "#3a7c29"), "#3a7c29", 0.3)
     property color batteryChargingBackground: Config.useDarkMode
         ? ColorUtils.mix(matugenPalette("primary", 40, "#29627c"), "#29627c", 0.3)

@@ -42,15 +42,15 @@ Singleton {
 
     function notifToJSON(notif) {
         return {
-            "notificationId": notif.notificationId,
-            "actions": notif.actions,
-            "appIcon": notif.appIcon,
-            "appName": notif.appName,
-            "body": notif.body,
-            "image": notif.image,
-            "summary": notif.summary,
-            "time": notif.time,
-            "urgency": notif.urgency,
+            "notificationId": notif?.notificationId,
+            "actions": notif?.actions,
+            "appIcon": notif?.appIcon,
+            "appName": notif?.appName,
+            "body": notif?.body,
+            "image": notif?.image,
+            "summary": notif?.summary,
+            "time": notif?.time,
+            "urgency": notif?.urgency,
         }
     }
     function notifToString(notif) {
@@ -71,7 +71,7 @@ Singleton {
     property int unread: 0
     property var filePath: Directories.notificationsPath
     property list<Notif> list: []
-    property var popupList: list.filter((notif) => notif.popup);
+    property var popupList: list.filter((notif) => notif?.popup);
     property bool popupInhibited: silent
     property var latestTimeForApp: ({})
     Component {
@@ -90,8 +90,8 @@ Singleton {
     onListChanged: {
         // Update latest time for each app
         root.list.forEach((notif) => {
-            if (!root.latestTimeForApp[notif.appName] || notif.time > root.latestTimeForApp[notif.appName]) {
-                root.latestTimeForApp[notif.appName] = Math.max(root.latestTimeForApp[notif.appName] || 0, notif.time);
+            if (!root.latestTimeForApp[notif?.appName] || notif.time > root.latestTimeForApp[notif?.appName]) {
+                root.latestTimeForApp[notif?.appName] = Math.max(root.latestTimeForApp[notif?.appName] || 0, notif?.time);
             }
         });
         // Remove apps that no longer have notifications
@@ -112,7 +112,7 @@ Singleton {
     function groupsForList(list) {
         const groups = {};
         list.forEach((notif) => {
-            if (!groups[notif.appName]) {
+            if (!groups[notif?.appName]) {
                 groups[notif.appName] = {
                     appName: notif.appName,
                     appIcon: notif.appIcon,

@@ -34,6 +34,10 @@ Rectangle {
         }
         
         // Build the highlighted text
+        if(model.isFormula) {
+            return fullText;
+        }
+        
         for (var j = 0; j < fullText.length; j++) {
             if (matchedIndices.includes(j)) {
                 result += '<span style="text-decoration: underline; font-weight: 600">' + fullText.charAt(j) + '</span>'
@@ -55,11 +59,19 @@ Rectangle {
         Item {
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
+
+            MaterialSymbol {
+                anchors.fill: parent
+                visible: model.isFormula
+                text: "calculate"
+                iconSize: 34
+            }
             
             IconImage {
                 id: iconImage
                 anchors.fill: parent
                 source: Quickshell.iconPath(model.iconName, "tux-penguin")
+                visible: !model.isFormula
             }
 
             Desaturate {
@@ -71,21 +83,36 @@ Rectangle {
             }
             
             ColorOverlay {
-                visible: Config.iconOverlayEnabled
+                visible: Config.iconOverlayEnabled && iconImage.visible
                 anchors.fill: desaturatedIcon
                 source: desaturatedIcon
                 color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
             }
         }
 
-        StyledText {
-            text: highlightFuzzyText(model.name, filterText)
-            textFormat: Text.RichText
-            color: model.cmd ? Appearance.colors.textMain : Appearance.colors.lightUrgent
-            verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 16
+        ColumnLayout {
             Layout.fillWidth: true
-            elide: Text.ElideRight
+            spacing: 0
+
+            StyledText {
+                text: "Math result"
+                visible: model.isFormula
+                textFormat: Text.RichText
+                color: Appearance.colors.bright
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 14
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                text: highlightFuzzyText(model.name || "", filterText)
+                textFormat: Text.RichText
+                color: model.isFormula || model.cmd ? Appearance.colors.textMain : Appearance.colors.lightUrgent
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 16
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+            }
         }
     }
 

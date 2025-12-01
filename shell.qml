@@ -3,16 +3,19 @@
 import Quickshell
 import "./bar"
 import "./osd"
+import qs.common.wallpaperSelector
 import qs.common.sessionScreen
+import qs.common.sidebarRight
 import qs.common.mediaPlayer
+import qs.common.background
 import qs.common.launcher
-import qs.common.widgets
 import qs.common.overview
-import qs.bar.modules.sidebarRight
-import qs.bar.modules.lock
+import qs.common.widgets
+import qs.common.lock
 import qs.notificationPopup
 
 Scope {
+    LazyLoader {active: true; component: Background {} }
     LazyLoader {active: true; component: Bar {} }
 
     LazyLoader {active: true; component: ScreenTopCorners {} }
@@ -23,7 +26,7 @@ Scope {
     LazyLoader {active: true; component: AudioOsd {} }
 
     LazyLoader {active: true; component: MediaPlayer {} }
-    LazyLoader {active: true; component: WallpaperSelector {} } // <-- this shit use a half of RAM
+    LazyLoader {active: true; component: WallpaperSelector {} } // <-- this shit use a half of RAM (now it's not)
     LazyLoader {active: true; component: SessionScreen {} }
 
     LazyLoader { active: true; component: NotificationPopup {} }

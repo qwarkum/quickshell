@@ -14,6 +14,7 @@ Singleton {
 
     property bool sessionOpen: false
     property bool sidebarRightOpen: false
+    property bool wallpaperSelectorOpen: false
     property bool mediaPlayerOpen: false
     property bool barOpen: true
     property bool launcherOpen: false
@@ -48,6 +49,32 @@ Singleton {
             }
         }
 
+        property JsonObject background: JsonObject {
+            property string currentWallpaper: ""
+            property string thumbnailPath: ""
+            property bool hideWhenFullscreen: false
+            property JsonObject parallax: JsonObject {
+                property bool vertical: false
+                property bool autoVertical: false
+                property bool enableWorkspace: true
+                property real workspaceZoom: 1.07 // Relative to your screen, not wallpaper size
+                property bool enableSidebar: true
+                property real widgetsFactor: 1.2
+            }
+        }
+
+        property JsonObject workSafety: JsonObject {
+            property JsonObject enable: JsonObject {
+                property bool wallpaper: false
+                property bool clipboard: false
+            }
+            property JsonObject triggerCondition: JsonObject {
+                property list<string> networkNameKeywords: ["airport", "cafe", "college", "company", "eduroam", "free", "guest", "public", "school", "university"]
+                property list<string> fileKeywords: ["anime", "booru", "ecchi", "hentai", "yande.re", "konachan", "breast", "nipples", "pussy", "nsfw", "spoiler", "girl"]
+                property list<string> linkKeywords: ["hentai", "porn", "sukebei", "hitomi.la", "rule34", "gelbooru", "fanbox", "dlsite"]
+            }
+        }
+
         property JsonObject launcher: JsonObject {
             property int spacing: 15
             property int searchInputHeight: 45
@@ -76,6 +103,23 @@ Singleton {
                     ]
                 }
             }
+        }
+
+        property JsonObject lock: JsonObject {
+            property bool useHyprlock: false
+            property bool launchOnStartup: false
+            property JsonObject blur: JsonObject {
+                property bool enable: true
+                property real radius: 100
+                property real extraZoom: 1.1
+            }
+            property bool centerClock: true
+            property bool showLockedText: true
+            property JsonObject security: JsonObject {
+                property bool unlockKeyring: true
+                property bool requirePasswordToPower: false
+            }
+            property bool materialShapeChars: true
         }
 
         property JsonObject bar: JsonObject {

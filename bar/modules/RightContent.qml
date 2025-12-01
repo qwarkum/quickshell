@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import qs.styles
-import qs.bar.modules.sidebarRight
 import qs.common.widgets
 import qs.styles
 import qs.services

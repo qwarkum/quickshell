@@ -15,6 +15,8 @@ Item {
     visible: MprisController.activePlayer
     implicitWidth: mediaModule.width
     opacity: visible ? 1 : 0  // Simple opacity control
+
+    property bool enablePlayerControl: true
     
     // Smooth fade animation
     Behavior on opacity {
@@ -68,6 +70,7 @@ Item {
                 Text {
                     id: playPauseButton
                     anchors.centerIn: parent
+                    visible: mediaPlayerRoot.enablePlayerControl
                     color: MprisController.activePlayer ? Appearance.colors.main : Appearance.colors.textSecondary
                     text: {
                         if (!MprisController.activePlayer) return Icons.music_note
@@ -85,29 +88,52 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                     }
                 }
+
+                MaterialSymbol {
+                    text: "music_note"
+                    anchors.centerIn: parent
+                    color: MprisController.activePlayer ? Appearance.colors.main : Appearance.colors.textSecondary
+                    visible: !mediaPlayerRoot.enablePlayerControl
+                }
             }
 
             Item {
-                Layout.preferredWidth: 200
+                Layout.preferredWidth: 150
                 Layout.preferredHeight: parent.height
                 Layout.rightMargin: 10
+                Layout.leftMargin: 2
                 
-                StyledText {
-                    id: trackTitle
+                ColumnLayout {
+                    anchors.fill: parent
                     width: parent.width
-                    anchors.centerIn: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    text: MprisController.activeTrack?.title || "No media"
-                    color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.textSecondary
-                    font.pixelSize: 14
-                    elide: Text.ElideRight
+                    spacing: -2
+
+                    StyledText {
+                        id: artistTitle
+                        Layout.fillWidth: true
+                        horizontalAlignment: Text.AlignHLeft
+                        text: MprisController.activeTrack?.artist || "Unknown artist"
+                        color: Appearance.colors.bright
+                        font.pixelSize: 12
+                        elide: Text.ElideRight
+                    }
+
+                    StyledText {
+                        id: trackTitle
+                        Layout.fillWidth: true
+                        horizontalAlignment: Text.AlignHLeft
+                        text: MprisController.activeTrack?.title || "No media"
+                        color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.textSecondary
+                        font.pixelSize: 14
+                        elide: Text.ElideRight
+                    }
                 }
 
                 MouseArea {
                     enabled: MprisController.activePlayer
                     anchors.fill: parent
                     onClicked: {
-                        Config.mediaPlayerOpen = true
+                        Config.mediaPlayerOpen = !Config.mediaPlayerOpen
                     }
                     cursorShape: Qt.PointingHandCursor
                 }

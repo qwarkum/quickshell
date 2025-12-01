@@ -21,7 +21,7 @@ Singleton {
     property bool isPluggedIn: isCharging || (chargeState == UPowerDeviceState.PendingCharge)
     property bool isLow: available && (percentage <= lowPercentage / 100)
     property bool isCritical: available && (percentage <= criticalPercentage / 100)
-    property bool isFullyCharged: (isCharged || isCharging) && (percentage >= fullyChargedPercentage / 100)
+    property bool isFullyCharged: (isCharging || isCharged) && (percentage >= fullyChargedPercentage / 100)
 
     property bool isLowAndNotCharging: isLow && !isCharging
     property bool isCriticalAndNotCharging: isCritical && !isCharging
@@ -81,7 +81,7 @@ Singleton {
 
     function getBatteryIcon() {
         if (BatteryService.isLowAndNotCharging || BatteryService.isCriticalAndNotCharging) return "power"
-        // if (BatteryService.isFullyCharged) return "battery_status_good" "battery_android_share"
+        // if (BatteryService.isFullyCharged) return "battery_status_good" // "battery_android_share"
         if (BatteryService.isCharging) return "electric_bolt" // "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
         if (Config.batterySaverToggled) return "energy_savings_leaf" // "battery_saver"
         return "battery_full" // "battery_android_full"
