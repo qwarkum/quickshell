@@ -35,7 +35,6 @@ Scope {
     LazyLoader { active: true; component: AppLauncher {} }
 
     LazyLoader { active: true; component: Lock {} }
-    // LazyLoader { active: true; component: ScreenCorners {} }
 
     // LazyLoader { active: true; component: ReloadPopup {} }
 }
