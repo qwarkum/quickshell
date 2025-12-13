@@ -57,6 +57,7 @@ QtObject {
         property color blurBackground: Theme.blurBackground
         property color dialogBlur: Theme.dialogBlur
     }
+
     
     readonly property QtObject configs: QtObject {
         property int windowRadius: 10
