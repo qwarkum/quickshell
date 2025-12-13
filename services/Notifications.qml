@@ -62,7 +62,7 @@ Singleton {
 
     component NotifTimer: Timer {
         required property int notificationId
-        interval: 7000
+        interval: 5000
         running: true
         onTriggered: () => {
             const index = root.list.findIndex((notif) => notif.notificationId === notificationId);
