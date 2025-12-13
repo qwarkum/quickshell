@@ -58,7 +58,7 @@ QtObject {
         property color dialogBlur: Theme.dialogBlur
     }
 
-    
+    // TODO: move to Config.qml
     readonly property QtObject configs: QtObject {
         property int windowRadius: 10
         property int widgetRadius: 15
