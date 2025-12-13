@@ -52,7 +52,7 @@ Singleton {
     // Color getters
     // -------------------------
     function matugenColor(name, fallback, lightThemeColor) {
-        if (!matugenColors || !Config.useWallpaperColors)
+        if (!matugenColors)
             return fallback
 
         const theme = Config.useDarkMode ? "dark" : "light"
@@ -65,7 +65,7 @@ Singleton {
     }
 
     function matugenPalette(name, tone, fallback) {
-        if (!matugenPalettes || !Config.useWallpaperColors) {
+        if (!matugenPalettes) {
             return fallback || "transparent"
         }
 
@@ -81,7 +81,7 @@ Singleton {
     // Base color definitions
     // -------------------------
     property color main: Config.useDarkMode ? matugenPalette("secondary", 90, "#bec6dc")
-                                            : matugenColor("primary", "#bec6dc")
+                                            : matugenColor("primary", '#3f3f3f')
     property color textMain: Config.useDarkMode ? Qt.lighter(main, 1.1)
                                                 : Qt.lighter(main, 0.9)
     property color textSecondary: Config.useDarkMode ? Qt.lighter(main, 0.85)
@@ -103,11 +103,11 @@ Singleton {
     property color extraBrighterSecondary: Config.useDarkMode ? Qt.lighter(moduleBackground, 2.4) : Qt.lighter(moduleBackground, 0.75)
 
     property color bright: Config.useDarkMode ? Qt.lighter(main, 0.5) : Qt.lighter(main, 1.4)
-    property color extraBrightSecondary: matugenColor("secondary", !Config.useDarkMode ? "#565e71" : "#bec6dc")
+    property color extraBrightSecondary: matugenColor("secondary", Config.useDarkMode ? "#bec6dc" : "#565e71")
 
     // Panel
-    property color panelBackground: matugenColor("surface_container_lowest", !Config.useDarkMode ? "#dfdfdf" : "#141414")
-    property color moduleBackground: Qt.lighter(matugenColor("surface_container_low"), Config.useDarkMode ? 0.9 : 0.95)
+    property color panelBackground: matugenColor("surface_container_lowest", Config.useDarkMode ? "#141414" : '#f1f1f1')
+    property color moduleBackground: Qt.lighter(matugenColor("surface_container_low", Config.useDarkMode ? '#1f1f1f' : '#e6e6e6'), Config.useDarkMode ? 0.9 : 0.95)
     property color moduleBorder: "transparent"
     property color panelBorder: "transparent"
 
@@ -118,20 +118,20 @@ Singleton {
     // Battery
     property color batteryDefaultOnBackground: Config.useDarkMode ? Qt.lighter(main, 0.4) : Qt.lighter(main, 1.8)
     property color batteryLowBackground: Config.useDarkMode
-        ? ColorUtils.mix(matugenPalette("error", 25, "#7c2929"), '#7c2929', 0.1)
-        : matugenPalette("error", 70, "#7c2929")
+        ? ColorUtils.mix(matugenPalette("error", 25, "#9e4242"), '#9e4242', 0.1)
+        : matugenPalette("error", 70, '#b16c6c')
     property color batteryLowOnBackground: Config.useDarkMode
-        ? matugenPalette("error", 70, "#7c2929")
-        : ColorUtils.mix(matugenPalette("error", 60, "#7c2929"), "#7c2929", 0.3)
+        ? matugenPalette("error", 70, "#ff9090")
+        : ColorUtils.mix(matugenPalette("error", 60, "#9e4242"), '#9e4242', 0.3)
     property color batteryChargedBackground: Config.useDarkMode
         ? ColorUtils.mix(matugenPalette("primary", 40, "#3a7c29"), "#3a7c29", 0.3)
-        : ColorUtils.mix(matugenPalette("primary", 0, "#b5fd94"), "#b5fd94", 0.3)
+        : ColorUtils.mix(matugenPalette("primary", 0, '#000000'), "#b5fd94", 0.3)
     property color batteryChargedOnBackground: Config.useDarkMode
         ? ColorUtils.mix(matugenPalette("primary", 20, "#b5fd94"), "#b5fd94", 0.1)
         : ColorUtils.mix(matugenPalette("primary", 40, "#3a7c29"), "#3a7c29", 0.3)
     property color batteryChargingBackground: Config.useDarkMode
         ? ColorUtils.mix(matugenPalette("primary", 40, "#29627c"), "#29627c", 0.3)
-        : ColorUtils.mix(matugenPalette("primary", 40, "#94e8fd"), "#94e8fd", 0.3)
+        : ColorUtils.mix(matugenPalette("primary", 40, '#000000'), "#94e8fd", 0.3)
     property color batteryChargingOnBackground: Config.useDarkMode
         ? ColorUtils.mix(matugenPalette("primary", 90, "#94e8fd"), "#94e8fd", 0.3)
         : ColorUtils.mix(matugenPalette("primary", 40, "#29627c"), "#29627c", 0.3)
@@ -144,7 +144,7 @@ Singleton {
     property color hoverBackgroundColor: "transparent"
     property color hoverBorderColor: "transparent"
 
-    property color blurBackground: ColorUtils.transparentize(panelBackground, 0.5)
+    property color blurBackground: ColorUtils.transparentize(panelBackground, Config.useDarkMode ? 0.5 : 0.65)
     property color dialogBlur: blurBackground
 
     // Additional matugen-specific colors

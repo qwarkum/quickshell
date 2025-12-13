@@ -34,6 +34,5 @@ RippleButton {
     StyledToolTip {
         content: tooltipText
         extraVisibleCondition: tooltipText.length > 0
-        tooltipColor: Appearance.colors.darkSecondary
     }
 }

@@ -53,6 +53,9 @@ Singleton {
             property string currentWallpaper: ""
             property string thumbnailPath: ""
             property bool hideWhenFullscreen: false
+            property bool showVideoWallpaperOnLockScreen: true
+            property bool stopVideoWallpaperProcessWhenLockScreen: true
+            property color defaultColor: '#6200ff'
             property JsonObject parallax: JsonObject {
                 property bool vertical: false
                 property bool autoVertical: false
@@ -110,8 +113,8 @@ Singleton {
             property bool launchOnStartup: false
             property JsonObject blur: JsonObject {
                 property bool enable: true
-                property real radius: 100
-                property real extraZoom: 1.1
+                property real radius: 30
+                property real extraZoom: 1
             }
             property bool centerClock: true
             property bool showLockedText: true
@@ -170,13 +173,6 @@ Singleton {
                 property int showNumberDelay: 300 // milliseconds
                 property list<string> numberMap: ["1", "2"] // Characters to show instead of numbers on workspace indicator
                 property bool useNerdFont: false
-            }
-            property JsonObject weather: JsonObject {
-                property bool enable: false
-                property bool enableGPS: true // gps based location
-                property string city: "" // When 'enableGPS' is false
-                property bool useUSCS: false // Instead of metric (SI) units
-                property int fetchInterval: 10 // minutes
             }
         }
     }

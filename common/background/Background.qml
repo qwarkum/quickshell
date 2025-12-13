@@ -13,7 +13,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
-import QtMultimedia
 
 Variants {
     id: root
@@ -29,7 +28,7 @@ Variants {
         required property var modelData
 
         // Hide when fullscreen
-        property list<HyprlandWorkspace> workspacesForMonitor: Hyprland.workspaces.values.filter(workspace => workspace.monitor && workspace.monitor.name == monitor.name)
+        property list<HyprlandWorkspace> workspacesForMonitor: Hyprland.workspaces.values.filter(workspace => workspace.monitor && workspace.monitor?.name == monitor?.name)
         property var activeWorkspaceWithFullscreen: workspacesForMonitor.filter(workspace => ((workspace.toplevels.values.filter(window => window.wayland?.fullscreen)[0] != undefined) && workspace.active))[0]
         visible: GlobalStates.screenLocked || (!(activeWorkspaceWithFullscreen != undefined)) || !Config?.options.background.hideWhenFullscreen
 
@@ -48,8 +47,7 @@ Variants {
             return enabled && sensitiveWallpaper && sensitiveNetwork;
         }
         property real wallpaperToScreenRatio: Math.min(wallpaperWidth / screen.width, wallpaperHeight / screen.height)
-        property real preferredWallpaperScale: Config.options.background.parallax.workspaceZoom
-        property real effectiveWallpaperScale: 1 // Some reasonable init value, to be updated
+        property real effectiveWallpaperScale: Config.options.background.parallax.workspaceZoom // Some reasonable init value, to be updated
         property int wallpaperWidth: modelData.width // Some reasonable init value, to be updated
         property int wallpaperHeight: modelData.height // Some reasonable init value, to be updated
         property real movableXSpace: ((wallpaperWidth / wallpaperToScreenRatio * effectiveWallpaperScale) - screen.width) / 2
@@ -64,6 +62,7 @@ Variants {
                 return ColorUtils.mix("red", Appearance.colors.main, 0.75);
             return (GlobalStates.screenLocked && shouldBlur) ? "red" : ColorUtils.colorWithLightness(Appearance.colors.main, (dominantColorIsDark ? 0.8 : 0.12));
         }
+        property bool showVideoWallpaperOnLockScreen: wallpaperIsVideo && Config.options.background.showVideoWallpaperOnLockScreen
         Behavior on colText {
             animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
         }
@@ -98,27 +97,6 @@ Variants {
             anchors.fill: parent
             clip: true
 
-            // piece of crap to replace mpvpaper ()
-            // Rectangle {
-            //     anchors.fill: parent
-            //     color: "black"
-
-            //     MediaPlayer {
-            //         id: videoPlayer
-            //         source: Config.options.background.currentWallpaper
-            //         loops: MediaPlayer.Infinite
-            //         autoPlay: true
-            //         videoOutput: videoWallpaper
-            //     }
-
-            //     VideoOutput {
-            //         id: videoWallpaper
-            //         anchors.fill: parent
-            //         visible: bgRoot.wallpaperIsVideo && !bgRoot.wallpaperSafetyTriggered
-            //         fillMode: VideoOutput.PreserveAspectCrop
-            //     }
-            // }
-
             // Wallpaper
             StyledImage {
                 id: wallpaper
@@ -152,7 +130,7 @@ Variants {
                 property real effectiveValueY: Math.max(0, Math.min(1, valueY))
                 x: -(bgRoot.movableXSpace) - (effectiveValueX - 0.5) * 2 * bgRoot.movableXSpace
                 y: -(bgRoot.movableYSpace) - (effectiveValueY - 0.5) * 2 * bgRoot.movableYSpace
-                source: bgRoot.wallpaperSafetyTriggered ? "" : bgRoot.currentWallpaper
+                source: bgRoot.wallpaperSafetyTriggered || bgRoot.showVideoWallpaperOnLockScreen ? "" : bgRoot.currentWallpaper
                 fillMode: Image.PreserveAspectCrop
                 Behavior on x {
                     NumberAnimation {
@@ -167,8 +145,8 @@ Variants {
                     }
                 }
                 sourceSize {
-                    width: bgRoot.screen.width * bgRoot.effectiveWallpaperScale * bgRoot.monitor.scale
-                    height: bgRoot.screen.height * bgRoot.effectiveWallpaperScale * bgRoot.monitor.scale
+                    width: bgRoot.screen.width * bgRoot.effectiveWallpaperScale * bgRoot.monitor?.scale
+                    height: bgRoot.screen.height * bgRoot.effectiveWallpaperScale * bgRoot.monitor?.scale
                 }
                 width: bgRoot.wallpaperWidth / bgRoot.wallpaperToScreenRatio * bgRoot.effectiveWallpaperScale
                 height: bgRoot.wallpaperHeight / bgRoot.wallpaperToScreenRatio * bgRoot.effectiveWallpaperScale
@@ -195,7 +173,7 @@ Variants {
                     Rectangle {
                         opacity: GlobalStates.screenLocked ? 1 : 0
                         anchors.fill: parent
-                        color: ColorUtils.transparentize(Appearance.colors.panelBackground, 0.7)
+                        color: ColorUtils.transparentize(Appearance.colors.blurBackground, 0.7)
                     }
                 }
             }

@@ -238,25 +238,32 @@ Item { // Notification item area
                     RowLayout {
                         id: actionRowLayout
                         Layout.alignment: Qt.AlignBottom
-
+                        Layout.fillWidth: true
+                        
+                        property int totalButtons: 2 + (notificationObject.actions?.length || 0)
+                        property real actionButtonsCount: notificationObject.actions?.length || 0
+                        property real availableWidth: actionsFlickable.width - (spacing * (totalButtons - 1))
+                        
+                        // Dynamic allocation: if no action buttons, system buttons get 50% each
+                        // If there are action buttons, system buttons get 10% each, actions get remaining 60%
+                        property real systemButtonShare: actionButtonsCount > 0 ? 0.1 : 0.5
+                        property real actionButtonShare: actionButtonsCount > 0 ? 0.8 : 0
+                        
+                        property real systemButtonWidth: availableWidth * systemButtonShare
+                        property real actionButtonWidth: actionButtonsCount > 0 ? (availableWidth * actionButtonShare) / actionButtonsCount : 0
+                        
                         NotificationActionButton {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: actionRowLayout.systemButtonWidth
                             buttonText: "Delete"
                             urgency: notificationObject.urgency
-                            implicitWidth: (notificationObject.actions.length == 0) ? ((actionsFlickable.width - actionRowLayout.spacing) / 2) : 
-                                (contentItem.implicitWidth + leftPadding + rightPadding)
-
                             onClicked: {
                                 root.destroyWithAnimation()
                             }
-
                             contentItem: MaterialSymbol {
                                 iconSize: 20
                                 horizontalAlignment: Text.AlignHCenter
-                                color: 
-                                    // (notificationObject.urgency == NotificationUrgency.Critical) ? 
-                                    // Appearance.colors.urgent :
-                                    Appearance.colors.textMain
+                                color: Appearance.colors.textMain
                                 text: "delete"
                             }
                         }
@@ -265,7 +272,9 @@ Item { // Notification item area
                             id: actionRepeater
                             model: notificationObject.actions
                             NotificationActionButton {
+                                required property var modelData
                                 Layout.fillWidth: true
+                                Layout.preferredWidth: actionRowLayout.actionButtonWidth
                                 buttonText: modelData.text
                                 urgency: notificationObject.urgency
                                 onClicked: {
@@ -276,10 +285,8 @@ Item { // Notification item area
 
                         NotificationActionButton {
                             Layout.fillWidth: true
+                            Layout.preferredWidth: actionRowLayout.systemButtonWidth
                             urgency: notificationObject.urgency
-                            implicitWidth: (notificationObject.actions.length == 0) ? ((actionsFlickable.width - actionRowLayout.spacing) / 2) : 
-                                (contentItem.implicitWidth + leftPadding + rightPadding)
-
                             onClicked: {
                                 Quickshell.clipboardText = notificationObject.body
                                 copyIcon.text = "inventory"
@@ -299,14 +306,10 @@ Item { // Notification item area
                                 id: copyIcon
                                 iconSize: 18
                                 horizontalAlignment: Text.AlignHCenter
-                                color: 
-                                    // (notificationObject.urgency == NotificationUrgency.Critical) ? 
-                                    // Appearance.colors.urgent :
-                                     Appearance.colors.textMain
+                                color: Appearance.colors.textMain
                                 text: "content_copy"
                             }
                         }
-                        
                     }
                 }
             }

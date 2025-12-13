@@ -10,16 +10,25 @@ import qs.common.components
 Singleton {
     id: root
         
-    property string mode: Config.useDarkMode ? "dark" : "light"
+    function generateTheme(filePath: string) {
+        if(Config.useWallpaperColors) {
+            generateImageTheme(filePath)
+        } else {
+            generateDefaultTheme()
+        }
+    }
 
-    function generateTheme(useDarkMode: bool, filePath: string) {
-        mode = useDarkMode ? "dark" : "light" // sometimes (when toggle dark mode) without this line apps theme is opposite to bar theme
-        generateTheme.command = ["matugen", "image", filePath, "-m", mode]
+    function generateImageTheme(filePath: string) {
+        generateTheme.command = ["matugen", "image", filePath, "-m", Config.useDarkMode ? "dark" : "light"]
+        generateTheme.running = true
+    }
+
+    function generateDefaultTheme() {
+        generateTheme.command = ["matugen", "color", "hex", Config.options.background.defaultColor, "-m", Config.useDarkMode ? "dark" : "light"]
         generateTheme.running = true
     }
 
     Process {
         id: generateTheme
-        // command: ["matugen", "image", Directories.currentWallpaper, "-m", mode]
     }
 }

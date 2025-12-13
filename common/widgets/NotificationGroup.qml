@@ -19,6 +19,14 @@ MouseArea { // Notification group area
     property bool popup: false
     property real padding: 10
     implicitHeight: background.implicitHeight
+    visible: notificationCount > 0
+    
+    Behavior on opacity {
+        NumberAnimation {
+            duration: Appearance.animation.elementMove.duration
+            easing.type: Appearance.animation.elementMove.type
+        }
+    }
 
     property real dragConfirmThreshold: 70 // Drag further to discard notification
     property real dismissOvershoot: 20 // Account for gaps and bouncy animations

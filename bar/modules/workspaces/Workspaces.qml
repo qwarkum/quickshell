@@ -22,7 +22,7 @@ Item {
 
     property int workspaceSpacing: 4
     property int workspaceSize: 26
-    property int workspaceCount: 7
+    property int workspaceCount: Config?.options.bar.workspaces.shown
     property int backgroundPadding: 3
 
     property int minAppCount: 2
@@ -37,7 +37,6 @@ Item {
 
     // ==== icons/apps ====
     property var workspaceApps: ({})
-    property var appIcons: ({})
 
     // ==== Hyprland wiring ====
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(root.QsWindow.window?.screen)

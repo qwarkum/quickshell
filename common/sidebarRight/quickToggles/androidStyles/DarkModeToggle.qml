@@ -19,7 +19,7 @@ AndroidQuickToggle {
         target: Config
 
         function onUseDarkModeChanged() {
-            MatugenService.generateTheme(Config.useDarkMode, Config.options.background.currentWallpaper)
+            MatugenService.generateTheme(Config.options.background.currentWallpaper)
         }
     }
     // altAction: () => {}

@@ -28,6 +28,7 @@ Singleton {
     readonly property string wallpapers: trimFileProtocol(`${Directories.pictures}/wallpapers`)
     readonly property string mpvpaperThumbnails: trimFileProtocol(`${Directories.cache}/mpvpaper/thumbnails`)
     readonly property string currentWallpaperSymlink: trimFileProtocol(`${Directories.pictures}/wallpapers/.current`)
+    
     readonly property string notificationsPath: trimFileProtocol(`${Directories.cache}/notifications/notifications.json`)
     readonly property string pywalJsonPath: trimFileProtocol(`${Directories.genericCache}/wal/colors.json`)
     readonly property string matugenJsonPath: trimFileProtocol(`${Directories.cache}/matugen/colors.json`)

@@ -20,6 +20,11 @@ Scope {
         passwordClearTimer.restart();
     }
 
+    function reset() {
+        root.currentText = "";
+        root.unlockInProgress = false;
+    }
+
     Timer {
         id: passwordClearTimer
         interval: 10000

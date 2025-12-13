@@ -37,7 +37,7 @@ Scope {
             visible: GlobalStates.overviewOpen
 
             WlrLayershell.namespace: "quickshell:overview"
-            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.keyboardFocus: GlobalStates.overviewOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
             color: "transparent"
 

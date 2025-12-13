@@ -74,19 +74,23 @@ Rectangle {
                 visible: !model.isFormula
             }
 
-            Desaturate {
-                id: desaturatedIcon
-                visible: false // There's already color overlay
-                anchors.fill: parent
-                source: iconImage
-                desaturation: 0.6
-            }
-            
-            ColorOverlay {
-                visible: Config.iconOverlayEnabled && iconImage.visible
-                anchors.fill: desaturatedIcon
-                source: desaturatedIcon
-                color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+            Loader {
+                active: Config.iconOverlayEnabled && iconImage.visible
+                anchors.fill: iconImage
+                sourceComponent: Item {
+                    Desaturate {
+                        id: desaturatedIcon
+                        visible: false // There's already color overlay
+                        anchors.fill: parent
+                        source: iconImage
+                        desaturation: 0.6
+                    }
+                    ColorOverlay {
+                        anchors.fill: desaturatedIcon
+                        source: desaturatedIcon
+                        color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+                    }
+                }
             }
         }
 

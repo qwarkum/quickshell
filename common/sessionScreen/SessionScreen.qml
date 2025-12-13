@@ -7,6 +7,7 @@ import Quickshell.Wayland
 import qs.styles
 import qs.services
 import qs.common.widgets
+import qs.common.utils
 
 PanelWindow {
     id: sessionScreen
@@ -92,7 +93,7 @@ PanelWindow {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: Appearance.colors.blurBackground
+        color: ColorUtils.transparentize(Appearance.colors.blurBackground, -0.5)
         opacity: fadeProgress
 
         MouseArea {
@@ -181,7 +182,7 @@ PanelWindow {
                                 radius: index === sessionScreen.selectedIndex ? 100 : 30
                                 color: index === sessionScreen.selectedIndex
                                     ? Appearance.colors.main
-                                    : Appearance.colors.darkSecondary
+                                    : Appearance.colors.secondary
 
                                 Behavior on color { ColorAnimation { duration: 200 } }
                                 Behavior on radius { NumberAnimation { duration: 200 } }
@@ -202,7 +203,7 @@ PanelWindow {
                                     text: modelData.icon
                                     iconSize: 44
                                     color: index === sessionScreen.selectedIndex
-                                        ? Appearance.colors.panelBackground
+                                        ? Appearance.colors.secondary
                                         : Appearance.colors.main
                                 }
                             }
@@ -231,7 +232,7 @@ PanelWindow {
                         width: Math.min(selectedLabelText.implicitWidth + 40, parent.width - 40)
                         height: 40
                         radius: 20
-                        color: Appearance.colors.darkSecondary
+                        color: Appearance.colors.secondary
                         opacity: sessionScreen.selectedIndex >= 0 ? 1 : 0
                         
                         // Behavior on opacity { NumberAnimation { duration: 200 } }

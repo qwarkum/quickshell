@@ -6,6 +6,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Notifications
 import qs.common.components
+import qs.common.widgets
+import qs.styles
 
 /**
  * Provides extra features not in Quickshell.Services.Notifications:
@@ -24,6 +26,7 @@ Singleton {
             "text": action.text,
         })) ?? []
         property bool popup: false
+        property bool isTransient: notification?.hints.transient ?? false
         property string appIcon: notification?.appIcon ?? ""
         property string appName: notification?.appName ?? ""
         property string body: notification?.body ?? ""
@@ -42,15 +45,15 @@ Singleton {
 
     function notifToJSON(notif) {
         return {
-            "notificationId": notif?.notificationId,
-            "actions": notif?.actions,
-            "appIcon": notif?.appIcon,
-            "appName": notif?.appName,
-            "body": notif?.body,
-            "image": notif?.image,
-            "summary": notif?.summary,
-            "time": notif?.time,
-            "urgency": notif?.urgency,
+            "notificationId": notif.notificationId,
+            "actions": notif.actions,
+            "appIcon": notif.appIcon,
+            "appName": notif.appName,
+            "body": notif.body,
+            "image": notif.image,
+            "summary": notif.summary,
+            "time": notif.time,
+            "urgency": notif.urgency,
         }
     }
     function notifToString(notif) {
@@ -59,9 +62,17 @@ Singleton {
 
     component NotifTimer: Timer {
         required property int notificationId
-        interval: 5000
+        interval: 7000
         running: true
         onTriggered: () => {
+            const index = root.list.findIndex((notif) => notif.notificationId === notificationId);
+            const notifObject = root.list[index];
+            print("[Notifications] Notification timer triggered for ID: " + notificationId + ", transient: " + notifObject?.isTransient);
+            // if (notifObject?.isTransient) {
+            //     root.discardNotification(notificationId);
+            // } else {
+            //     root.timeoutNotification(notificationId);
+            // }
             root.timeoutNotification(notificationId);
             destroy()
         }
@@ -71,8 +82,8 @@ Singleton {
     property int unread: 0
     property var filePath: Directories.notificationsPath
     property list<Notif> list: []
-    property var popupList: list.filter((notif) => notif?.popup);
-    property bool popupInhibited: silent
+    property var popupList: list.filter((notif) => notif.popup);
+    property bool popupInhibited: (GlobalStates?.sidebarRightOpen ?? false) || silent
     property var latestTimeForApp: ({})
     Component {
         id: notifComponent
@@ -90,8 +101,8 @@ Singleton {
     onListChanged: {
         // Update latest time for each app
         root.list.forEach((notif) => {
-            if (!root.latestTimeForApp[notif?.appName] || notif.time > root.latestTimeForApp[notif?.appName]) {
-                root.latestTimeForApp[notif?.appName] = Math.max(root.latestTimeForApp[notif?.appName] || 0, notif?.time);
+            if (!root.latestTimeForApp[notif.appName] || notif.time > root.latestTimeForApp[notif.appName]) {
+                root.latestTimeForApp[notif.appName] = Math.max(root.latestTimeForApp[notif.appName] || 0, notif.time);
             }
         });
         // Remove apps that no longer have notifications
@@ -112,7 +123,7 @@ Singleton {
     function groupsForList(list) {
         const groups = {};
         list.forEach((notif) => {
-            if (!groups[notif?.appName]) {
+            if (!groups[notif.appName]) {
                 groups[notif.appName] = {
                     appName: notif.appName,
                     appIcon: notif.appIcon,
@@ -168,12 +179,11 @@ Singleton {
                 if (notification.expireTimeout != 0) {
                     newNotifObject.timer = notifTimerComponent.createObject(root, {
                         "notificationId": newNotifObject.notificationId,
-                        "interval": notification.expireTimeout < 0 ? 5000 : notification.expireTimeout,
+                        "interval": notification.expireTimeout < 0 ? 7000 : notification.expireTimeout,
                     });
                 }
                 root.unread++;
             }
-
             root.notify(newNotifObject);
             // console.log(notifToString(newNotifObject));
             notifFileView.setText(stringifyList(root.list));
@@ -238,7 +248,7 @@ Singleton {
         if (notifServerIndex !== -1) {
             const notifServerNotif = notifServer.trackedNotifications.values[notifServerIndex];
             const action = notifServerNotif.actions.find((action) => action.identifier === notifIdentifier);
-            console.log("Action found: " + JSON.stringify(action));
+            // console.log("Action found: " + JSON.stringify(action));
             action.invoke()
         } 
         else {

@@ -71,8 +71,9 @@ Button {
             anchors.centerIn: parent
             text: "circle"
             iconSize: 6
-            visible: !enableNumbers && !showNumbers
-            opacity: root.showNumbers ? 1 : (wsItem.apps.length === 0 ? 1 : 0)
+            visible: !(showNumbers && wsItem.apps.length === 0) && 
+                      ((!enableNumbers && wsItem.apps.length === 0) || 
+                      (!Config?.options.bar.workspaces.showAppIcons && !showNumbers))
 
             color: wsItem.isActive ? Appearance.colors.moduleBackground : Appearance.colors.emptyWorkspace
             fill: 1
@@ -126,7 +127,7 @@ Button {
                         width: root.showNumbers ? 14 : 20
                         height: root.showNumbers ? 14 : 20
                         source: Quickshell.iconPath(iconName, "tux-penguin")
-                        opacity: wsItem.isActive ? 1 : 0.65
+                        visible: Config?.options.bar.workspaces.showAppIcons
 
                         Behavior on width {
                             animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
@@ -140,7 +141,7 @@ Button {
                     }
 
                     Loader {
-                        active: Config.iconOverlayEnabled
+                        active: Config.iconOverlayEnabled && Config?.options.bar.workspaces.showAppIcons
                         anchors.fill: iconImage
                         sourceComponent: Item {
                             Desaturate {

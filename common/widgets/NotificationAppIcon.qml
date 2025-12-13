@@ -5,6 +5,7 @@ import Quickshell.Widgets
 import Quickshell.Services.Notifications
 import "../utils/notification_utils.js" as NotificationUtils
 import qs.styles
+import qs.common.utils
 
 Rectangle { // App icon
     id: root
@@ -20,6 +21,7 @@ Rectangle { // App icon
     property real materialIconSize: (size + 6) * materialIconScale
     property real appIconSize: size * appIconScale
     property real smallAppIconSize: size * smallAppIconScale
+    property int smallAppIconMargin: -5
 
     implicitWidth: size
     implicitHeight: size
@@ -49,11 +51,34 @@ Rectangle { // App icon
         id: appIconLoader
         active: root.image == "" && root.appIcon != ""
         anchors.centerIn: parent
-        sourceComponent: IconImage {
-            id: appIconImage
-            implicitSize: root.appIconSize
-            asynchronous: true
-            source: Quickshell.iconPath(root.appIcon, "tux-penguin")
+        sourceComponent: Item {
+            width: appIconImage.width
+            height: appIconImage.height
+            IconImage {
+                id: appIconImage
+                implicitSize: root.appIconSize
+                anchors.centerIn: parent
+                asynchronous: true
+                source: Quickshell.iconPath(root.appIcon, "tux-penguin")
+            }
+            Loader {
+                active: Config.iconOverlayEnabled
+                anchors.fill: appIconImage
+                sourceComponent: Item {
+                    Desaturate {
+                        id: desaturatedIcon
+                        visible: false // There's already color overlay
+                        anchors.fill: parent
+                        source: appIconImage
+                        desaturation: 0.6
+                    }
+                    ColorOverlay {
+                        anchors.fill: desaturatedIcon
+                        source: desaturatedIcon
+                        color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+                    }
+                }
+            }
         }
     }
     Loader {
@@ -88,14 +113,58 @@ Rectangle { // App icon
                 }
             }
             Loader {
+                active: Config.iconOverlayEnabled
+                anchors.fill: notifImage
+                sourceComponent: Item {
+                    Desaturate {
+                        id: desaturatedIcon
+                        visible: false // There's already color overlay
+                        anchors.fill: parent
+                        source: notifImage
+                        desaturation: 0.6
+                    }
+                    ColorOverlay {
+                        anchors.fill: desaturatedIcon
+                        source: desaturatedIcon
+                        color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+                    }
+                }
+            }
+            Loader {
                 id: notifImageAppIconLoader
                 active: root.appIcon != ""
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                sourceComponent: IconImage {
-                    implicitSize: root.smallAppIconSize
-                    asynchronous: true
-                    source: Quickshell.iconPath(root.appIcon)
+                    anchors.rightMargin: root.smallAppIconMargin
+                    anchors.bottomMargin: root.smallAppIconMargin
+                sourceComponent: Item {
+                    width: appIconImage.width
+                    height: appIconImage.height
+                    IconImage {
+                        id: appIconImage
+                        implicitSize: root.smallAppIconSize
+                        anchors.centerIn: parent
+                        asynchronous: true
+                        source: Quickshell.iconPath(root.appIcon, "tux-penguin")
+                    }
+                    Loader {
+                        active: Config.iconOverlayEnabled
+                        anchors.fill: appIconImage
+                        sourceComponent: Item {
+                            Desaturate {
+                                id: desaturatedIcon
+                                visible: false // There's already color overlay
+                                anchors.fill: parent
+                                source: appIconImage
+                                desaturation: 0.6
+                            }
+                            ColorOverlay {
+                                anchors.fill: desaturatedIcon
+                                source: desaturatedIcon
+                                color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
+                            }
+                        }
+                    }
                 }
             }
         }

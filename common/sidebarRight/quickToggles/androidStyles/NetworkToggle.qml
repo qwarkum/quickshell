@@ -21,12 +21,12 @@ import qs.common.widgets
 
 AndroidQuickToggle {
     id: root
-    toggled: NetworkService.wifiEnabled
+    toggled: NetworkService.wifiEnabled || NetworkService.ethernet
     buttonIcon: NetworkService.networkIcon
     mainAction: () => {
         NetworkService.toggleWifi()
     }
     name: NetworkService.ethernet ? "Ethernet" : NetworkService.wifiEnabled ? "Wi-Fi" : "Network"
-    statusText: !NetworkService.wifiEnabled ? "Disabled" : NetworkService.networkName == "lo" ? "No connection" : NetworkService.networkName
+    statusText: (!NetworkService.ethernet && !NetworkService.wifiEnabled) ? "Disabled" : NetworkService.networkName === "lo" ? "No connection" : NetworkService.networkName
     expandedSize: true
 }

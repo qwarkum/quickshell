@@ -15,7 +15,7 @@ ToolTip {
     }
     property bool shouldBeVisible: false
     property bool delayEnabled: false
-    verticalPadding: 4
+    verticalPadding: 1
     horizontalPadding: 7
     
     Timer {

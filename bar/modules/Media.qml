@@ -17,7 +17,15 @@ Item {
     opacity: visible ? 1 : 0  // Simple opacity control
 
     property bool enablePlayerControl: true
+    property real progress: MprisController.activePlayer?.position / MprisController.activePlayer?.length
     
+    Timer {
+        running: MprisController.activePlayer?.playbackState == MprisPlaybackState.Playing
+        interval: 3000
+        repeat: true
+        onTriggered: MprisController.activePlayer.positionChanged()
+    }
+
     // Smooth fade animation
     Behavior on opacity {
         NumberAnimation { duration: 200 }
@@ -61,11 +69,11 @@ Item {
                 id: playerProgress
                 Layout.alignment: Qt.AlignVCenter
                 lineWidth: 2
-                value: MprisController.activePlayer?.position / MprisController.activePlayer?.length || 0
+                value: mediaPlayerRoot.progress == 0 ? 0.001 : mediaPlayerRoot.progress
                 implicitSize: 26
                 colSecondary: MprisController.activePlayer ? Appearance.colors.batteryDefaultOnBackground : "transparent"
                 colPrimary: MprisController.activePlayer ? Appearance.colors.main : "transparent"
-                enableAnimation: true
+                enableAnimation: false
 
                 Text {
                     id: playPauseButton
@@ -101,7 +109,7 @@ Item {
                 Layout.preferredWidth: 150
                 Layout.preferredHeight: parent.height
                 Layout.rightMargin: 10
-                Layout.leftMargin: 2
+                Layout.leftMargin: 0
                 
                 ColumnLayout {
                     anchors.fill: parent
@@ -114,7 +122,7 @@ Item {
                         horizontalAlignment: Text.AlignHLeft
                         text: MprisController.activeTrack?.artist || "Unknown artist"
                         color: Appearance.colors.bright
-                        font.pixelSize: 12
+                        font.pixelSize: 11
                         elide: Text.ElideRight
                     }
 
@@ -124,7 +132,7 @@ Item {
                         horizontalAlignment: Text.AlignHLeft
                         text: MprisController.activeTrack?.title || "No media"
                         color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.textSecondary
-                        font.pixelSize: 14
+                        font.pixelSize: 13
                         elide: Text.ElideRight
                     }
                 }

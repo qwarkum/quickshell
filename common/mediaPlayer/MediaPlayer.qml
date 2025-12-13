@@ -97,18 +97,18 @@ Item {
                 anchors.fill: parent
                 focus: true
                 Keys.onEscapePressed: {
-                    root.toggle()
+                    Config.mediaPlayerOpen = false
                 }
             }
 
-            // HyprlandFocusGrab {
-            //     id: grab
-            //     windows: [ mediaPopup ]
-            //     active: mediaPopup.visible
-            //     onCleared: () => {
-            //         if (!active) root.toggle()
-            //     }
-            // }
+            HyprlandFocusGrab {
+                id: grab
+                windows: [ mediaPopup ]
+                active: Config.mediaPlayerOpen
+                onCleared: () => {
+                    if (!active) Config.mediaPlayerOpen = false
+                }
+            }
 
             Connections {
                 target: MprisController
