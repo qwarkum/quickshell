@@ -107,7 +107,7 @@ Singleton {
 
     // Panel
     property color panelBackground: matugenColor("surface_container_lowest", Config.useDarkMode ? "#141414" : '#f1f1f1')
-    property color moduleBackground: Qt.lighter(matugenColor("surface_container_low", Config.useDarkMode ? '#1f1f1f' : '#e6e6e6'), Config.useDarkMode ? 0.9 : 0.95)
+    property color moduleBackground: Qt.lighter(matugenColor("surface_container_low", Config.useDarkMode ? '#1f1f1f' : '#e6e6e6'), Config.useDarkMode ? 1 : 0.92)
     property color moduleBorder: "transparent"
     property color panelBorder: "transparent"
 

@@ -6,7 +6,7 @@ import qs.styles
 ToolTip {
     id: root
     property string content
-    property color tooltipColor: Appearance.colors.brightSecondary
+    property color tooltipColor: Config.useDarkMode ? Appearance.colors.brightSecondary : Appearance.colors.darkSecondary
     property bool extraVisibleCondition: true
     property bool alternativeVisibleCondition: false
     property bool internalVisibleCondition: {

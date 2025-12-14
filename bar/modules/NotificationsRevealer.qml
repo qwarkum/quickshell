@@ -8,7 +8,7 @@ import qs.common.widgets
 Revealer {
     id: root
     readonly property int unreadCounterPadding: 2
-    reveal: Notifications.silent || Notifications.unread > 0
+    reveal: !Config.sidebarRightOpen && (Notifications.silent || Notifications.unread > 0)
     Layout.fillHeight: true
     Layout.rightMargin: reveal ? 10 : 0
     implicitHeight: reveal ? notificationUnreadCount.implicitHeight : 0

@@ -106,7 +106,7 @@ Item {
             }
 
             Item {
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 120
                 Layout.preferredHeight: parent.height
                 Layout.rightMargin: 10
                 Layout.leftMargin: 0

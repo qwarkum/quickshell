@@ -19,7 +19,10 @@ AndroidQuickToggle {
         target: Config
 
         function onUseWallpaperColorsChanged() {
-            MatugenService.generateTheme(Config.options.background.currentWallpaper)
+            var source = Config.options.background.isWallpaperVideo ? 
+                         Config.options.background.thumbnailPath :
+                         Config.options.background.currentWallpaper
+            MatugenService.generateTheme(source)
         }
     }
 

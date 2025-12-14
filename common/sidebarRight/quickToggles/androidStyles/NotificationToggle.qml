@@ -8,8 +8,8 @@ AndroidQuickToggle {
     id: root
 
     name: "Notifications"
-    statusText: toggled ? "Show" : "Silent"
     toggled: !Notifications.silent
+    statusText: toggled ? "Show" : "Silent"
     buttonIcon: toggled ? "notifications_active" : "notifications_paused"
 
     mainAction: () => {

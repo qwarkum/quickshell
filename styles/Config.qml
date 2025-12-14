@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.common.utils
 import qs.common.components
 
 Singleton {
@@ -52,6 +53,7 @@ Singleton {
         property JsonObject background: JsonObject {
             property string currentWallpaper: ""
             property string thumbnailPath: ""
+            property bool isWallpaperVideo: StringUtil.isFileVideo(Config.options.background.currentWallpaper)
             property bool hideWhenFullscreen: false
             property bool showVideoWallpaperOnLockScreen: true
             property bool stopVideoWallpaperProcessWhenLockScreen: true
