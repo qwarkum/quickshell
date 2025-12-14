@@ -63,19 +63,34 @@ Scope {
                             Item { Layout.fillWidth: true }
 
                             // Right side
-                            RightContent { Layout.rightMargin: 15 }
+                            RightContent { Layout.rightMargin: 20 }
                         }
 
                         // Center group (independent from layout)
-                        RowLayout {
-                            id: centerGroup
-                            anchors.centerIn: parent
-                            spacing: 10
+                        // RowLayout {
+                        //     id: centerGroup
+                        //     anchors.centerIn: parent
+                        //     spacing: 10
 
-                            Media {}
-                            Workspaces {}
-                            DateTime {}
-                            Battery { Layout.rightMargin: 10 }
+                        //     Media {}
+                        //     Workspaces {}
+                        //     DateTime {}
+                        //     Battery {}
+                        // }
+
+                        RowLayout { // Center section
+                            id: centerSection
+                            anchors.centerIn: parent
+                            spacing: 4
+
+                            Repeater {
+                                id: centerRepeater
+                                model: Config.options.bar.layouts.center
+                                delegate: BarComponent {
+                                    list: centerRepeater.model
+                                    barSection: 1
+                                }
+                            }
                         }
                     }
                 }

@@ -14,6 +14,7 @@ Text {
         hintingPreference: Font.PreferFullHinting
         family: Appearance.fonts.rubik
         pixelSize: 15
+        weight: 400
     }
     color: Appearance.colors.textMain
     linkColor: Appearance.colors.textMain

@@ -8,6 +8,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Services.Mpris
 import Qt5Compat.GraphicalEffects
+import QtQuick.Shapes
 import qs.icons
 import qs.styles
 import qs.services
@@ -17,6 +18,8 @@ import qs.common.utils
 
 Item {
     id: root
+
+    property list<real> visualizerPoints: []
 
     // Functions in the root scope
     function toggle() {
@@ -38,6 +41,24 @@ Item {
         target: "mediaPlayer"
         function toggle() {
             root.toggle()
+        }
+    }
+
+    Process {
+        id: cavaProc
+        running: mediaPlayerLoader.active
+        onRunningChanged: {
+            if (!cavaProc.running) {
+                root.visualizerPoints = [];
+            }
+        }
+        command: ["cava", "-p", `${FileUtils.trimFileProtocol(Directories.scriptPath)}/cava/raw_output_config.txt`]
+        stdout: SplitParser {
+            onRead: data => {
+                // Parse `;`-separated values into the visualizerPoints array
+                let points = data.split(";").map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+                root.visualizerPoints = points;
+            }
         }
     }
 
@@ -63,7 +84,6 @@ Item {
                 }
                 return Quickshell.primaryScreen
             }
-            property list<real> visualizerPoints: []
             property real maxVisualizerValue: 1000 // Max value in the data points
             property int visualizerSmoothing: 2 // Number of points to average for smoothing
 
@@ -73,24 +93,6 @@ Item {
             anchors.top: true
             anchors.left: true
             margins.left: screen ? screen.width / 5.5 : 300
-
-            Process {
-                id: cavaProc
-                running: MprisController?.isPlaying && Config.mediaPlayerOpen
-                onRunningChanged: {
-                    if (!cavaProc.running) {
-                        mediaPopup.visualizerPoints = [];
-                    }
-                }
-                command: ["cava", "-p", `${FileUtils.trimFileProtocol(Directories.scriptPath)}/cava/raw_output_config.txt`]
-                stdout: SplitParser {
-                    onRead: data => {
-                        // Parse `;`-separated values into the visualizerPoints array
-                        let points = data.split(";").map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
-                        mediaPopup.visualizerPoints = points;
-                    }
-                }
-            }
 
             FocusScope {
                 id: focusRoot
@@ -104,9 +106,11 @@ Item {
             HyprlandFocusGrab {
                 id: grab
                 windows: [ mediaPopup ]
-                active: Config.mediaPlayerOpen
+                active: mediaPlayerLoader.active
                 onCleared: () => {
-                    if (!active) Config.mediaPlayerOpen = false
+                    if (!active) {
+                        Config.mediaPlayerOpen = false
+                    }
                 }
             }
 
@@ -168,7 +172,7 @@ Item {
                     id: visualizerCanvas
                     anchors.fill: parent
                     live: MprisController?.isPlaying
-                    points: mediaPopup.visualizerPoints
+                    points: root.visualizerPoints
                     maxVisualizerValue: mediaPopup.maxVisualizerValue
                     smoothing: mediaPopup.visualizerSmoothing
                     color: Appearance.colors.bright

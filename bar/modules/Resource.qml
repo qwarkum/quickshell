@@ -28,8 +28,8 @@ Item {
             id: resourceCircProg
             Layout.alignment: Qt.AlignVCenter
             lineWidth: 2
-            value: percentage
-            implicitSize: 28
+            value: percentage == 0 ? 0.001 : percentage
+            implicitSize: 26
             colPrimary: root.warning ? Appearance.colors.extraLightUrgent : Appearance.colors.main
             enableAnimation: true
 
@@ -43,7 +43,7 @@ Item {
                     font.weight: Font.DemiBold
                     fill: 1
                     text: iconName
-                    iconSize: 18
+                    iconSize: 16
                     color: Appearance.colors.main
                 }
             }

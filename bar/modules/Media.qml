@@ -71,9 +71,20 @@ Item {
                 lineWidth: 2
                 value: mediaPlayerRoot.progress == 0 ? 0.001 : mediaPlayerRoot.progress
                 implicitSize: 26
-                colSecondary: MprisController.activePlayer ? Appearance.colors.batteryDefaultOnBackground : "transparent"
-                colPrimary: MprisController.activePlayer ? Appearance.colors.main : "transparent"
+                colSecondary: Appearance.colors.batteryDefaultOnBackground
+                colPrimary: Appearance.colors.main
                 enableAnimation: false
+
+                Rectangle {
+                    visible: !MprisController.activePlayer
+                    anchors.centerIn: parent
+                    width: parent.implicitSize
+                    height: parent.implicitSize
+                    radius: width / 2
+                    color: "transparent"
+                    border.color: Appearance.colors.batteryDefaultOnBackground
+                    border.width: 2
+                }
 
                 Text {
                     id: playPauseButton
@@ -90,7 +101,7 @@ Item {
                     }
 
                     MouseArea {
-                        enabled: MprisController.activePlayer
+                        enabled: MprisController?.activePlayer
                         anchors.fill: parent
                         onClicked: if (MprisController.canTogglePlaying) MprisController.togglePlaying()
                         cursorShape: Qt.PointingHandCursor
@@ -114,7 +125,7 @@ Item {
                 ColumnLayout {
                     anchors.fill: parent
                     width: parent.width
-                    spacing: -2
+                    spacing: -4
 
                     StyledText {
                         id: artistTitle
@@ -138,7 +149,7 @@ Item {
                 }
 
                 MouseArea {
-                    enabled: MprisController.activePlayer
+                    enabled: MprisController?.activePlayer
                     anchors.fill: parent
                     onClicked: {
                         Config.mediaPlayerOpen = !Config.mediaPlayerOpen

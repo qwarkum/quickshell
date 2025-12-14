@@ -18,6 +18,7 @@ Singleton {
     property bool wallpaperSelectorOpen: false
     property bool mediaPlayerOpen: false
     property bool barOpen: true
+    property bool hasActivePlayer: false
     property bool launcherOpen: false
     property bool audioOsdOpen: false
     property bool brightnessOsdOpen: false
@@ -175,6 +176,77 @@ Singleton {
                 property int showNumberDelay: 300 // milliseconds
                 property list<string> numberMap: ["1", "2"] // Characters to show instead of numbers on workspace indicator
                 property bool useNerdFont: false
+            }
+            property JsonObject layouts: JsonObject {
+                property list<var> availableComponents: [
+                    {
+                        id: "date",
+                        icon: "date_range",
+                        title: "Date",
+                        centered: false
+                    },
+                    {
+                        id: "battery",
+                        icon: "battery_android_6",
+                        title: "Battery",
+                        centered: false
+                    }
+                ]
+                property list<var> left: [
+                    // {
+                    //     id: "system_monitor",
+                    //     icon: "memory",
+                    //     title: "System monitor",
+                    //     centered: false
+                    // },
+                ]
+                property list<var> center: [
+                    {
+                        id: "music_player",
+                        icon: "music_note",
+                        title: "Music player",
+                        centered: false
+                    },
+                    {
+                        id: "workspaces",
+                        icon: "workspaces",
+                        title: "Workspaces",
+                        centered: false
+                    },
+                    {
+                        id: "date",
+                        icon: "date_range",
+                        title: "Date",
+                        centered: false
+                    },
+                    {
+                        id: "battery",
+                        icon: "battery_full",
+                        title: "Battery",
+                        centered: false
+                    }
+                ]
+                property list<var> right: [
+                    {
+                        id: "utility_buttons",
+                        icon: "build",
+                        title: "Utility buttons",
+                        centered: false
+                    },
+                    {
+                        id: "clock",
+                        icon: "nest_clock_farsight_analog",
+                        title: "Clock",
+                        centered: false
+                    },
+                    {
+                        id: "system_tray",
+                        icon: "system_update_alt",
+                        title: "System tray",
+                        centered: false
+                    }
+                ]
+
             }
         }
     }

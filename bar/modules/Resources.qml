@@ -18,7 +18,7 @@ MouseArea {
         anchors.fill: parent
 
         Resource {
-            iconName: "database"
+            iconName: "memory"
             percentage: ResourceUsage.memoryUsedPercentage
             warningThreshold: 95
         }
@@ -26,18 +26,13 @@ MouseArea {
         Resource {
             iconName: "swap_horiz"
             percentage: ResourceUsage.swapUsedPercentage
-            shown: (percentage > 0) || 
-                (MprisController.activePlayer?.trackTitle == null) ||
-                root.showResources
             Layout.leftMargin: shown ? 6 : 0
             warningThreshold: 85
         }
 
         Resource {
-            iconName: "memory"
+            iconName: "planner_review"
             percentage: ResourceUsage.cpuUsage
-            shown: !(MprisController.activePlayer?.trackTitle?.length > 0) ||
-                root.showResources
             Layout.leftMargin: shown ? 6 : 0
             warningThreshold: 90
         }

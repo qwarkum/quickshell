@@ -49,7 +49,7 @@ Item {
             }
 
             Item {
-                Layout.preferredWidth: 20
+                Layout.preferredWidth: 18
                 Layout.preferredHeight: parent.height
                 Layout.leftMargin: 2
                 Layout.rightMargin: 12
