@@ -28,7 +28,7 @@ Item {
         "workspaces": [workspaceComp],
         "music_player": [musicPlayerComp],
         // "system_monitor": [systemMonitorComp],
-        "clock": [clockComp],
+        // "clock": [clockComp],
         "date": [dateComp],
         "battery": [batteryComp],
         // "utility_buttons": [utilityButtonsComp],
@@ -98,7 +98,7 @@ Item {
     // Component { id: batteryCompVert; Vertical.BatteryIndicator {} }
 
     // Component { id: clockCompVert; Vertical.VerticalClockWidget {} }
-    Component { id: clockComp; Clock {} }
+    // Component { id: clockComp; Clock {} }
 
     Component { id: dateComp; DateTime {} }
 

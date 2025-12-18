@@ -34,7 +34,7 @@ Item {
         width: rightContentLayout.implicitWidth + leftPadding + rightPadding
 
         onPressed: {
-            Config.sidebarRightOpen = true
+            Config.sidebarRightOpen = !Config.sidebarRightOpen
         }
 
         // RowLayout content anchored to the right

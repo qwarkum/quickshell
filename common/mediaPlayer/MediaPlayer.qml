@@ -137,15 +137,6 @@ Item {
                 }
             }
 
-            Rectangle {
-                id: background
-                anchors.fill: parent
-                anchors.rightMargin: Appearance.configs.panelRadius
-                anchors.leftMargin: Appearance.configs.panelRadius
-                radius: Appearance.configs.panelRadius
-                topLeftRadius: 0
-                topRightRadius: 0
-                color: Appearance.colors.panelBackground
 
                 RoundCorner {
                     corner: RoundCorner.CornerEnum.TopRight
@@ -154,7 +145,6 @@ Item {
                     anchors {
                         top: parent.top
                         left: parent.left
-                        leftMargin: -Appearance.configs.panelRadius
                     }
                 }
                 RoundCorner {
@@ -164,7 +154,23 @@ Item {
                     anchors {
                         top: parent.top
                         right: parent.right
-                        rightMargin: -Appearance.configs.panelRadius
+                    }
+                }
+            Rectangle {
+                id: background
+                anchors.fill: parent
+                anchors.rightMargin: Appearance.configs.panelRadius
+                anchors.leftMargin: Appearance.configs.panelRadius
+                color: Appearance.colors.panelBackground
+
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle {
+                        width: background.width
+                        height: background.height
+                        radius: Appearance.configs.panelRadius
+                        topLeftRadius: 0
+                        topRightRadius: 0
                     }
                 }
 
@@ -177,16 +183,16 @@ Item {
                     smoothing: mediaPopup.visualizerSmoothing
                     color: Appearance.colors.bright
                     
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: Rectangle {
-                            color: background.color
-                            width: background.width
-                            height: background.height
-                            radius: background.radius
-                            visible: false
-                        }
-                    }
+                    // layer.enabled: true
+                    // layer.effect: OpacityMask {
+                    //     maskSource: Rectangle {
+                    //         color: background.color
+                    //         width: background.width
+                    //         height: background.height
+                    //         radius: background.radius
+                    //         visible: false
+                    //     }
+                    // }
                 }
 
                 // All content goes inside the background

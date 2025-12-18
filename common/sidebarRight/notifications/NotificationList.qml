@@ -90,6 +90,7 @@ Item {
             buttonIcon: "delete_sweep"
             onClicked: () => {
                 Notifications.discardAllNotifications()
+                // Notifications.markAllRead();
             }
         }
     }

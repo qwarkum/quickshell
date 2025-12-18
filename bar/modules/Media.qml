@@ -125,7 +125,7 @@ Item {
                 ColumnLayout {
                     anchors.fill: parent
                     width: parent.width
-                    spacing: -4
+                    spacing: -5
 
                     StyledText {
                         id: artistTitle
@@ -133,7 +133,7 @@ Item {
                         horizontalAlignment: Text.AlignHLeft
                         text: MprisController.activeTrack?.artist || "Unknown artist"
                         color: Appearance.colors.bright
-                        font.pixelSize: 11
+                        font.pixelSize: 12
                         elide: Text.ElideRight
                     }
 
@@ -143,7 +143,7 @@ Item {
                         horizontalAlignment: Text.AlignHLeft
                         text: MprisController.activeTrack?.title || "No media"
                         color: MprisController.activePlayer ? Appearance.colors.textMain : Appearance.colors.textSecondary
-                        font.pixelSize: 13
+                        font.pixelSize: 14
                         elide: Text.ElideRight
                     }
                 }

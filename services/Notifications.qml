@@ -83,7 +83,7 @@ Singleton {
     property var filePath: Directories.notificationsPath
     property list<Notif> list: []
     property var popupList: list.filter((notif) => notif.popup);
-    property bool popupInhibited: (GlobalStates?.sidebarRightOpen ?? false) || silent
+    property bool popupInhibited: silent
     property var latestTimeForApp: ({})
     Component {
         id: notifComponent
@@ -174,7 +174,7 @@ Singleton {
 			root.list = [...root.list, newNotifObject];
 
             // Popup
-            if (!root.popupInhibited) {
+            if (!Config.sidebarRightOpen && !root.popupInhibited) {
                 newNotifObject.popup = true;
                 if (notification.expireTimeout != 0) {
                     newNotifObject.timer = notifTimerComponent.createObject(root, {

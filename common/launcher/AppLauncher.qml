@@ -20,12 +20,19 @@ PanelWindow {
     anchors.bottom: true
     color: "transparent"
 
+    mask: Region {
+        item: Config.launcherOpen ? content : null
+    }
+
     WlrLayershell.namespace: "quickshell:launcher"
+    WlrLayershell.layer: WlrLayer.Overlay
 
     property string filterText: ""
     property int itemHeight: 50
     property int maxVisibleItems: 7
     property int searchInputHeight: Config.options.launcher.searchInputHeight
+    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(window.screen)
+    property bool monitorIsFocused: (Hyprland.focusedMonitor?.id == monitor?.id)
 
     function calculateHeight() {
         const listSpacing = Config.options.launcher.list.spacing
@@ -33,6 +40,39 @@ PanelWindow {
         const itemCount = Math.min(appLauncherView.visibleItemCount, maxVisibleItems)
         const listHeight = (itemHeight * itemCount) + (listSpacing * Math.max(0, itemCount))
         return listHeight + searchInputHeight + launcherSpacing * 2
+    }
+
+    HyprlandFocusGrab {
+        id: grab
+        windows: [ window ]
+        property bool canBeActive: window.monitorIsFocused
+        active: false
+        onCleared: {
+            if (!active) {
+                Config.launcherOpen = false
+            }
+        }
+    }
+
+    Connections {
+        target: Config
+        function onLauncherOpenChanged() {
+            if (Config.launcherOpen) {
+                delayedGrabTimer.start();
+            }
+        }
+    }
+
+    Timer {
+        id: delayedGrabTimer
+        interval: 100 // Config.options.hacks.arbitraryRaceConditionDelay or just 100ms
+        repeat: false
+        onTriggered: {
+            if (!grab.canBeActive) {
+                return;
+            }
+            grab.active = Config.launcherOpen;
+        }
     }
 
     IpcHandler {
@@ -75,15 +115,6 @@ PanelWindow {
                 bottom: parent.bottom
                 right: parent.right
                 rightMargin: -Appearance.configs.panelRadius
-            }
-        }
-
-        HyprlandFocusGrab {
-            id: grab
-            windows: [ window ]
-            active: window.visible
-            onCleared: {
-                if (!active) Config.launcherOpen = false
             }
         }
 
