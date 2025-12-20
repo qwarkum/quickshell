@@ -9,7 +9,7 @@ Item {
 
     readonly property real nonAnimHeight: 200
     readonly property int enterDuration: 500
-    readonly property int exitDuration: 300
+    readonly property int exitDuration: 350
     readonly property list<real> enterCurve: Appearance.animationCurves.expressiveDefaultSpatial // [0.38, 1.21, 0.22, 1, 1, 1]
     readonly property list<real> exitCurve: Appearance.animationCurves.standard // [0.2, 0, 0, 1, 1, 1]
 
