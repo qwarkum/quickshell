@@ -52,3 +52,4 @@ The animation can be customized in `TopPanel/Wrapper.qml`:
 
 You can also change `nonAnimHeight` to adjust the panel's final height.
 
+
