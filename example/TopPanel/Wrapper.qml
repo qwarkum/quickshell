@@ -7,13 +7,11 @@ import qs.styles
 Item {
     id: root
 
-    required property bool visible
-
     readonly property real nonAnimHeight: 200
     readonly property int enterDuration: 500
-    readonly property int exitDuration: 200
+    readonly property int exitDuration: 400
     readonly property list<real> enterCurve: [0.38, 1.21, 0.22, 1, 1, 1]
-    readonly property list<real> exitCurve: [0.3, 0, 0.8, 0.15, 1, 1]
+    readonly property list<real> exitCurve: [0.2, 0, 0, 1, 1, 1]
 
     visible: height > 0
     implicitHeight: 0
