@@ -27,16 +27,6 @@ Variants {
             anchors.left: true
             anchors.right: true
 
-            // visible: false
-
-            // IpcHandler {
-            //     target: "panel"
-
-            //     function toggle() {
-            //         win.visible = !win.visible
-            //     }
-            // }
-
             Item {
                 anchors.fill: parent
 
@@ -48,7 +38,23 @@ Variants {
                     id: panels
 
                     screen: scope.modelData
-                    topPanelVisible: true
+                }
+
+                // IPC handler for toggling the panel
+                IpcHandler {
+                    target: "topPanel"
+
+                    function toggle() {
+                        panels.toggle()
+                    }
+
+                    function show() {
+                        panels.topPanelVisible = true
+                    }
+
+                    function hide() {
+                        panels.topPanelVisible = false
+                    }
                 }
             }
         }
