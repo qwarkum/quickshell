@@ -37,6 +37,8 @@ Scope {
 
     LazyLoader { active: true; component: Lock {} }
 
+    LazyLoader { active: true; component: Drawers {} }
+
     ExmplPanel {}
 
     // LazyLoader { active: true; component: ReloadPopup {} }
