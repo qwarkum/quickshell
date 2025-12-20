@@ -10,7 +10,7 @@ Item {
     property string selectedName: ""
     property int columnsCount: 4
     property int gridMargin: 15
-    property int itemSpacing: 24
+    property int itemSpacing: 10
     property int selectedIndex: 0
 
     signal wallpaperClicked(string fileName)

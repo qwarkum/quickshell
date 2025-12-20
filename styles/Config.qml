@@ -63,7 +63,7 @@ Singleton {
                 property bool vertical: false
                 property bool autoVertical: false
                 property bool enableWorkspace: true
-                property real workspaceZoom: 1.07 // Relative to your screen, not wallpaper size
+                property real workspaceZoom: enableWorkspace ? 1.05 : 1 // Relative to your screen, not wallpaper size
                 property bool enableSidebar: true
                 property real widgetsFactor: 1.2
             }
@@ -76,8 +76,8 @@ Singleton {
             }
             property JsonObject triggerCondition: JsonObject {
                 property list<string> networkNameKeywords: ["airport", "cafe", "college", "company", "eduroam", "free", "guest", "public", "school", "university"]
-                property list<string> fileKeywords: ["anime", "booru", "ecchi", "hentai", "yande.re", "konachan", "breast", "nipples", "pussy", "nsfw", "spoiler", "girl"]
-                property list<string> linkKeywords: ["hentai", "porn", "sukebei", "hitomi.la", "rule34", "gelbooru", "fanbox", "dlsite"]
+                property list<string> fileKeywords: ["anime", "booru", "ecchi", "spoiler"]
+                property list<string> linkKeywords: []
             }
         }
 

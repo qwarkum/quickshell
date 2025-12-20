@@ -13,6 +13,7 @@ import qs.common.overview
 import qs.common.widgets
 import qs.common.lock
 import qs.notificationPopup
+import qs.example
 
 Scope {
     LazyLoader {active: true; component: Background {} }
@@ -35,6 +36,8 @@ Scope {
     LazyLoader { active: true; component: AppLauncher {} }
 
     LazyLoader { active: true; component: Lock {} }
+
+    ExmplPanel {}
 
     // LazyLoader { active: true; component: ReloadPopup {} }
 }

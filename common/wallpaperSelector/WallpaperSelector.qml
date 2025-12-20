@@ -16,7 +16,7 @@ PanelWindow {
     id: root
     color: "transparent"
     implicitWidth: 1100
-    implicitHeight: 700
+    implicitHeight: 680
     visible: Config.wallpaperSelectorOpen
     focusable: true
     anchors.bottom: true
@@ -275,6 +275,7 @@ PanelWindow {
                 id: grid
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.topMargin: 10
                 // Layout.bottomMargin: searchBar.implicitHeight + searchBar.anchors.bottomMargin * 2
                 modelData: root.filteredModel
 

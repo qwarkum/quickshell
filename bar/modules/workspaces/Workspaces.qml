@@ -28,7 +28,8 @@ Item {
     property int minAppCount: 2
     property bool workspaceAppsCounterEnabled: true
     property bool showNumbers: false
-    property bool enableNumbers: false
+    property bool enableNumbers: true
+    property bool minimizeApps: false
 
     // ==== grouping ====
     property int totalWorkspaces: 10  // Your total number of workspaces in Hyprland

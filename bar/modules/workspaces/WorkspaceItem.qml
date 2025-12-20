@@ -51,8 +51,10 @@ Button {
             text: wsItem.displayNumber
             color: wsItem.isActive ? Appearance.colors.moduleBackground : Appearance.colors.emptyWorkspace
             font.pixelSize: 13
-            visible: enableNumbers || showNumbers
-            opacity: root.showNumbers ? 1 : (wsItem.apps.length === 0 ? 1 : 0)
+            visible: enableNumbers || root.showNumbers
+            opacity: root.showNumbers || root.minimizeApps ?
+                     1 : 
+                     (wsItem.apps.length === 0 ? 1 : 0)
 
             Behavior on visible {
                 animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
@@ -71,9 +73,10 @@ Button {
             anchors.centerIn: parent
             text: "circle"
             iconSize: 6
-            visible: !(showNumbers && wsItem.apps.length === 0) && 
-                      ((!enableNumbers && wsItem.apps.length === 0) || 
-                      (!Config?.options.bar.workspaces.showAppIcons && !showNumbers))
+            visible: !(root.showNumbers && wsItem.apps.length === 0) && 
+                      ((!root.enableNumbers && wsItem.apps.length === 0) || 
+                      (!Config?.options.bar.workspaces.showAppIcons && !root.showNumbers)) ||
+                      (root.minimizeApps && !root.showNumbers && !root.enableNumbers)
 
             color: wsItem.isActive ? Appearance.colors.moduleBackground : Appearance.colors.emptyWorkspace
             fill: 1
@@ -91,12 +94,12 @@ Button {
 
         RowLayout {
             id: iconsRow
-            spacing: root.showNumbers ? 0 : 3
+            spacing: root.showNumbers || root.minimizeApps ? 0 : 3
             opacity: wsItem.apps.length > 0 ? 1 : 0
             
             // Position in center when showing icons, bottom right when showing numbers
-            property real horizontalOffset: root.showNumbers ? (appsCounter.visible ? 22 : (wsItem.apps.length == root.minAppCount) ? 15 : 10) : 0
-            property real verticalOffset: root.showNumbers ? 10 : 0
+            property real horizontalOffset: root.showNumbers || root.minimizeApps ? (appsCounter.visible ? 22 : (wsItem.apps.length == root.minAppCount) ? 15 : 10) : 0
+            property real verticalOffset: root.showNumbers || root.minimizeApps ? 10 : 0
             
             x: parent.width / 2 - width / 2 + horizontalOffset
             y: parent.height / 2 - height / 2 + verticalOffset
@@ -124,8 +127,8 @@ Button {
 
                     IconImage {
                         id: iconImage
-                        width: root.showNumbers ? 14 : 20
-                        height: root.showNumbers ? 14 : 20
+                        width: root.showNumbers || root.minimizeApps ? 14 : 20
+                        height: root.showNumbers || root.minimizeApps ? 14 : 20
                         source: Quickshell.iconPath(iconName, "tux-penguin")
                         visible: Config?.options.bar.workspaces.showAppIcons
 
@@ -166,8 +169,8 @@ Button {
                 text: "+" + (wsItem.apps.length - root.minAppCount)
                 visible: root.workspaceAppsCounterEnabled && wsItem.apps.length > root.minAppCount
                 color: root.showNumbers ? Appearance.colors.main : 
-                        wsItem.isActive ? Appearance.colors.moduleBackground : Appearance.colors.main
-                font.pixelSize: root.showNumbers ? 8 : 12
+                        wsItem.isActive && !root.minimizeApps ? Appearance.colors.moduleBackground : Appearance.colors.main
+                font.pixelSize: root.showNumbers || root.minimizeApps ? 8 : 12
                 opacity: visible ? 1 : 0
 
                 Behavior on opacity {
