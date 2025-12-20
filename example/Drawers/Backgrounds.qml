@@ -11,7 +11,7 @@ Shape {
     anchors.fill: parent
     preferredRendererType: Shape.CurveRenderer
 
-    TopPanel.Background {
+    Background {
         wrapper: root.panels.topPanel
 
         // The startX and startY are set relative to the Shape's coordinate system

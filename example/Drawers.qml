@@ -1,4 +1,4 @@
-import "./Drawers/Drawers.qml" as DrawersModule
+import "./Drawers" as DrawersModule
 
 DrawersModule.Drawers {}
 

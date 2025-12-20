@@ -16,7 +16,6 @@ Variants {
             id: win
 
             screen: scope.modelData
-            name: "example-drawers"
             WlrLayershell.namespace: "quickshell:example-drawers"
             WlrLayershell.layer: WlrLayer.Overlay
             color: "transparent"
@@ -25,6 +24,8 @@ Variants {
             anchors.bottom: true
             anchors.left: true
             anchors.right: true
+
+            visible: false
 
             Item {
                 anchors.fill: parent

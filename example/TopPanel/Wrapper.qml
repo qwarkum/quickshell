@@ -7,7 +7,6 @@ import qs.styles
 Item {
     id: root
 
-    property bool visible: false
     readonly property real nonAnimHeight: 200
 
     visible: height > 0

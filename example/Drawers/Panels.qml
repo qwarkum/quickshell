@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 import qs.example.TopPanel
 
 Item {
@@ -22,7 +23,7 @@ Item {
         }
     }
 
-    TopPanel.Wrapper {
+    Wrapper {
         id: topPanel
 
         visible: root.topPanelVisible
