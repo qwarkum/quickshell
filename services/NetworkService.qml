@@ -63,6 +63,9 @@ Singleton {
     }
 
     function toggleWifi(): void {
+        if(root.ethernet) {
+            return
+        }
         enableWifi(!wifiEnabled);
     }
 

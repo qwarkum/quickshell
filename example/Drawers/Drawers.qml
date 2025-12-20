@@ -21,12 +21,18 @@ Variants {
             WlrLayershell.namespace: "quickshell:example-drawers"
             WlrLayershell.layer: WlrLayer.Overlay
             color: "transparent"
-            exclusiveZone: 0
+            exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
             focusable: panels.topPanelVisible
             WlrLayershell.keyboardFocus: panels.topPanelVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
             // Keep window alive for corner animation; shrink input to nothing when hidden
-            mask: panels.topPanelVisible ? Region { item: panels.topPanel } : Region { width: 0; height: 0 }
+            mask: Region {
+                width: win.width// - bar.implicitWidth - Config.border.thickness - win.dragMaskPadding * 2
+                height: win.height// - Config.border.thickness * 2 - win.dragMaskPadding * 2
+                intersection: Intersection.Xor
+
+                // regions: regions.instances
+            }
 
             anchors.top: true
             anchors.bottom: true
