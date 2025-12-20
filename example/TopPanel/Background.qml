@@ -11,7 +11,7 @@ ShapePath {
     readonly property real roundingY: flatten ? wrapper.height / 2 : rounding
 
     strokeWidth: -1
-    fillColor: Appearance.colors.panelBackground
+    fillColor: "red"
 
     // The startX and startY are set by the parent Shape component
     // startX is at the left edge minus rounding, startY is at the top

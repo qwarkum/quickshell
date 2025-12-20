@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import qs.styles
 import qs.example.Drawers
@@ -19,13 +20,22 @@ Variants {
             WlrLayershell.namespace: "quickshell:example-drawers"
             WlrLayershell.layer: WlrLayer.Overlay
             color: "transparent"
+            exclusiveZone: 0
 
             anchors.top: true
             anchors.bottom: true
             anchors.left: true
             anchors.right: true
 
-            visible: false
+            // visible: false
+
+            // IpcHandler {
+            //     target: "panel"
+
+            //     function toggle() {
+            //         win.visible = !win.visible
+            //     }
+            // }
 
             Item {
                 anchors.fill: parent
