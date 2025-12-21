@@ -26,9 +26,9 @@ Item {
     property int backgroundPadding: 3
 
     property int minAppCount: 2
-    property bool workspaceAppsCounterEnabled: true
+    property bool workspaceAppsCounterEnabled: true // if false - few apps will be treated as one app (default circle)
     property bool showNumbers: false
-    property bool enableNumbers: true
+    property bool enableNumbers: false
     property bool minimizeApps: false
 
     // ==== grouping ====

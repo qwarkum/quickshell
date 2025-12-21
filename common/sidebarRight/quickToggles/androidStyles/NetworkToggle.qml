@@ -24,6 +24,9 @@ AndroidQuickToggle {
     toggled: NetworkService.wifiEnabled || NetworkService.ethernet
     buttonIcon: NetworkService.networkIcon
     mainAction: () => {
+        if(NetworkService.ethernet) {
+            return
+        }
         NetworkService.toggleWifi()
     }
     name: NetworkService.ethernet ? "Ethernet" : NetworkService.wifiEnabled ? "Wi-Fi" : "Network"

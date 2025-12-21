@@ -14,6 +14,31 @@ Variants {
 
         required property ShellScreen modelData
 
+        // Close when clicking outside / losing grab
+        HyprlandFocusGrab {
+            id: focusGrab
+            windows: [win]
+            active: panels.topPanelVisible
+            onCleared: panels.topPanelVisible = false
+        }
+
+        // IPC handler for toggling the panel
+        IpcHandler {
+            target: "topPanel"
+
+            function toggle() {
+                panels.toggle()
+            }
+
+            function show() {
+                panels.topPanelVisible = true
+            }
+
+            function hide() {
+                panels.topPanelVisible = false
+            }
+        }
+
         PanelWindow {
             id: win
 
@@ -42,24 +67,6 @@ Variants {
             Item {
                 anchors.fill: parent
 
-                Backgrounds {
-                    panels: panels
-                }
-
-                Panels {
-                    id: panels
-
-                    screen: scope.modelData
-                }
-
-                // Close when clicking outside / losing grab
-                HyprlandFocusGrab {
-                    id: focusGrab
-                    windows: [win]
-                    active: panels.topPanelVisible
-                    onCleared: panels.topPanelVisible = false
-                }
-
                 // Close on Esc
                 Keys.onPressed: event => {
                     if (!panels.topPanelVisible)
@@ -70,21 +77,14 @@ Variants {
                     }
                 }
 
-                // IPC handler for toggling the panel
-                IpcHandler {
-                    target: "topPanel"
+                Backgrounds {
+                    panels: panels
+                }
 
-                    function toggle() {
-                        panels.toggle()
-                    }
+                Panels {
+                    id: panels
 
-                    function show() {
-                        panels.topPanelVisible = true
-                    }
-
-                    function hide() {
-                        panels.topPanelVisible = false
-                    }
+                    screen: scope.modelData
                 }
             }
         }
