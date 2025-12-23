@@ -1,8 +1,9 @@
 //@ pragma UseQApplication
 
 import Quickshell
-import "./bar"
-import "./osd"
+import qs.bar
+import qs.osd.audio
+import qs.osd.brightness
 import qs.common.wallpaperSelector
 import qs.common.sessionScreen
 import qs.common.sidebarRight
@@ -13,7 +14,7 @@ import qs.common.overview
 import qs.common.widgets
 import qs.common.lock
 import qs.notificationPopup
-import qs.example
+import qs.drawers
 
 Scope {
     LazyLoader {active: true; component: Background {} }
@@ -24,7 +25,7 @@ Scope {
     LazyLoader {active: true; component: ScreenBottomCorners {} }
     
     LazyLoader {active: true; component: BrightnessOsd {} }
-    LazyLoader {active: true; component: AudioOsd {} }
+    // LazyLoader {active: true; component: AudioOsd {} }
 
     LazyLoader {active: true; component: MediaPlayer {} }
     LazyLoader {active: true; component: WallpaperSelector {} }

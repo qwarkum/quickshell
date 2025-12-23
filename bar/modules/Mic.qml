@@ -6,7 +6,7 @@ import qs.services
 import qs.common.widgets
 
 Revealer {
-    reveal: audioService.micMuted ?? false
+    reveal: AudioService.micMuted ?? false
     Layout.fillHeight: true
     Layout.rightMargin: reveal ? 10 : 0
     Behavior on Layout.rightMargin {

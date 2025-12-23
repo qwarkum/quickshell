@@ -136,9 +136,9 @@ QtObject {
             }
         }
         property QtObject elementMoveFast: QtObject {
-            property int duration: animationCurves.expressiveEffectsDuration
+            property int duration: animationCurves.standardDuration
             property int type: Easing.BezierSpline
-            property list<real> bezierCurve: animationCurves.expressiveEffects
+            property list<real> bezierCurve: animationCurves.standard
             property int velocity: 850
             property Component colorAnimation: Component { ColorAnimation {
                 duration: root.animation.elementMoveFast.duration
@@ -186,6 +186,7 @@ QtObject {
         readonly property list<real> standard: [0.2, 0, 0, 1, 1, 1]
         readonly property list<real> standardAccel: [0.3, 0, 1, 1, 1, 1]
         readonly property list<real> standardDecel: [0, 0, 0, 1, 1, 1]
+        readonly property real standardDuration: 170
         readonly property real expressiveFastSpatialDuration: 350
         readonly property real expressiveDefaultSpatialDuration: 500
         readonly property real expressiveSlowSpatialDuration: 650

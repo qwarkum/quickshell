@@ -7,7 +7,6 @@ import qs.common.widgets
 import qs.common.utils
 import qs.services
 import qs.styles
-import qs.osd
 
 AndroidQuickToggle {
     id: root

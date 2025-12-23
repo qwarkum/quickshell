@@ -39,7 +39,7 @@ PanelWindow {
     FolderListModel {
         id: folderModel
         folder: Directories.wallpapersNotTrimed
-        nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.webp", "*.mp4"]
+        nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.webp", "*.mp4", "*.gif"]
         showDirs: false
     }
 

@@ -15,22 +15,15 @@ import qs.common.components
 Scope {
     id: root
 
-    // Reference the audio service
-    property alias audioService: audioService
-
     property real valueIndicatorVerticalPadding: 9
     property real valueIndicatorLeftPadding: 10
     property real valueIndicatorRightPadding: 20
-
-    AudioService {
-        id: audioService
-    }
 
     Connections {
         target: Config
         function onBrightnessOsdOpenChanged() {
             if (Config.brightnessOsdOpen) {
-                audioService.shouldShowOsd = false
+                AudioService.shouldShowOsd = false
             }
         }
     }
@@ -38,7 +31,7 @@ Scope {
     property string selectedFile: ""
 
     LazyLoader {
-        active: audioService.shouldShowOsd
+        active: AudioService.shouldShowOsd
 
         PanelWindow {
             anchors.top: true
@@ -104,7 +97,7 @@ Scope {
                                 alignWhenCentered: !root.rotateIcon
                             }
                             color: Appearance.colors.textMain
-                            text: audioService.muted ? "volume_off" : "volume_up"
+                            text: AudioService.muted ? "volume_off" : "volume_up"
 
                             iconSize: 30
                         }
@@ -135,14 +128,14 @@ Scope {
                                     family: Appearance.fonts.rubik
                                 }
                                 Layout.fillWidth: false
-                                text: Math.round(audioService.volume * 100)
+                                text: Math.round(AudioService.volume * 100)
                             }
                         }
                         
                         StyledProgressBar {
                             id: valueProgressBar
                             Layout.fillWidth: true
-                            value: audioService.volume
+                            value: AudioService.volume
                         }
                     }
                 }

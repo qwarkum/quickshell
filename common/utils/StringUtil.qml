@@ -23,7 +23,8 @@ Singleton {
                filePath.endsWith(".webm") || 
                filePath.endsWith(".mkv") || 
                filePath.endsWith(".avi") || 
-               filePath.endsWith(".mov")
+               filePath.endsWith(".mov") ||
+               filePath.endsWith(".gif")
     }
 
     /**

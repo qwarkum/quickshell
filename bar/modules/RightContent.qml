@@ -53,8 +53,4 @@ Item {
             Bluetooth {}
         }
     }
-    
-    AudioService {
-        id: audioService
-    }
 }

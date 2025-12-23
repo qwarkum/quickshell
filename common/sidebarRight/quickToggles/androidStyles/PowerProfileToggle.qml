@@ -3,7 +3,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Services.UPower
-import qs.osd
 import qs.styles
 import qs.common.widgets
 import qs.common.utils

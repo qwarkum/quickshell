@@ -34,10 +34,6 @@ Item {
         }
     }
 
-    AudioService {
-        id: audioService
-    }
-
     ColumnLayout {
         anchors.fill: parent
 

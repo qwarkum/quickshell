@@ -1,10 +1,13 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs.styles
 
-Item {
+Singleton {
     id: root
 
     // Audio properties
@@ -13,9 +16,8 @@ Item {
     property bool micMuted: false
     property bool shouldShowOsd: false
 
-    // Pipewire connection
     PwObjectTracker {
-        objects: [ Pipewire.defaultAudioSink, Pipewire.defaultAudioSource ]
+        objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
     }
 
     Connections {

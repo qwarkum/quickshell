@@ -4,7 +4,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import qs.styles
-import qs.example.Drawers
 
 Variants {
     model: Quickshell.screens
@@ -43,7 +42,6 @@ Variants {
             id: win
 
             screen: scope.modelData
-            WlrLayershell.namespace: "quickshell:example-drawers"
             WlrLayershell.layer: WlrLayer.Overlay
             color: "transparent"
             exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
@@ -77,14 +75,19 @@ Variants {
                     }
                 }
 
+                Border {}
+
                 Backgrounds {
                     panels: panels
                 }
 
                 Panels {
                     id: panels
+                    screen: modelData
+                }
 
-                    screen: scope.modelData
+                Interactions {
+                    panels: panels
                 }
             }
         }

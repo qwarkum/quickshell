@@ -12,10 +12,6 @@ import qs.styles
 Item {
     id: root
 
-    AudioService {
-        id: audioService
-    }
-
     ColumnLayout {
         anchors.top: parent.top
         anchors.left: parent.left
