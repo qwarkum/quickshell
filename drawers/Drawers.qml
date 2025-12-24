@@ -39,7 +39,7 @@ Variants {
             color: "transparent"
             exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            focusable: true
+            WlrLayershell.keyboardFocus: visibilities.brightnessOsd || visibilities.audioOsd
 
             // Keep window alive for corner animation; shrink input to nothing when hidden
             mask: Region {

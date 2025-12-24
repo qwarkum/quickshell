@@ -27,14 +27,22 @@ Item {
     implicitWidth: Appearance.configs.osdWidth
     implicitHeight: Appearance.configs.osdHeight
 
-    // Connections {
-    //     target: Config
-    //     function onAudioOsdOpenChanged() {
-    //         if(Config.audioOsdOpen) {
-    //             BrightnessService.hideOsd()
-    //         }
-    //     }
-    // }
+    Connections {
+        target: Config
+        function onAudioOsdOpenChanged() {
+            if(Config.audioOsdOpen) {
+                BrightnessService.hideOsd()
+            }
+        }
+    }
+
+    Connections {
+        target: BrightnessService
+        
+        function onBrightnessChanged() {
+            BrightnessService.showOsd();
+        }
+    }
 
     RowLayout {
         id: valueRow

@@ -6,6 +6,10 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: panels.topPanelVisible = false
+        onClicked: {
+            // Hide all OSDs when clicking anywhere
+            panels.visibilities.audioOsd = false
+            panels.visibilities.brightnessOsd = false
+        }
     }
 }
