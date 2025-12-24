@@ -22,21 +22,12 @@ Item {
     /* actual visibility is decoupled */
     visible: implicitHeight > 0
 
-    // Auto-hide timer
-    Timer {
-        id: hideTimer
-        interval: 1000
-        onTriggered: BrightnessService.hideOsd()
-    }
-
     states: [
         State {
             name: "open"
             when: root.shown
             PropertyChanges {
                 root.implicitHeight: content.implicitHeight
-                target: hideTimer
-                running: true
             }
         },
         State {
@@ -44,8 +35,6 @@ Item {
             when: !root.shown
             PropertyChanges {
                 root.implicitHeight: 0
-                target: hideTimer
-                running: false
             }
         }
     ]

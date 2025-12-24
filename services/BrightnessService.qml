@@ -9,6 +9,7 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
 import qs.services
+import qs.styles
 
 /**
  * For managing brightness of monitors. Supports both brightnessctl and ddcutil.
@@ -58,6 +59,7 @@ Singleton {
             visibilities.brightnessOsd = true;
         }
         Config.brightnessOsdOpen = true;
+        hideTimer.restart()
     }
 
     function hideOsd() {
@@ -73,6 +75,35 @@ Singleton {
     onMonitorsChanged: {
         ddcMonitors = [];
         ddcProc.running = true;
+    }
+
+    IpcHandler {
+        id: brightnessHandler
+        target: "brightness"
+
+        function show() {
+            BrightnessService.showOsd();
+        }
+
+        function increment() {
+            BrightnessService.increaseBrightness();
+        }
+
+        function decrement() {
+            BrightnessService.decreaseBrightness();
+        }
+    }
+
+    Timer {
+        id: hideTimer
+        interval: 1500
+        onTriggered: {
+            const visibilities = Visibilities.getForActive();
+            if (visibilities) {
+                visibilities.brightnessOsd = false;
+            }
+            Config.brightnessOsd = false
+        }
     }
 
     Process {

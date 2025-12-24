@@ -2,8 +2,8 @@
 
 import Quickshell
 import qs.bar
-import qs.osd.audio
-import qs.osd.brightness
+// import qs.osd.audio
+// import qs.osd.brightness
 import qs.common.wallpaperSelector
 import qs.common.sessionScreen
 import qs.common.sidebarRight

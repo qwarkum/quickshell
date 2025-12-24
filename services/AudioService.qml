@@ -47,11 +47,11 @@ Singleton {
     // OSD hide timer
     Timer {
         id: hideTimer
-        interval: 1000
+        interval: 1500
         onTriggered: {
             const visibilities = Visibilities.getForActive();
             if (visibilities) {
-                visibilities.osd = false;
+                visibilities.audioOsd = false;
             }
             Config.audioOsdOpen = false
         }
@@ -91,7 +91,7 @@ Singleton {
     function showOsd() {
         const visibilities = Visibilities.getForActive();
         if (visibilities) {
-            visibilities.osd = true;
+            visibilities.audioOsd = true;
         }
         Config.audioOsdOpen = true
         hideTimer.restart()

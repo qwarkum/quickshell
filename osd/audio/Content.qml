@@ -22,18 +22,18 @@ Item {
     implicitWidth: Appearance.configs.osdWidth
     implicitHeight: Appearance.configs.osdHeight
 
-    Connections {
-        target: Config
-        function onBrightnessOsdOpenChanged() {
-            if (Config.brightnessOsdOpen) {
-                // Close audio OSD when brightness OSD opens
-                const visibilities = Visibilities.getForActive();
-                if (visibilities) {
-                    visibilities.osd = false;
-                }
-            }
-        }
-    }
+    // Connections {
+    //     target: Config
+    //     function onBrightnessOsdOpenChanged() {
+    //         if (Config.brightnessOsdOpen) {
+    //             // Close audio OSD when brightness OSD opens
+    //             const visibilities = Visibilities.getForActive();
+    //             if (visibilities) {
+    //                 visibilities.audioOsd = false;
+    //             }
+    //         }
+    //     }
+    // }
 
     RowLayout {
         id: valueRow

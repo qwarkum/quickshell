@@ -60,7 +60,7 @@ Variants {
                 id: focusGrab
                 windows: [win]
                 active: true
-                onCleared: visibilities.osd = false
+                onCleared: visibilities.audioOsd = false
             }
 
             Item {
@@ -91,7 +91,7 @@ Variants {
                 PersistentProperties {
                     id: visibilities
 
-                    property bool osd
+                    property bool audioOsd
                     property bool brightnessOsd
 
                     Component.onCompleted: Visibilities.load(modelData, this)

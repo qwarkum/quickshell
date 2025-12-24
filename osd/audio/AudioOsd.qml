@@ -26,7 +26,7 @@ Scope {
                 // Close audio OSD when brightness OSD opens
                 const visibilities = Visibilities.getForActive();
                 if (visibilities) {
-                    visibilities.osd = false;
+                    visibilities.audioOsd = false;
                 }
             }
         }
@@ -39,7 +39,7 @@ Scope {
 
         PanelWindow {
             anchors.top: true
-            WlrLayershell.namespace: "quickshell:osd"
+            WlrLayershell.namespace: "quickshell:audioOsd"
             WlrLayershell.layer: WlrLayer.Top
             exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
 

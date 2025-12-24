@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import qs.example.TopPanel as TopPanel
+// import qs.example.TopPanel as TopPanel
 import qs.osd.audio as AudioOsd
 import qs.osd.brightness as BrightnessOsd
 import qs.services
@@ -34,7 +34,7 @@ Item {
 
     AudioOsd.Wrapper {
         id: audioOsdPanel
-        shown: root.visibilities.osd
+        shown: root.visibilities.audioOsd
         opacity: visible ? 1 : 0
 
         anchors.top: parent.top
