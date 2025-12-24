@@ -54,17 +54,15 @@ Scope {
         target: "brightness"
 
         function show() {
-            root.showOsd();
+            BrightnessService.showOsd();
         }
 
         function increment() {
             BrightnessService.increaseBrightness();
-            root.showOsd();
         }
 
         function decrement() {
             BrightnessService.decreaseBrightness();
-            root.showOsd();
         }
     }
 
@@ -72,12 +70,8 @@ Scope {
     Connections {
         target: BrightnessService
         function onBrightnessChanged() {
-            // Refresh the display when brightness changes
-            if (root.visible) {
-                hideTimer.restart();
-            } else {
-                root.showOsd()
-            }
+            // Show OSD when brightness changes
+            BrightnessService.showOsd();
         }
     }
 

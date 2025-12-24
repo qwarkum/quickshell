@@ -24,7 +24,7 @@ Scope {
     LazyLoader {active: true; component: SidebarRight {} }
     LazyLoader {active: true; component: ScreenBottomCorners {} }
     
-    LazyLoader {active: true; component: BrightnessOsd {} }
+    // LazyLoader {active: true; component: BrightnessOsd {} }
     // LazyLoader {active: true; component: AudioOsd {} }
 
     LazyLoader {active: true; component: MediaPlayer {} }

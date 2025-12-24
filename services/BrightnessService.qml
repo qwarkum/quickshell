@@ -8,6 +8,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
+import qs.services
 
 /**
  * For managing brightness of monitors. Supports both brightnessctl and ddcutil.
@@ -29,15 +30,19 @@ Singleton {
     function increaseBrightness(): void {
         const focusedName = Hyprland.focusedMonitor.name;
         const monitor = monitors.find(m => focusedName === m.screen.name);
-        if (monitor)
+        if (monitor) {
             monitor.setBrightness(monitor.brightness + 0.05);
+            showOsd();
+        }
     }
 
     function decreaseBrightness(): void {
         const focusedName = Hyprland.focusedMonitor.name;
         const monitor = monitors.find(m => focusedName === m.screen.name);
-        if (monitor)
+        if (monitor) {
             monitor.setBrightness(monitor.brightness - 0.05);
+            showOsd();
+        }
     }
 
     function setBrightness(value: real): void {
@@ -45,6 +50,22 @@ Singleton {
         const monitor = monitors.find(m => focusedName === m.screen.name);
         if (monitor)
             monitor.setBrightness(value);
+    }
+
+    function showOsd() {
+        const visibilities = Visibilities.getForActive();
+        if (visibilities) {
+            visibilities.brightnessOsd = true;
+        }
+        Config.brightnessOsdOpen = true;
+    }
+
+    function hideOsd() {
+        const visibilities = Visibilities.getForActive();
+        if (visibilities) {
+            visibilities.brightnessOsd = false;
+        }
+        Config.brightnessOsdOpen = false;
     }
 
     reloadableId: "brightness"

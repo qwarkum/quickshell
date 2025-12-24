@@ -92,6 +92,7 @@ Variants {
                     id: visibilities
 
                     property bool osd
+                    property bool brightnessOsd
 
                     Component.onCompleted: Visibilities.load(modelData, this)
                 }
