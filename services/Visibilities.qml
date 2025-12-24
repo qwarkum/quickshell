@@ -7,10 +7,10 @@ Singleton {
     property var screens: new Map()
 
     function load(screen: ShellScreen, visibilities: var): void {
-        screens.set(Hypr.monitorFor(screen), visibilities);
+        screens.set(Hyprland.monitorFor(screen), visibilities);
     }
 
     function getForActive(): var {
-        return screens.get(Hypr.focusedMonitor);
+        return screens.get(Hyprland.focusedMonitor);
     }
 }

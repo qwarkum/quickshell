@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import qs.services
 import qs.styles
 
 Variants {
@@ -13,30 +14,22 @@ Variants {
 
         required property ShellScreen modelData
 
-        // Close when clicking outside / losing grab
-        HyprlandFocusGrab {
-            id: focusGrab
-            windows: [win]
-            active: panels.topPanelVisible
-            onCleared: panels.topPanelVisible = false
-        }
+        // // IPC handler for toggling the panel
+        // IpcHandler {
+        //     target: "topPanel"
 
-        // IPC handler for toggling the panel
-        IpcHandler {
-            target: "topPanel"
+        //     function toggle() {
+        //         panels.toggle()
+        //     }
 
-            function toggle() {
-                panels.toggle()
-            }
+        //     function show() {
+        //         panels.topPanelVisible = true
+        //     }
 
-            function show() {
-                panels.topPanelVisible = true
-            }
-
-            function hide() {
-                panels.topPanelVisible = false
-            }
-        }
+        //     function hide() {
+        //         panels.topPanelVisible = false
+        //     }
+        // }
 
         PanelWindow {
             id: win
@@ -46,8 +39,8 @@ Variants {
             color: "transparent"
             exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            focusable: panels.topPanelVisible
-            WlrLayershell.keyboardFocus: panels.topPanelVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+            focusable: true
+
             // Keep window alive for corner animation; shrink input to nothing when hidden
             mask: Region {
                 width: win.width// - bar.implicitWidth - Config.border.thickness - win.dragMaskPadding * 2
@@ -61,6 +54,14 @@ Variants {
             anchors.bottom: true
             anchors.left: true
             anchors.right: true
+
+            // edit this
+            HyprlandFocusGrab {
+                id: focusGrab
+                windows: [win]
+                active: true
+                onCleared: visibilities.osd = false
+            }
 
             Item {
                 anchors.fill: parent
