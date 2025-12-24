@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs.styles
+import qs.services
 
 Singleton {
     id: root
@@ -14,7 +15,6 @@ Singleton {
     property real volume: 0
     property bool muted: false
     property bool micMuted: false
-    property bool shouldShowOsd: false
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
@@ -49,7 +49,10 @@ Singleton {
         id: hideTimer
         interval: 1000
         onTriggered: {
-            root.shouldShowOsd = false
+            const visibilities = Visibilities.getForActive();
+            if (visibilities) {
+                visibilities.osd = false;
+            }
             Config.audioOsdOpen = false
         }
     }
@@ -86,7 +89,10 @@ Singleton {
     }
 
     function showOsd() {
-        root.shouldShowOsd = true
+        const visibilities = Visibilities.getForActive();
+        if (visibilities) {
+            visibilities.osd = true;
+        }
         Config.audioOsdOpen = true
         hideTimer.restart()
     }

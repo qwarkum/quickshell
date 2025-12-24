@@ -26,7 +26,11 @@ Item {
         target: Config
         function onBrightnessOsdOpenChanged() {
             if (Config.brightnessOsdOpen) {
-                AudioService.shouldShowOsd = false
+                // Close audio OSD when brightness OSD opens
+                const visibilities = Visibilities.getForActive();
+                if (visibilities) {
+                    visibilities.osd = false;
+                }
             }
         }
     }

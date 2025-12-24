@@ -84,6 +84,15 @@ Variants {
                 Panels {
                     id: panels
                     screen: modelData
+                    visibilities: visibilities
+                }
+
+                PersistentProperties {
+                    id: visibilities
+
+                    property bool osd
+
+                    Component.onCompleted: Visibilities.load(modelData, this)
                 }
 
                 Interactions {
