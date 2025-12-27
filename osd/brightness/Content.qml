@@ -26,6 +26,7 @@ Item {
 
     implicitWidth: Appearance.configs.osdWidth
     implicitHeight: Appearance.configs.osdHeight
+    visible: !Config.audioOsdOpen
 
     Connections {
         target: Config

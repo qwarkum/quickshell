@@ -49,9 +49,9 @@ Singleton {
         id: hideTimer
         interval: 1500
         onTriggered: {
-            const visibilities = Visibilities.getForActive();
-            if (visibilities) {
-                visibilities.audioOsd = false;
+            const visibilities = Visibilities.getAll();
+            for (var screen of visibilities) {
+                screen.audioOsd = false;
             }
             Config.audioOsdOpen = false
         }

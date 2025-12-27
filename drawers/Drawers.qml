@@ -39,7 +39,7 @@ Variants {
             color: "transparent"
             exclusiveZone: Hyprland.focusedWorkspace?.hasFullscreen ? -1 : 0
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.keyboardFocus: visibilities.brightnessOsd || visibilities.audioOsd
+            WlrLayershell.keyboardFocus: visibilities.mediaPlayer ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
             // Keep window alive for corner animation; shrink input to nothing when hidden
             mask: Region {
@@ -47,7 +47,7 @@ Variants {
                 height: win.height// - Config.border.thickness * 2 - win.dragMaskPadding * 2
                 intersection: Intersection.Xor
 
-                // regions: regions.instances
+                regions: regions.instances
             }
 
             anchors.top: true
@@ -55,23 +55,39 @@ Variants {
             anchors.left: true
             anchors.right: true
 
+            Variants {
+                id: regions
+
+                model: panels.children
+
+                Region {
+                    required property Item modelData
+
+                    x: modelData.x
+                    y: modelData.y + 40
+                    width: modelData.width
+                    height: modelData.height
+                    intersection: Intersection.Subtract
+                }
+            }
+
             // edit this
             HyprlandFocusGrab {
                 id: focusGrab
                 windows: [win]
-                active: true
-                onCleared: visibilities.audioOsd = false
+                active: visibilities.mediaPlayer
+                onCleared: visibilities.mediaPlayer = false
             }
 
             Item {
                 anchors.fill: parent
-
+                focus: true
                 // Close on Esc
                 Keys.onPressed: event => {
-                    if (!panels.topPanelVisible)
+                    if (!visibilities.mediaPlayer)
                         return;
                     if (event.key === Qt.Key_Escape) {
-                        panels.topPanelVisible = false;
+                        visibilities.mediaPlayer = false;
                         event.accepted = true;
                     }
                 }
@@ -93,13 +109,14 @@ Variants {
 
                     property bool audioOsd
                     property bool brightnessOsd
+                    property bool mediaPlayer
 
                     Component.onCompleted: Visibilities.load(modelData, this)
                 }
 
-                Interactions {
-                    panels: panels
-                }
+                // Interactions {
+                //     panels: panels
+                // }
             }
         }
     }

@@ -58,12 +58,15 @@ PanelWindow {
         }
     }
 
-    implicitWidth: Screen.width
-    implicitHeight: Screen.height + Appearance.configs.barHeight
+    anchors.top: true
+    anchors.bottom: true
+    anchors.left: true
+    anchors.right: true
+
     color: "transparent"
     visible: Config.sessionOpen
     focusable: true
-    exclusiveZone: 0
+    exclusiveZone: -1
     WlrLayershell.namespace: "quickshell:session"
     WlrLayershell.layer: WlrLayer.Overlay
 

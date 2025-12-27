@@ -1,36 +1,21 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-// import qs.example.TopPanel as TopPanel
+import qs.services
 import qs.osd.audio as AudioOsd
 import qs.osd.brightness as BrightnessOsd
-import qs.services
+import qs.common.mediaPlayer as MediaPlayer
 
 Item {
     id: root
     required property ShellScreen screen
     required property var visibilities
-
-    // property bool topPanelVisible: false
-
-    // readonly property alias topPanel: topPanel
+    
     readonly property alias audioOsdPanel: audioOsdPanel
     readonly property alias brightnessOsdPanel: brightnessOsdPanel
+    readonly property alias mediaPlayerPanel: mediaPlayerPanel
 
     anchors.fill: parent
-
-    // function toggle() {
-    //     topPanelVisible = !topPanelVisible
-    // }
-
-    // TopPanel.Wrapper {
-    //     id: topPanel
-    //     visible: root.topPanelVisible
-    //     opacity: visible ? 1 : 0
-
-    //     anchors.top: parent.top
-    //     anchors.horizontalCenter: parent.horizontalCenter
-    // }
 
     AudioOsd.Wrapper {
         id: audioOsdPanel
@@ -48,5 +33,15 @@ Item {
 
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
+    }
+    
+    MediaPlayer.Wrapper {
+        id: mediaPlayerPanel
+        shown: root.visibilities.mediaPlayer
+        opacity: visible ? 1 : 0
+
+        anchors.top: parent.top
+        // anchors.horizontalCenter: parent.horizontalCenter
+        x:(root.width - mediaPlayerPanel.width) / 4
     }
 }

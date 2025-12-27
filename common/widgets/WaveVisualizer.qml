@@ -56,7 +56,7 @@ Canvas { // Visualizer
             root.color.r,
             root.color.g,
             root.color.b,
-            Config.useDarkMode ? 0.17 : 0.5
+            Config.useDarkMode ? 0.25 : 0.5
         );
         ctx.fill();
     }

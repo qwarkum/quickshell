@@ -7,7 +7,7 @@ import qs.bar
 import qs.common.wallpaperSelector
 import qs.common.sessionScreen
 import qs.common.sidebarRight
-import qs.common.mediaPlayer
+// import qs.common.mediaPlayer
 import qs.common.background
 import qs.common.launcher
 import qs.common.overview
@@ -27,7 +27,7 @@ Scope {
     // LazyLoader {active: true; component: BrightnessOsd {} }
     // LazyLoader {active: true; component: AudioOsd {} }
 
-    LazyLoader {active: true; component: MediaPlayer {} }
+    // LazyLoader {active: true; component: MediaPlayer {} }
     LazyLoader {active: true; component: WallpaperSelector {} }
     LazyLoader {active: true; component: SessionScreen {} }
 

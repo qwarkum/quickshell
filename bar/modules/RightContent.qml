@@ -23,9 +23,9 @@ Item {
         colBackground: Appearance.colors.panelBackground
         colBackgroundHover: Appearance.colors.darkSecondary
         colRipple: Appearance.colors.brightSecondary
-        colBackgroundToggled: Appearance.colors.secondary
+        colBackgroundToggled: Appearance.colors.darkSecondary
         colBackgroundToggledHover: Appearance.colors.brightSecondary
-        colRippleToggled: Appearance.colors.secondary
+        colRippleToggled: Appearance.colors.brighterSecondary
 
         toggled: Config.sidebarRightOpen
 

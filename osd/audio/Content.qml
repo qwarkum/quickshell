@@ -21,6 +21,7 @@ Item {
 
     implicitWidth: Appearance.configs.osdWidth
     implicitHeight: Appearance.configs.osdHeight
+    visible: !Config.brightnessOsdOpen
 
     Connections {
         target: Config
