@@ -8,6 +8,7 @@ QtObject {
     readonly property QtObject colors: QtObject {
         // Base colors - reference Theme directly
         property color main: Theme.main
+        property color inverseMain: Theme.inverseMain
         property color textMain: Theme.textMain
         property color textSecondary: Theme.textSecondary
         property color almostMain: Theme.almostMain

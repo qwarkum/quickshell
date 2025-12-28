@@ -65,12 +65,26 @@ Scope {
             Config.wallpaperSelectorOpen = !Config.wallpaperSelectorOpen;
         }
     }
+
+    IpcHandler {
+        target: "mediaPlayer"
+
+        function toggle() {
+            Config.mediaPlayerOpen = !Config.mediaPlayerOpen;
+        }
+    }
     
     Connections {
         target: Config
 
         function onMediaPlayerOpenChanged() {
-            drawers.toggle("mediaPlayer");
+            if(!MprisController.activePlayer) {
+                return;
+            }
+            const visibilities = Visibilities.getForActive();
+            if (visibilities) {
+                visibilities.mediaPlayer = !visibilities.mediaPlayer;
+            }
         }
 
         function onLauncherOpenChanged() {

@@ -50,7 +50,7 @@ Item {
                 target: MprisController
                 function onActivePlayerChanged() {
                     if (!MprisController.activePlayer) {
-                        root.close()
+                        Config.mediaPlayerOpen = false
                     }
                 }
                 
@@ -79,8 +79,6 @@ Item {
                         width: root.width
                         height: root.height
                         radius: Appearance.configs.panelRadius
-                        topLeftRadius: 0
-                        topRightRadius: 0
                     }
                 }
 
@@ -92,17 +90,6 @@ Item {
                     maxVisualizerValue: root.maxVisualizerValue
                     smoothing: root.visualizerSmoothing
                     color: Appearance.colors.bright
-                    
-                    // layer.enabled: true
-                    // layer.effect: OpacityMask {
-                    //     maskSource: Rectangle {
-                    //         color: background.color
-                    //         width: background.width
-                    //         height: background.height
-                    //         radius: background.radius
-                    //         visible: false
-                    //     }
-                    // }
                 }
 
                 // All content goes inside the background
@@ -422,7 +409,7 @@ Item {
 
                         // Bottom section - Player selector and delete button
                         RowLayout {
-                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignHCenter
                             spacing: 5
 
                             Rectangle {
@@ -481,229 +468,36 @@ Item {
                                 }
                             }
 
-                            // Player Selector Container
-                            Item {
-                                id: playerSelectorContainer
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 25
+                            SplitButton {
+                                id: playerSelector
 
-                                // Player list popup - positioned directly above the selector with no gap
-                                Rectangle {
-                                    id: playerListPopup
-                                    anchors.bottom: parent.top // Position above the container
-                                    width: playerSelector.width
-                                    height: playerSelector.expanded ? Math.min(playerList.contentHeight, 120) : 0
-                                    visible: playerSelector.expanded
-                                    color: Appearance.colors.moduleBackground
-                                    radius: playerSelector.radius
-                                    clip: true
-                                    
-                                    // Animation for expanding/collapsing
-                                    Behavior on height {
-                                        NumberAnimation { 
-                                            duration: 150; 
-                                            easing.type: playerSelector.expanded ? Easing.OutCubic : Easing.InCubic
-                                        }
-                                    }
-                                    Behavior on opacity {
-                                        NumberAnimation { 
-                                            duration: 150;
-                                            easing.type: playerSelector.expanded ? Easing.OutCubic : Easing.InCubic
-                                        }
-                                    }
-                                    
-                                    // Bottom corners are squared, top corners are rounded
-                                    bottomLeftRadius: 0
-                                    bottomRightRadius: 0
-                                    
-                                    ListView {
-                                        id: playerList
-                                        anchors.fill: parent
-                                        model: {
-                                            // Filter out the currently active player
-                                            const players = Mpris.players.values || []
-                                            return players.filter(player => player !== MprisController.activePlayer)
-                                        }
-                                        spacing: 3
-                                        boundsBehavior: Flickable.StopAtBounds
-                                        
-                                        delegate: Rectangle {
-                                            width: playerList.width
-                                            height: 25
-                                            color: mouseArea.containsMouse ? Appearance.colors.darkSecondary : Appearance.colors.moduleBackground
-                                            radius: playerSelector.radius
-                                            
-                                            // Background color animation
-                                            Behavior on color {
-                                                ColorAnimation { duration: 150 }
-                                            }
-                                            
-                                            RowLayout {
-                                                anchors.centerIn: parent
-                                                anchors.margins: 5
-                                                spacing: 8
+                                disabled: !MprisController.list.length
+                                active: menuItems.find(m => m.modelData === MprisController.activePlayer) ?? menuItems[0] ?? null
+                                menu.onItemSelected: item => MprisController.setActivePlayer(item.modelData)
 
-                                                Item {
-                                                    Layout.preferredWidth: 20
-                                                    Layout.preferredHeight: 20
-                                                    
-                                                    Image {
-                                                        id: iconImage
-                                                        Layout.preferredWidth: 18
-                                                        Layout.preferredHeight: 18
-                                                        source: Quickshell.iconPath(AppSearch.guessIcon((modelData.desktopEntry)))
-                                                        sourceSize.width: 18
-                                                        sourceSize.height: 18
-                                                        opacity: 0.8
-                                                        fillMode: Image.PreserveAspectFit
-                                                    }
+                                menuItems: playerList.instances
+                                fallbackIcon: ""
+                                fallbackText: "No players"
 
-                                                    Desaturate {
-                                                        id: desaturatedIcon
-                                                        visible: false // There's already color overlay
-                                                        anchors.fill: parent
-                                                        source: iconImage
-                                                        desaturation: 0.6
-                                                    }
-                                                    
-                                                    ColorOverlay {
-                                                        visible: Config.iconOverlayEnabled
-                                                        anchors.fill: desaturatedIcon
-                                                        source: desaturatedIcon
-                                                        color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
-                                                    }
-                                                }
-                                                
-                                                Text {
-                                                    Layout.fillWidth: true
-                                                    text: modelData.identity
-                                                    color: Appearance.colors.bright
-                                                    font {
-                                                        pixelSize: 14
-                                                        family: Appearance.fonts.rubik
-                                                    }
-                                                    elide: Text.ElideRight
-                                                }
-                                            }
-                                            
-                                            MouseArea {
-                                                id: mouseArea
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                                cursorShape: Qt.PointingHandCursor
-                                                onClicked: {
-                                                    MprisController.setActivePlayer(modelData)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    // Scroll indicator for when there are many players
-                                    ScrollIndicator {
-                                        anchors {
-                                            right: parent.right
-                                            top: parent.top
-                                            bottom: parent.bottom
-                                            rightMargin: 2
-                                        }
-                                        width: 4
-                                        visible: playerList.contentHeight > playerList.height
-                                        orientation: Qt.Vertical
-                                    }
-                                }
+                                label.Layout.maximumWidth: 100
+                                label.Layout.minimumWidth: 70
+                                label.elide: Text.ElideRight
 
-                                // Current Player Selector
-                                Rectangle {
-                                    id: playerSelectorWrapper
-                                    color: Appearance.colors.moduleBackground
-                                    width: parent.width
-                                    height: 25
-                                    anchors.bottom: parent.bottom
-                                    radius: Appearance.configs.full
-                                    topRightRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
-                                    topLeftRadius: (playerSelector.expanded && Mpris.players.values.length > 1) ? 0 : radius
-                                    
-                                    Rectangle {
-                                        id: playerSelector
-                                        anchors.fill: parent
-                                        radius: playerSelectorWrapper.radius
-                                        topRightRadius: radius
-                                        topLeftRadius: radius
-                                        
-                                        property bool expanded: false
-                                        
-                                        // Background color animation on hover and press
-                                        color: mouseArea.containsMouse && Mpris.players.values.length > 1 ? Appearance.colors.darkSecondary : Appearance.colors.moduleBackground
-                                        Behavior on color {
-                                            ColorAnimation { duration: 150 }
-                                        }
-                                        
-                                        // Close dropdown when active player changes
-                                        Connections {
-                                            target: MprisController
-                                            function onActivePlayerChanged() {
-                                                playerSelector.expanded = false
-                                            }
-                                        }
-                                        
-                                        RowLayout {
-                                            Layout.fillWidth: true
-                                            anchors.centerIn: parent
-                                            spacing: 8
+                                stateLayer.disabled: true
+                                menuOnTop: true
 
-                                            // Group the overlays inside an Item
-                                            Item {
-                                                Layout.preferredWidth: 20
-                                                Layout.preferredHeight: 20
+                                Variants {
+                                    id: playerList
 
-                                                Image {
-                                                    id: playerIcon
-                                                    anchors.fill: parent
-                                                    sourceSize.width: 20 
-                                                    sourceSize.height: 20
-                                                    source: Quickshell.iconPath(AppSearch.guessIcon(MprisController.activePlayer?.desktopEntry))
-                                                    fillMode: Image.PreserveAspectFit
-                                                }
+                                    model: MprisController.list
 
-                                                Desaturate {
-                                                    id: desaturatedIcon
-                                                    visible: false
-                                                    anchors.fill: parent
-                                                    source: playerIcon
-                                                    desaturation: 0.6
-                                                }
+                                    MenuItem {
+                                        required property MprisPlayer modelData
 
-                                                ColorOverlay {
-                                                    visible: Config.iconOverlayEnabled
-                                                    anchors.fill: parent
-                                                    source: desaturatedIcon
-                                                    color: ColorUtils.transparentize(Appearance.colors.brightSecondary, 0.9)
-                                                }
-                                            }
-
-                                            // Player name text
-                                            Text {
-                                                Layout.fillWidth: true
-                                                text: MprisController.activePlayer?.identity ?? "No players"
-                                                color: Appearance.colors.bright
-                                                font.pixelSize: 14
-                                                font.family: Appearance.fonts.rubik
-                                                elide: Text.ElideRight
-                                            }
-                                        }
-                                        
-                                        MouseArea {
-                                            id: mouseArea
-                                            anchors.fill: parent
-                                            onClicked: {
-                                                // Only allow expanding if there are other players
-                                                if (Mpris.players.values.length > 1) {
-                                                    playerSelector.expanded = !playerSelector.expanded
-                                                }
-                                            }
-                                            cursorShape: Mpris.players.values.length > 1 ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                            hoverEnabled: true
-                                        }
+                                        icon: ""
+                                        text: modelData?.identity ?? ""
+                                        activeIcon: ""
+                                        desktopEntry: modelData?.desktopEntry ?? ""
                                     }
                                 }
                             }
@@ -714,7 +508,7 @@ Item {
                                 height: playerSelector.height
                                 radius: 100
                                 
-                                color: closeMouse.containsMouse ? Appearance.colors.darkSecondary : Appearance.colors.moduleBackground
+                                color: MprisController.activePlayer?.canQuit && closeMouse.containsMouse ? Appearance.colors.darkSecondary : Appearance.colors.moduleBackground
                                 Behavior on color {
                                     ColorAnimation { duration: 150 }
                                 }
@@ -724,7 +518,7 @@ Item {
                                     anchors.centerIn: parent
                                     text: "delete"
                                     iconSize: 20
-                                    color: closeMouse.containsMouse ? Appearance.colors.bright : Appearance.colors.bright
+                                    color: MprisController.activePlayer?.canQuit ? Appearance.colors.bright : Appearance.colors.brighterSecondary
 
                                     Behavior on color {
                                         ColorAnimation { duration: 150 }
@@ -734,9 +528,9 @@ Item {
                                         id: closeMouse
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
+                                        cursorShape: MprisController.activePlayer?.canQuit ? Qt.PointingHandCursor : Qt.ArrowCursor
                                         onClicked: {
-                                            if (MprisController.activePlayer) {
+                                            if (MprisController.activePlayer?.canQuit) {
                                                 MprisController.activePlayer.stop()
                                                 MprisController.activePlayer.quit()
                                             }

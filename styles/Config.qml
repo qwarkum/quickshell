@@ -10,6 +10,7 @@ import qs.common.components
 Singleton {
     id: root
     property string filePath: Directories.shellConfigPath
+    property alias services: servicesJsonAdapter
     property alias options: configOptionsJsonAdapter
     property bool ready: false
 
@@ -37,6 +38,17 @@ Singleton {
     property bool batterySaverToggled: false
 
     property bool revealKeyboardLayout: true
+
+    JsonAdapter {
+        id: servicesJsonAdapter
+
+        property list<var> playerAliases: [
+            {
+                "from": "com.github.th_ch.youtube_music",
+                "to": "YT Music"
+            }
+        ]
+    }
 
     JsonAdapter {
         id: configOptionsJsonAdapter

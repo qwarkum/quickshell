@@ -15,6 +15,8 @@ import Quickshell.Services.Mpris
  */
 Singleton {
 	id: root;
+
+	readonly property list<MprisPlayer> list: Mpris.players.values
 	property MprisPlayer trackedPlayer: null;
 	property MprisPlayer activePlayer: trackedPlayer ?? Mpris.players.values[0] ?? null;
 	signal trackChanged(reverse: bool);

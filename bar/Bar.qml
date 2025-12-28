@@ -93,6 +93,7 @@ Scope {
                             Repeater {
                                 id: centerRepeater
                                 model: Config.options.bar.layouts.center
+                                
                                 delegate: BarComponent {
                                     list: centerRepeater.model
                                     barSection: 1

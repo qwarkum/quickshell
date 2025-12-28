@@ -82,6 +82,8 @@ Singleton {
     // -------------------------
     property color main: Config.useDarkMode ? matugenPalette("secondary", 90, "#bec6dc")
                                             : matugenColor("primary", '#3f3f3f')
+    property color inverseMain: Config.useDarkMode ? Qt.lighter(matugenColor("inverse_primary", "#63568f"), 1.8)
+                                            : Qt.lighter(matugenColor("primary", '#cdbdff'), 0.8)
     property color textMain: Config.useDarkMode ? Qt.lighter(main, 1.1)
                                                 : Qt.lighter(main, 0.9)
     property color textSecondary: Config.useDarkMode ? Qt.lighter(main, 0.85)

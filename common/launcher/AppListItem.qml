@@ -40,7 +40,7 @@ Rectangle {
         
         for (var j = 0; j < fullText.length; j++) {
             if (matchedIndices.includes(j)) {
-                result += '<span style="text-decoration: underline; font-weight: 600">' + fullText.charAt(j) + '</span>'
+                result += '<span style="text-decoration: underline; font-weight: 600; color:' + Appearance.colors.inverseMain + '">' + fullText.charAt(j) + '</span>'
             } else {
                 result += fullText.charAt(j)
             }
@@ -117,7 +117,7 @@ Rectangle {
             }
 
             StyledText {
-                text: model.comment ? model.comment : "No description"
+                text: model.comment ? model.comment : model.name
                 visible: !model.isFormula
                 color: Appearance.colors.bright
                 font.pixelSize: 14
