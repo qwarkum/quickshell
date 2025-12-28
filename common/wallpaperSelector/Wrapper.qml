@@ -12,7 +12,7 @@ Item {
     /* external control */
     property bool shown: false
     
-    readonly property bool shouldBeActive: visibilities.mediaPlayer && Config.mediaPlayerOpen
+    readonly property bool shouldBeActive: visibilities.wallpaperSelector && Config.wallpaperSelectorOpen
     readonly property int enterDuration: 300
     readonly property int exitDuration: 350
     readonly property list<real> enterCurve: Appearance.animationCurves.standard
@@ -89,7 +89,7 @@ Item {
         id: content
         
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
+        anchors.top: parent.top
         // anchors.left: parent.left
         // anchors.leftMargin: 300
 
@@ -98,7 +98,6 @@ Item {
         Component.onCompleted: timer.start()
 
         sourceComponent: Content {
-            shown: root.shown
             anchors.verticalCenter: parent.verticalCenter
         }
     }

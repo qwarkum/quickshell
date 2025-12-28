@@ -4,15 +4,16 @@ import Quickshell
 import qs.bar
 // import qs.osd.audio
 // import qs.osd.brightness
-import qs.common.wallpaperSelector
+// import qs.common.wallpaperSelector
 import qs.common.sessionScreen
 import qs.common.sidebarRight
 // import qs.common.mediaPlayer
 import qs.common.background
-import qs.common.launcher
+// import qs.common.launcher
 import qs.common.overview
 import qs.common.widgets
 import qs.common.lock
+import qs.common.shortcuts
 import qs.notificationPopup
 import qs.drawers
 
@@ -28,17 +29,19 @@ Scope {
     // LazyLoader {active: true; component: AudioOsd {} }
 
     // LazyLoader {active: true; component: MediaPlayer {} }
-    LazyLoader {active: true; component: WallpaperSelector {} }
+    // LazyLoader {active: true; component: WallpaperSelector {} }
     LazyLoader {active: true; component: SessionScreen {} }
 
     LazyLoader { active: true; component: NotificationPopup {} }
     LazyLoader { active: true; component: Overview {} }
 
-    LazyLoader { active: true; component: AppLauncher {} }
+    // LazyLoader { active: true; component: AppLauncher {} }
 
     LazyLoader { active: true; component: Lock {} }
 
     LazyLoader { active: true; component: Drawers {} }
+    
+    LazyLoader { active: true; component: Shortcuts {} }
 
     // LazyLoader { active: true; component: ReloadPopup {} }
 }

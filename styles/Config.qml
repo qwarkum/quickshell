@@ -85,7 +85,7 @@ Singleton {
             property int spacing: 15
             property int searchInputHeight: 45
             property JsonObject list: JsonObject {
-                property int spacing: 8
+                property int spacing: 12
             }
         }
 

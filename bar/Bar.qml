@@ -54,10 +54,17 @@ Scope {
                         RowLayout {
                             id: edgeRow
                             anchors.fill: parent
-                            anchors.margins: 0
-                            spacing: 0
+                            anchors.leftMargin: 20
 
                             // Resources { Layout.leftMargin: 10 }
+                            Repeater {
+                                id: leftRepeater
+                                model: Config.options.bar.layouts.left
+                                delegate: BarComponent {
+                                    list: leftRepeater.model
+                                    barSection: 1
+                                }
+                            }
 
                             // Spacer to push right content
                             Item { Layout.fillWidth: true }

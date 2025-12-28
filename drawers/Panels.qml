@@ -5,6 +5,8 @@ import qs.services
 import qs.osd.audio as AudioOsd
 import qs.osd.brightness as BrightnessOsd
 import qs.common.mediaPlayer as MediaPlayer
+import qs.common.launcher as Launcher
+import qs.common.wallpaperSelector as WallpaperSelector
 
 Item {
     id: root
@@ -14,6 +16,8 @@ Item {
     readonly property alias audioOsdPanel: audioOsdPanel
     readonly property alias brightnessOsdPanel: brightnessOsdPanel
     readonly property alias mediaPlayerPanel: mediaPlayerPanel
+    readonly property alias launcherPanel: launcherPanel
+    readonly property alias wallpaperSelectorPanel: wallpaperSelectorPanel
 
     anchors.fill: parent
 
@@ -43,5 +47,26 @@ Item {
         anchors.top: parent.top
         // anchors.horizontalCenter: parent.horizontalCenter
         x:(root.width - mediaPlayerPanel.width) / 4
+    }
+    
+    Launcher.Wrapper {
+        id: launcherPanel
+        
+        screen: root.screen
+        visibilities: root.visibilities
+        panels: root
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+    }
+    
+    WallpaperSelector.Wrapper {
+        id: wallpaperSelectorPanel
+        
+        shown: root.visibilities.wallpaperSelector
+        opacity: visible ? 1 : 0
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
     }
 }

@@ -77,23 +77,6 @@ Singleton {
         ddcProc.running = true;
     }
 
-    IpcHandler {
-        id: brightnessHandler
-        target: "brightness"
-
-        function show() {
-            BrightnessService.showOsd();
-        }
-
-        function increment() {
-            BrightnessService.increaseBrightness();
-        }
-
-        function decrement() {
-            BrightnessService.decreaseBrightness();
-        }
-    }
-
     Timer {
         id: hideTimer
         interval: 1500

@@ -16,11 +16,9 @@ Item {
     readonly property list<real> enterCurve: Appearance.animationCurves.standard
     readonly property list<real> exitCurve: Appearance.animationCurves.standard
 
+    visible: height > 0
     implicitHeight: 0
     implicitWidth: content.implicitWidth
-
-    /* actual visibility is decoupled */
-    visible: implicitHeight > 0
 
     states: [
         State {

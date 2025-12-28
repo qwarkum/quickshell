@@ -4,37 +4,50 @@ import qs.common.widgets
 import qs.services
 import qs.styles
 
-MouseArea {
+Item {
     id: root
-    property bool showResources: true
-    implicitWidth: rowLayout.implicitWidth + rowLayout.anchors.leftMargin + rowLayout.anchors.rightMargin
-    implicitHeight: 45
-    hoverEnabled: true
+    implicitWidth: resourcesModule.width + 10
+    
+    property real percentage: BatteryService.percentage
 
-    RowLayout {
-        id: rowLayout
+    Rectangle {
+        id: resourcesModule
+        width: rowLayout.implicitWidth
+        height: Appearance.configs.moduleHeight
+        radius: height / 2
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 2
 
-        spacing: 0
-        anchors.fill: parent
+        color: Appearance.colors.moduleBackground
+        border.color: Appearance.colors.moduleBorder
+        border.width: Appearance.configs.windowBorderWidth
 
-        Resource {
-            iconName: "memory"
-            percentage: ResourceUsage.memoryUsedPercentage
-            warningThreshold: 95
-        }
+        RowLayout {
+            id: rowLayout
 
-        Resource {
-            iconName: "swap_horiz"
-            percentage: ResourceUsage.swapUsedPercentage
-            Layout.leftMargin: shown ? 6 : 0
-            warningThreshold: 85
-        }
+            spacing: 0
+            anchors.centerIn: parent
 
-        Resource {
-            iconName: "planner_review"
-            percentage: ResourceUsage.cpuUsage
-            Layout.leftMargin: shown ? 6 : 0
-            warningThreshold: 90
+            Resource {
+                iconName: "memory"
+                percentage: ResourceUsage.memoryUsedPercentage
+                warningThreshold: 95
+            }
+
+            Resource {
+                iconName: "swap_horiz"
+                percentage: ResourceUsage.swapUsedPercentage
+                Layout.leftMargin: shown ? 6 : 0
+                warningThreshold: 85
+            }
+
+            Resource {
+                iconName: "planner_review"
+                percentage: ResourceUsage.cpuUsage
+                Layout.leftMargin: shown ? 6 : 0
+                warningThreshold: 90
+            }
         }
     }
 }

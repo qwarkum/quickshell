@@ -15,6 +15,7 @@ Toolbar {
         implicitWidth: height
         onClicked: {
             root.refreshWallpapers()
+            grid.forceActiveFocus()
         }
         text: "refresh"
         StyledToolTip {
@@ -24,7 +25,10 @@ Toolbar {
 
     IconToolbarButton {
         implicitWidth: height
-        onClicked: Config.useDarkMode = !Config.useDarkMode
+        onClicked: {
+            Config.useDarkMode = !Config.useDarkMode
+            grid.forceActiveFocus()
+        }
         text: Config.useDarkMode ? "moon_stars" : "light_mode"
         StyledToolTip {
             content: "Click to toggle light/dark mode"

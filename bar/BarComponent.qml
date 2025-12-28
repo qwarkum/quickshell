@@ -27,7 +27,7 @@ Item {
     property var compMap: ({ // [horizontal, vertical]
         "workspaces": [workspaceComp],
         "music_player": [musicPlayerComp],
-        // "system_monitor": [systemMonitorComp],
+        "system_monitor": [systemMonitorComp],
         // "clock": [clockComp],
         "date": [dateComp],
         "battery": [batteryComp],
@@ -85,7 +85,7 @@ Item {
     // Component { id: activeWindowCompVert; ActiveWindow { vertical: true } }
     // Component { id: activeWindowComp; ActiveWindow {} }
 
-    // Component { id: systemMonitorComp; Resources {} }
+    Component { id: systemMonitorComp; Resources {} }
     // Component { id: systemMonitorCompVert; Vertical.Resources {} }
 
     // Component { id: musicPlayerCompVert; Vertical.VerticalMedia {} }

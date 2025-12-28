@@ -67,6 +67,6 @@ Canvas { // Visualizer
         saturation: 0.2
         blurEnabled: true
         blurMax: 7
-        blur: 1
+        blur: 3
     }
 }

@@ -99,11 +99,10 @@ Rectangle {
             spacing: 0
 
             StyledText {
-                text: "Math result"
+                text: model.comment
                 visible: model.isFormula
                 textFormat: Text.RichText
                 color: Appearance.colors.bright
-                verticalAlignment: Text.AlignVCenter
                 font.pixelSize: 14
                 Layout.fillWidth: true
             }
@@ -112,8 +111,16 @@ Rectangle {
                 text: highlightFuzzyText(model.name || "", filterText)
                 textFormat: Text.RichText
                 color: model.isFormula || model.cmd ? Appearance.colors.textMain : Appearance.colors.lightUrgent
-                verticalAlignment: Text.AlignVCenter
                 font.pixelSize: 16
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+            }
+
+            StyledText {
+                text: model.comment ? model.comment : "No description"
+                visible: !model.isFormula
+                color: Appearance.colors.bright
+                font.pixelSize: 14
                 Layout.fillWidth: true
                 elide: Text.ElideRight
             }

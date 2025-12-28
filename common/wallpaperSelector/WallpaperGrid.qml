@@ -6,6 +6,7 @@ import qs.styles
 
 Item {
     id: root
+
     property var modelData: []
     property string selectedName: ""
     property int columnsCount: 4
@@ -13,9 +14,11 @@ Item {
     property int itemSpacing: 10
     property int selectedIndex: 0
 
-    signal wallpaperClicked(string fileName)
+    Component.onCompleted: {
+        forceActiveFocus()
+    }
 
-    focus: true
+    signal wallpaperClicked(string fileName)
 
     function scrollToSelected() {
         if (gridContent.children.length === 0) return;

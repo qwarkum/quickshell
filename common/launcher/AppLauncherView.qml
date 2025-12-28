@@ -43,6 +43,7 @@ ColumnLayout {
 
                 filteredAppModel.append({
                     name: result, // expr + " = " + result,
+                    comment: "Math result",
                     cmd: "",
                     iconName: "",
                     isFormula: true,
@@ -64,6 +65,7 @@ ColumnLayout {
             const entry = results[i];
             filteredAppModel.append({
                 name: entry.Name || entry.name || entry.DisplayName || entry.displayName || "Unknown",
+                comment: entry.comment,
                 cmd: extractCommandFromEntry(entry) || "",
                 iconName: AppSearch.guessIcon(entry.Name || entry.name) || "",
                 rawEntry: entry,

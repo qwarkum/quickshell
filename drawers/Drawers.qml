@@ -75,8 +75,17 @@ Variants {
             HyprlandFocusGrab {
                 id: focusGrab
                 windows: [win]
-                active: visibilities.mediaPlayer
-                onCleared: visibilities.mediaPlayer = false
+                active: visibilities.mediaPlayer || 
+                        visibilities.launcher ||
+                        visibilities.wallpaperSelector
+                onCleared: {
+                    visibilities.mediaPlayer = false
+                    visibilities.launcher = false
+                    visibilities.wallpaperSelector = false
+
+                    Config.wallpaperSelectorOpen = false
+                    Config.launcherOpen = false
+                }
             }
 
             Item {
@@ -84,10 +93,16 @@ Variants {
                 focus: true
                 // Close on Esc
                 Keys.onPressed: event => {
-                    if (!visibilities.mediaPlayer)
+                    if (!visibilities.mediaPlayer &&
+                        !visibilities.launcher &&
+                        !visibilities.wallpaperSelector) {
                         return;
+                    }
                     if (event.key === Qt.Key_Escape) {
                         visibilities.mediaPlayer = false;
+                        visibilities.launcher = false;
+                        visibilities.wallpaperSelector = false;
+
                         event.accepted = true;
                     }
                 }
@@ -110,6 +125,8 @@ Variants {
                     property bool audioOsd
                     property bool brightnessOsd
                     property bool mediaPlayer
+                    property bool launcher
+                    property bool wallpaperSelector
 
                     Component.onCompleted: Visibilities.load(modelData, this)
                 }
