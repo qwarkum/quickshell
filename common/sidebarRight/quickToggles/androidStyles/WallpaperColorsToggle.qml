@@ -9,7 +9,7 @@ import qs.common.components
 
 AndroidQuickToggle {
     toggled: Config.useWallpaperColors
-    buttonIcon: "format_paint"
+    buttonIcon: "palette"
     name: "Wallpaper col"
     mainAction: () => {
         Config.useWallpaperColors = !Config.useWallpaperColors

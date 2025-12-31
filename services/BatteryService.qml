@@ -82,7 +82,7 @@ Singleton {
     function getBatteryIcon() {
         if (BatteryService.isLowAndNotCharging || BatteryService.isCriticalAndNotCharging) return "power"
         // if (BatteryService.isFullyCharged) return "battery_status_good" // "battery_android_share"
-        if (BatteryService.isCharging) return "electric_bolt" // "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
+        if (BatteryService.isCharging) return "bolt" // "battery_android_bolt" // "battery_charging_full" "electric_bolt" 
         if (Config.batterySaverToggled) return "energy_savings_leaf" // "battery_saver"
         return "battery_full" // "battery_android_full"
     }

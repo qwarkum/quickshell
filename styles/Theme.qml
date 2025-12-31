@@ -80,7 +80,7 @@ Singleton {
     // -------------------------
     // Base color definitions
     // -------------------------
-    property color main: Config.useDarkMode ? matugenPalette("secondary", 90, "#bec6dc")
+    property color main: Config.useDarkMode ? ColorUtils.mix(matugenColor("primary", '#3f3f3f'), matugenColor("on_primary_fixed_variant", '#3f3f3f'), 1.1)
                                             : matugenColor("primary", '#3f3f3f')
     property color inverseMain: Config.useDarkMode ? Qt.lighter(matugenColor("inverse_primary", "#63568f"), 1.8)
                                             : Qt.lighter(matugenColor("primary", '#cdbdff'), 0.8)

@@ -13,7 +13,9 @@ import qs.common.components
 Button {
     Layout.preferredWidth: wsItem.targetWidth
     Layout.preferredHeight: root.workspaceSize
-    onPressed: Hyprland.dispatch(`workspace ${wsItem.workspaceId}`)
+    onPressed: if(!wsItem.isActive) {
+        Hyprland.dispatch(`workspace ${wsItem.workspaceId}`)
+    }
     
     background: Item {
         id: wsItem

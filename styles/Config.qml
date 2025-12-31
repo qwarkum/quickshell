@@ -70,7 +70,7 @@ Singleton {
             property bool hideWhenFullscreen: false
             property bool showVideoWallpaperOnLockScreen: true
             property bool stopVideoWallpaperProcessWhenLockScreen: true
-            property color defaultColor: '#6200ff'
+            property color defaultColor: '#00a2ff'
             property JsonObject parallax: JsonObject {
                 property bool vertical: false
                 property bool autoVertical: false

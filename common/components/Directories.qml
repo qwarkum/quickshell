@@ -33,6 +33,7 @@ Singleton {
     readonly property string pywalJsonPath: trimFileProtocol(`${Directories.genericCache}/wal/colors.json`)
     readonly property string matugenJsonPath: trimFileProtocol(`${Directories.cache}/matugen/colors.json`)
     readonly property string matugenConfigDir: trimFileProtocol(`${Directories.config}/matugen`)
+    readonly property string detectWallpaperSchemeScriptPath: trimFileProtocol(`${Directories.scriptPath}/colors/scheme_for_image.py`)
 
     function trimFileProtocol(str) {
         return str.startsWith("file://") ? str.slice(7) : str;

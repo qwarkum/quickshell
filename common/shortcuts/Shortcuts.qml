@@ -50,6 +50,9 @@ Scope {
             if (visibilities) {
                 visibilities.launcher = !visibilities.launcher;
             }
+            if(Config.wallpaperSelectorOpen) {
+                Config.wallpaperSelectorOpen = false;
+            }
             Config.launcherOpen = !Config.launcherOpen;
         }
     }
@@ -61,6 +64,9 @@ Scope {
             const visibilities = Visibilities.getForActive();
             if (visibilities) {
                 visibilities.wallpaperSelector = !visibilities.wallpaperSelector;
+            }
+            if(Config.launcherOpen) {
+                Config.launcherOpen = false;
             }
             Config.wallpaperSelectorOpen = !Config.wallpaperSelectorOpen;
         }
