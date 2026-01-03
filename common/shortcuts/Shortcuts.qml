@@ -58,6 +58,14 @@ Scope {
     }
 
     IpcHandler {
+        target: "sidebarRight"
+
+        function toggle() {
+            Config.sidebarRightOpen = !Config.sidebarRightOpen;
+        }
+    }
+
+    IpcHandler {
         target: "wallpaperSelector"
 
         function toggle() {
@@ -108,6 +116,13 @@ Scope {
                 for (var screen of visibilities) {
                     screen.wallpaperSelector = false;
                 }
+            }
+        }
+
+        function onSidebarRightOpenChanged() {
+            const visibilities = Visibilities.getForActive();
+            if (visibilities) {
+                visibilities.sidebarRight = !visibilities.sidebarRight;
             }
         }
     }

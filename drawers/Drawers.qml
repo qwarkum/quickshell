@@ -77,14 +77,16 @@ Variants {
                 windows: [win]
                 active: visibilities.mediaPlayer || 
                         visibilities.launcher ||
-                        visibilities.wallpaperSelector
+                        visibilities.wallpaperSelector // ||
+                        // visibilities.sidebarRight
                 onCleared: {
                     visibilities.mediaPlayer = false
                     visibilities.launcher = false
                     visibilities.wallpaperSelector = false
+                    // visibilities.sidebarRight = false
 
-                    Config.wallpaperSelectorOpen = false
                     Config.launcherOpen = false
+                    Config.wallpaperSelectorOpen = false
                 }
             }
 
@@ -95,13 +97,16 @@ Variants {
                 Keys.onPressed: event => {
                     if (!visibilities.mediaPlayer &&
                         !visibilities.launcher &&
-                        !visibilities.wallpaperSelector) {
+                        !visibilities.wallpaperSelector // &&
+                        //!visibilities.sidebarRight
+                        ) {
                         return;
                     }
                     if (event.key === Qt.Key_Escape) {
                         visibilities.mediaPlayer = false;
                         visibilities.launcher = false;
                         visibilities.wallpaperSelector = false;
+                        // visibilities.sidebarRight = false;
 
                         event.accepted = true;
                     }
@@ -127,6 +132,7 @@ Variants {
                     property bool mediaPlayer
                     property bool launcher
                     property bool wallpaperSelector
+                    // property bool sidebarRight
 
                     Component.onCompleted: Visibilities.load(modelData, this)
                 }
